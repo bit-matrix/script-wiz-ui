@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Editor from "@monaco-editor/react";
+import "./App.css";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const options = {
+    autoClosingBrackets: "always",
+    autoClosingPairs: "open",
+    // matchBrackets: "always",
+    // autoClosingQuotes: "always",
+    // autoClosingPairs: [
+    //   { open: "<", close: ">" },
+    //   { open: "$(", close: ")" },
+    //   { open: '"', close: '"', notIn: ["string"] },
+    //   { open: "'", close: "'", notIn: ["string", "comment"] },
+    //   { open: "/**", close: " */", notIn: ["string"] },
+    //   { open: "OP_IF", close: " OP_ENDIF", notIn: ["string", "comment"] },
+    //   { open: "OP_NOTIF", close: " OP_ENDIF", notIn: ["string", "comment"] },
+    // ],
+    brackets: [
+      ["<", ">"],
+      ["$(", ")"],
+    ],
+  };
+  return <Editor height="100vh" width="50vw" options={options} language="json" theme="vs-dark" defaultValue="// some comment" />;
 }
 
 export default App;
