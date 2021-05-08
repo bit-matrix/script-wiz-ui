@@ -24,7 +24,7 @@ function App() {
       });
       console.log(monaco.editor);
       // Define a new theme that contains only rules that match this language
-      monaco.editor.defineTheme("scripts", {
+      monaco.editor.defineTheme("scriptTheme", {
         base: "vs-dark",
         inherit: false,
         rules: [
@@ -90,7 +90,11 @@ function App() {
   //   ],
   // };
 
-  return <Editor width="%100" language="dummy" height="100vh" theme="scripts" />;
+  if (monaco != null) {
+    return <Editor width="%100" language="dummy" height="100vh" theme="scriptTheme" />;
+  }
+
+  return null;
 }
 
 export default App;
