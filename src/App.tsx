@@ -32,7 +32,13 @@ function App() {
           { token: "custom-error", foreground: "ff0000", fontStyle: "bold" },
           { token: "custom-notice", foreground: "FFA500" },
           { token: "custom-date", foreground: "008800" },
+          { background: "1E1E1E" },
+          { foreground: "FFFFFF" },
         ],
+        colors: {
+          "editor.foreground": "#FFFFFF",
+          "editor.background": "#1E1E1E",
+        },
       });
 
       monaco.languages.registerCompletionItemProvider("dummy", {
