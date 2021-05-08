@@ -11,6 +11,30 @@ function App() {
     if (monaco !== null) {
       monaco.languages.register({ id: "dummy" });
 
+      // Register a tokens provider for the language
+      monaco.languages.setMonarchTokensProvider("dummy", {
+        tokenizer: {
+          root: [
+            [/\[error.*/, "custom-error"],
+            [/\[notice.*/, "custom-notice"],
+            [/\""*/, "custom-info"],
+            [/\[[a-zA-Z 0-9:]+\]/, "custom-date"],
+          ],
+        },
+      });
+      console.log(monaco.editor);
+      // Define a new theme that contains only rules that match this language
+      monaco.editor.defineTheme("scripts", {
+        base: "vs-dark",
+        inherit: false,
+        rules: [
+          { token: "custom-info", foreground: "808080" },
+          { token: "custom-error", foreground: "ff0000", fontStyle: "bold" },
+          { token: "custom-notice", foreground: "FFA500" },
+          { token: "custom-date", foreground: "008800" },
+        ],
+      });
+
       monaco.languages.registerCompletionItemProvider("dummy", {
         provideCompletionItems: () => {
           const suggestions = [
@@ -66,7 +90,7 @@ function App() {
   //   ],
   // };
 
-  return <Editor width="%100" language="dummy" height="100vh" theme="vs-dark" />;
+  return <Editor width="%100" language="dummy" height="100vh" theme="scripts" />;
 }
 
 export default App;
