@@ -7,6 +7,18 @@ import Editor, { useMonaco } from "@monaco-editor/react";
 type CursorBlinking = "blink" | "smooth" | "phase" | "expand" | "solid";
 type WrappingIndent = "none" | "same" | "indent" | "deepIndent";
 
+const vibrantYellow = "ffd700";
+const subtleGray = "666677";
+const salmon = "d68d72";
+const lightBlue = "8addff";
+const blue = "3c9dda";
+const fuchsia = "d081c4";
+const oak = "d9daa2";
+const red = "ff0000";
+const mistBlue = "a8bcce";
+const lightOlive = "b5cea8";
+const darkOlive = "5bb498";
+
 function App() {
   const monaco = useMonaco();
 
@@ -15,29 +27,27 @@ function App() {
     if (monaco !== null) {
       monaco.languages.register({ id: "dummy" });
 
-      // Register a tokens provider for the language
-      monaco.languages.setMonarchTokensProvider("dummy", {
-        tokenizer: {
-          root: [
-            [/\[error.*/, "custom-error"],
-            [/\[notice.*/, "custom-notice"],
-            [/\""*/, "custom-info"],
-            [/\[[a-zA-Z 0-9:]+\]/, "custom-date"],
-          ],
-        },
-      });
-
       // Define a new theme that contains only rules that match this language
       monaco.editor.defineTheme("scriptTheme", {
         base: "vs-dark",
         inherit: false,
         rules: [
-          { token: "custom-info", foreground: "808080" },
-          { token: "custom-error", foreground: "ff0000", fontStyle: "bold" },
-          { token: "custom-notice", foreground: "FFA500" },
-          { token: "custom-date", foreground: "008800" },
+          { token: "delimiter.evaluation", foreground: vibrantYellow },
+          { token: "delimiter.push", foreground: subtleGray },
+          { token: "opcode.push", foreground: subtleGray },
+          { token: "opcode.push-number", foreground: lightOlive },
+          { token: "opcode.disabled", foreground: red },
+          { token: "opcode.signature", foreground: fuchsia },
+          { token: "opcode.flow-control", foreground: salmon },
+          { token: "opcode.blocking", foreground: oak },
+          { token: "opcode.other", foreground: blue },
+          { token: "identifier", foreground: lightBlue },
+          { token: "literal.bigint", foreground: lightOlive },
+          { token: "literal.hex", foreground: darkOlive },
+          { token: "literal.binary", foreground: mistBlue },
+          { token: "invalid", foreground: red },
           { token: "", background: "1E1E1E" },
-          { token: "", foreground: "FFFFFF" },
+          { token: "", foreground: "ce9178" },
         ],
         colors: {
           "editor.foreground": "#FFFFFF",
@@ -109,6 +119,61 @@ function App() {
         ],
       });
 
+      // Register a tokens provider for the language
+      monaco.languages.setMonarchTokensProvider("dummy", {
+        bigint: /-?\d+(_+\d+)*/,
+        brackets: [
+          { open: "$(", close: ")", token: "delimiter.evaluation" },
+          { open: "<", close: ">", token: "delimiter.push" },
+        ],
+        binary: /[01]+(?:[01_]*[01]+)*/,
+        hex: /[0-9a-fA-F]_*(?:_*[0-9a-fA-F]_*[0-9a-fA-F]_*)*[0-9a-fA-F]/,
+        tokenizer: {
+          root: [
+            // [/0b(@binary)/, "literal.binary"], // BinaryLiteral
+            [
+              /[a-zA-Z_][.a-zA-Z0-9_-]+/,
+              {
+                cases: {
+                  // "@flowControlOpcodes": "opcode.flow-control",
+                  // "@signatureCheckingOpcodes": "opcode.signature",
+                  // "@blockingOpcodes": "opcode.blocking",
+                  // "@pushBytesOpcodes": "opcode.push",
+                  // "@pushNumberOpcodes": "opcode.push-number",
+                  // "@disabledOpcodes": "opcode.disabled",
+                  // "@otherOpcodes": "opcode.other",
+                  "@default": "identifier",
+                },
+              },
+            ],
+            [/0x(@hex)/, "literal.hex"], // HexLiteral
+            [/(@bigint)/, "literal.bigint"], // BigIntLiteral
+            { include: "@whitespace" },
+            [/[<>)]|\$\(/, "@brackets"],
+            [/"/, "string", "@string_double"], // UTF8Literal
+            [/'/, "string", "@string_single"], // UTF8Literal
+          ],
+          whitespace: [
+            [/[ \t\r\n]+/, ""],
+            [/\/\*/, "comment", "@comment"],
+            [/\/\/.*$/, "comment"],
+          ],
+          comment: [
+            [/[^/*]+/, "comment"],
+            [/\*\//, "comment", "@pop"],
+            [/[/*]/, "comment"],
+          ],
+          string_double: [
+            [/[^"$]+/, "string"],
+            [/"/, "string", "@pop"],
+          ],
+          string_single: [
+            [/[^'$]+/, "string"],
+            [/'/, "string", "@pop"],
+          ],
+        },
+      });
+
       monaco.languages.registerHoverProvider("dummy", {
         provideHover: function (model, position) {
           return {
@@ -168,7 +233,7 @@ function App() {
     const monacoOptions = {
       cursorBlinking: "smooth" as CursorBlinking,
       dragAndDrop: true,
-      fontSize: 16,
+      fontSize: 14,
       lineHeight: 18,
       fontFamily: "'Fira Mono', monospace",
       scrollBeyondLastLine: false,
