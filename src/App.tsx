@@ -26,8 +26,8 @@ function App() {
       monaco.languages.registerHoverProvider(scriptWizEditor.LANGUAGE, languageOptions.hoverProvider);
 
       monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
-        provideCompletionItems: () => {
-          const suggestions = languageOptions.languageSuggestions(monaco.languages);
+        provideCompletionItems: (model: any, position: any) => {
+          const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position);
           return { suggestions: suggestions };
         },
       });
@@ -35,7 +35,7 @@ function App() {
   }, [monaco]);
 
   if (monaco != null) {
-    return <Editor width="%100" options={editorOptions} language={scriptWizEditor.LANGUAGE} height="100vh" theme={scriptWizEditor.THEME} />;
+    return <Editor width="50vw" options={editorOptions} language={scriptWizEditor.LANGUAGE} height="100vh" theme={scriptWizEditor.THEME} />;
   }
 
   return null;

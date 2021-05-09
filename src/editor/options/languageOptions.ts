@@ -122,8 +122,22 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
   },
 };
 
-const hoverProvider = {
-  provideHover: function (model: any) {
+const hoverProvider: Monaco.languages.HoverProvider = {
+  provideHover: function (model: Monaco.editor.ITextModel, position: Monaco.Position, token: Monaco.CancellationToken) {
+    console.log("model", model.getValue()); // langugeCompletionItem insert text
+    console.log("position", position);
+    console.log("range", model.getWordAtPosition(position));
+    console.log("token", token);
+
+    //const query = model.getWordAtPosition(position);
+    //const columns = model.getWordUntilPosition(position);
+    //const range: Range = {
+    // startColumn: columns.startColumn,
+    //endColumn: columns.endColumn,
+    // startLineNumber: position.lineNumber,
+    //endLineNumber: position.lineNumber,
+    //};
+
     return {
       range: new Monaco.Range(1, 1, model.getLineCount(), model.getLineMaxColumn(model.getLineCount())),
       contents: [{ value: "**SOURCE**" }, { value: "Hello world" }],
@@ -131,43 +145,38 @@ const hoverProvider = {
   },
 };
 
-const languageSuggestions = (monaco: typeof Monaco.languages): Monaco.languages.CompletionItem[] => {
+const languageSuggestions = (monaco: typeof Monaco.languages, model: Monaco.editor.ITextModel, position: Monaco.Position): Monaco.languages.CompletionItem[] => {
+  // const query = model.getWordAtPosition(position);
+  const columns = model.getWordUntilPosition(position);
+
+  const range: Monaco.IRange = {
+    startColumn: columns.startColumn,
+    endColumn: columns.endColumn,
+    startLineNumber: position.lineNumber,
+    endLineNumber: position.lineNumber,
+  };
+
   return [
     {
       label: "OP_ADD",
-      kind: monaco.CompletionItemKind.Text,
+      kind: monaco.CompletionItemKind.Function,
       insertText: "OP_ADD",
-      range: {
-        startLineNumber: 1,
-        startColumn: 1,
-        endLineNumber: 1,
-        endColumn: 1,
-      },
+      range,
     },
     {
       label: "OP_SUB",
-      kind: monaco.CompletionItemKind.Keyword,
+      kind: monaco.CompletionItemKind.Function,
       insertText: "testing(${1:condition})",
       insertTextRules: monaco.CompletionItemInsertTextRule.InsertAsSnippet,
-      range: {
-        startLineNumber: 2,
-        startColumn: 2,
-        endLineNumber: 2,
-        endColumn: 2,
-      },
+      range,
     },
     {
       label: "OP_SHA256",
-      kind: monaco.CompletionItemKind.Snippet,
+      kind: monaco.CompletionItemKind.Function,
       insertText: ["if (${1:condition}) {", "\t$0", "} else {", "\t", "}"].join("\n"),
       insertTextRules: monaco.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "If-Else Statement",
-      range: {
-        startLineNumber: 0,
-        startColumn: 0,
-        endLineNumber: 0,
-        endColumn: 0,
-      },
+      range,
     },
   ];
 };
