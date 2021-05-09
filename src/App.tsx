@@ -3,7 +3,9 @@ import React, { useEffect } from "react";
 import "./App.css";
 import Editor, { useMonaco } from "@monaco-editor/react";
 
-export type EditorAutoClosingStrategy = "always" | "languageDefined" | "beforeWhitespace" | "never";
+// type EditorAutoClosingStrategy = "always" | "languageDefined" | "beforeWhitespace" | "never";
+type CursorBlinking = "blink" | "smooth" | "phase" | "expand" | "solid";
+type WrappingIndent = "none" | "same" | "indent" | "deepIndent";
 
 function App() {
   const monaco = useMonaco();
@@ -163,7 +165,19 @@ function App() {
   }, [monaco]);
 
   if (monaco != null) {
-    return <Editor width="%100" language="dummy" height="100vh" theme="scriptTheme" />;
+    const monacoOptions = {
+      cursorBlinking: "smooth" as CursorBlinking,
+      dragAndDrop: true,
+      fontSize: 16,
+      lineHeight: 18,
+      fontFamily: "'Fira Mono', monospace",
+      scrollBeyondLastLine: false,
+      contextmenu: false,
+      folding: false,
+      wrappingIndent: "same" as WrappingIndent,
+    };
+
+    return <Editor width="%100" options={monacoOptions} language="dummy" height="100vh" theme="scriptTheme" />;
   }
 
   return null;
