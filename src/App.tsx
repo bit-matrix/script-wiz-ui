@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import "./App.css";
 import Editor, { useMonaco } from "@monaco-editor/react";
 
+export type EditorAutoClosingStrategy = "always" | "languageDefined" | "beforeWhitespace" | "never";
+
 function App() {
   const monaco = useMonaco();
 
@@ -13,6 +15,7 @@ function App() {
 
       // Register a tokens provider for the language
       monaco.languages.setMonarchTokensProvider("dummy", {
+        brackets: [{ open: "<", close: ">", token: "<>" }],
         tokenizer: {
           root: [
             [/\[error.*/, "custom-error"],
@@ -39,6 +42,70 @@ function App() {
           "editor.foreground": "#FFFFFF",
           "editor.background": "#1E1E1E",
         },
+      });
+
+      monaco.languages.setLanguageConfiguration("dummy", {
+        autoClosingPairs: [
+          { open: "<", close: ">" },
+          { open: "$(", close: ")" },
+          { open: '"', close: '"', notIn: ["string"] },
+          { open: "'", close: "'", notIn: ["string", "comment"] },
+          { open: "/**", close: " */", notIn: ["string"] },
+          { open: "OP_IF", close: " OP_ENDIF", notIn: ["string", "comment"] },
+          { open: "OP_NOTIF", close: " OP_ENDIF", notIn: ["string", "comment"] },
+        ],
+        brackets: [
+          ["<", ">"],
+          ["$(", ")"],
+        ],
+        comments: {
+          lineComment: "//",
+          blockComment: ["/*", "*/"],
+        },
+        onEnterRules: [
+          {
+            // e.g. /** | */
+            beforeText: /^\s*\/\*\*(?!\/)([^*]|\*(?!\/))*$/,
+            afterText: /^\s*\*\/$/,
+            action: {
+              indentAction: monaco.languages.IndentAction.IndentOutdent,
+              appendText: " * ",
+            },
+          },
+          {
+            // e.g. /** ...|
+            beforeText: /^\s*\/\*\*(?!\/)([^*]|\*(?!\/))*$/,
+            action: {
+              indentAction: monaco.languages.IndentAction.None,
+              appendText: " * ",
+            },
+          },
+          {
+            // e.g.  * ...|
+            beforeText: /^(\t|[ ])*[ ]\*([ ]([^*]|\*(?!\/))*)?$/,
+            afterText: /^(\s*(\/\*\*|\*)).*/,
+            action: {
+              indentAction: monaco.languages.IndentAction.None,
+              appendText: "* ",
+            },
+          },
+          {
+            // e.g.  */|
+            beforeText: /^(\t|[ ])*[ ]\*\/\s*$/,
+            action: {
+              indentAction: monaco.languages.IndentAction.None,
+              removeText: 1,
+            },
+          },
+          {
+            // e.g.  *-----*/|
+            beforeText: /^(\t|[ ])*[ ]\*[^/]*\*\/\s*$/,
+            action: {
+              indentAction: monaco.languages.IndentAction.None,
+              removeText: 1,
+            },
+          },
+        ],
       });
 
       monaco.languages.registerCompletionItemProvider("dummy", {
