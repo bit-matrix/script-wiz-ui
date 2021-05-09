@@ -122,24 +122,36 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
   },
 };
 
+const opwords = [
+  { label: "OP_ADD", detail: "OP_ADD", documentation: "OP_ADD" },
+  { label: "OP_SHA256", detail: "OP_SHA256", documentation: "OP_SHA256" },
+  { label: "OP_SUB", detail: "OP_SUB", documentation: "OP_SUB" },
+];
+
 const hoverProvider: Monaco.languages.HoverProvider = {
   provideHover: function (model: Monaco.editor.ITextModel, position: Monaco.Position, token: Monaco.CancellationToken) {
-    console.log("model", model.getValue()); // langugeCompletionItem insert text
-    console.log("position", position);
-    console.log("range", model.getWordAtPosition(position));
-    console.log("token", token);
+    // const modelValue = model.getValue();
+    const query = model.getWordAtPosition(position);
 
-    //const query = model.getWordAtPosition(position);
-    //const columns = model.getWordUntilPosition(position);
-    //const range: Range = {
-    // startColumn: columns.startColumn,
-    //endColumn: columns.endColumn,
-    // startLineNumber: position.lineNumber,
-    //endLineNumber: position.lineNumber,
-    //};
+    const currentModel = opwords.find((opw) => opw.label === query?.word);
+
+    const columns = model.getWordUntilPosition(position);
+    const range: Monaco.IRange = {
+      startColumn: columns.startColumn,
+      endColumn: columns.endColumn,
+      startLineNumber: position.lineNumber,
+      endLineNumber: position.lineNumber,
+    };
+
+    if (currentModel !== undefined) {
+      return {
+        range,
+        contents: [{ value: currentModel.label }, { value: currentModel.documentation }, { value: currentModel.detail }],
+      };
+    }
 
     return {
-      range: new Monaco.Range(1, 1, model.getLineCount(), model.getLineMaxColumn(model.getLineCount())),
+      range,
       contents: [{ value: "**SOURCE**" }, { value: "Hello world" }],
     };
   },
@@ -156,29 +168,38 @@ const languageSuggestions = (monaco: typeof Monaco.languages, model: Monaco.edit
     endLineNumber: position.lineNumber,
   };
 
-  return [
-    {
-      label: "OP_ADD",
-      kind: monaco.CompletionItemKind.Function,
-      insertText: "OP_ADD",
-      range,
-    },
-    {
-      label: "OP_SUB",
-      kind: monaco.CompletionItemKind.Function,
-      insertText: "testing(${1:condition})",
-      insertTextRules: monaco.CompletionItemInsertTextRule.InsertAsSnippet,
-      range,
-    },
-    {
-      label: "OP_SHA256",
-      kind: monaco.CompletionItemKind.Function,
-      insertText: ["if (${1:condition}) {", "\t$0", "} else {", "\t", "}"].join("\n"),
-      insertTextRules: monaco.CompletionItemInsertTextRule.InsertAsSnippet,
-      documentation: "If-Else Statement",
-      range,
-    },
-  ];
+  return opwords.map((opw) => ({
+    label: opw.label,
+    insertText: opw.label,
+    kind: monaco.CompletionItemKind.Function,
+    range,
+    documentation: opw.documentation,
+    detail: opw.detail,
+  }));
+  // return [
+  //   {
+  //     label: "OP_ADD",
+  //     kind: monaco.CompletionItemKind.Function,
+  //     insertText: "OP_ADD",
+
+  //     range,
+  //   },
+  //   {
+  //     label: "OP_SUB",
+  //     kind: monaco.CompletionItemKind.Function,
+  //     insertText: "testing(${1:condition})",
+  //     insertTextRules: monaco.CompletionItemInsertTextRule.InsertAsSnippet,
+  //     range,
+  //   },
+  //   {
+  //     label: "OP_SHA256",
+  //     kind: monaco.CompletionItemKind.Function,
+  //     insertText: ["if (${1:condition}) {", "\t$0", "} else {", "\t", "}"].join("\n"),
+  //     insertTextRules: monaco.CompletionItemInsertTextRule.InsertAsSnippet,
+  //     documentation: "If-Else Statement",
+  //     range,
+  //   },
+  // ];
 };
 
 export { languageConfigurations, tokenProviders, hoverProvider, languageSuggestions };
