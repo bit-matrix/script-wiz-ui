@@ -15,7 +15,6 @@ function App() {
 
       // Register a tokens provider for the language
       monaco.languages.setMonarchTokensProvider("dummy", {
-        brackets: [{ open: "<", close: ">", token: "<>" }],
         tokenizer: {
           root: [
             [/\[error.*/, "custom-error"],
@@ -106,6 +105,15 @@ function App() {
             },
           },
         ],
+      });
+
+      monaco.languages.registerHoverProvider("dummy", {
+        provideHover: function (model, position) {
+          return {
+            range: new monaco.Range(1, 1, model.getLineCount(), model.getLineMaxColumn(model.getLineCount())),
+            contents: [{ value: "**SOURCE**" }, { value: "Hello world" }],
+          };
+        },
       });
 
       monaco.languages.registerCompletionItemProvider("dummy", {
