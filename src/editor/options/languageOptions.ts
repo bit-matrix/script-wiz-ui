@@ -1,6 +1,7 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 /* eslint-disable no-template-curly-in-string */
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
+import { opWordCodes } from "@script-wiz/lib";
 
 const languageConfigurations = (monaco: typeof Monaco.languages): Monaco.languages.LanguageConfiguration => {
   return {
@@ -122,18 +123,12 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
   },
 };
 
-const opwords = [
-  { label: "OP_ADD", detail: "OP_ADD", documentation: "OP_ADD" },
-  { label: "OP_SHA256", detail: "OP_SHA256", documentation: "OP_SHA256" },
-  { label: "OP_SUB", detail: "OP_SUB", documentation: "OP_SUB" },
-];
-
 const hoverProvider: Monaco.languages.HoverProvider = {
   provideHover: function (model: Monaco.editor.ITextModel, position: Monaco.Position, token: Monaco.CancellationToken) {
     // const modelValue = model.getValue();
     const query = model.getWordAtPosition(position);
 
-    const currentModel = opwords.find((opw) => opw.label === query?.word);
+    const currentModel = opWordCodes.find((opc) => opc.word === query?.word);
 
     const columns = model.getWordUntilPosition(position);
     const range: Monaco.IRange = {
@@ -146,7 +141,7 @@ const hoverProvider: Monaco.languages.HoverProvider = {
     if (currentModel !== undefined) {
       return {
         range,
-        contents: [{ value: currentModel.label }, { value: currentModel.documentation }, { value: currentModel.detail }],
+        contents: [{ value: currentModel.word }, { value: currentModel.description || "" }, { value: "compiled:" + currentModel.hex }],
       };
     }
 
@@ -168,13 +163,13 @@ const languageSuggestions = (monaco: typeof Monaco.languages, model: Monaco.edit
     endLineNumber: position.lineNumber,
   };
 
-  return opwords.map((opw) => ({
-    label: opw.label,
-    insertText: opw.label,
+  return opWordCodes.map((opc) => ({
+    label: opc.word,
+    insertText: opc.word,
     kind: monaco.CompletionItemKind.Function,
     range,
-    documentation: opw.documentation,
-    detail: opw.detail,
+    documentation: opc.description,
+    detail: opc.description,
   }));
   // return [
   //   {
