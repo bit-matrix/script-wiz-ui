@@ -1,6 +1,7 @@
 /* eslint-disable no-template-curly-in-string */
 import React, { useEffect } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
+import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { scriptWizEditor } from "./editor/utils/constant";
 import themeOptions from "./editor/options/themeOptions";
 import editorOptions from "./editor/options/editorOptions";
@@ -9,6 +10,17 @@ import "./App.css";
 
 function App() {
   const monaco = useMonaco();
+
+  const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
+    if (value) {
+      let lines = value.split("\n");
+      console.log(lines);
+      lines = lines.map((line) => line.trim());
+      lines = lines.map((line) => line.replaceAll("\r", ""));
+      lines = lines.map((line) => line.replaceAll("\t", ""));
+      console.log(lines);
+    }
+  };
 
   useEffect(() => {
     // language define
@@ -35,7 +47,7 @@ function App() {
   }, [monaco]);
 
   if (monaco != null) {
-    return <Editor width="50vw" options={editorOptions} language={scriptWizEditor.LANGUAGE} height="100vh" theme={scriptWizEditor.THEME} />;
+    return <Editor width="50vw" options={editorOptions} language={scriptWizEditor.LANGUAGE} height="100vh" theme={scriptWizEditor.THEME} onChange={onChangeEditor} />;
   }
 
   return null;
