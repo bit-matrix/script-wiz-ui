@@ -32,10 +32,19 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({ stackDataList }) => 
           <span key={`${index.toString() + "index"}`} className="editor-output-text-page-number">
             {index + 1}
           </span>
-
-          <span key={`${index.toString() + "text"}`} className="editor-output-text">
-            {o}
-          </span>
+          <Whisper
+            placement="right"
+            trigger="hover"
+            speaker={
+              <Tooltip>
+                This is a help <i>tooltip</i> .
+              </Tooltip>
+            }
+          >
+            <span key={`${index.toString() + "text"}`} className="editor-output-text">
+              {o}
+            </span>
+          </Whisper>
           <br />
         </div>
       ))}
