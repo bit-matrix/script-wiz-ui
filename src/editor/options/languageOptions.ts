@@ -166,7 +166,7 @@ const hoverProvider: Monaco.languages.HoverProvider = {
 
     return {
       range,
-      contents: [{ value: "compiled : " + compiledValue }],
+      contents: [{ value: "Compiled : " + compiledValue }],
     };
   },
 };
