@@ -7,8 +7,8 @@ import { scriptWizEditor } from "./editor/utils/constant";
 import themeOptions from "./editor/options/themeOptions";
 import editorOptions from "./editor/options/editorOptions";
 import * as languageOptions from "./editor/options/languageOptions";
-import "./App.css";
 import IStackData from "../../script-wiz-lib/dist/model/IStackData";
+import "./App.css";
 
 const initialStackDataList: Array<IStackData | undefined> = [];
 
@@ -45,11 +45,9 @@ function App() {
   const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
     if (value) {
       let lines = value.split("\n");
-      console.log(lines);
       lines = lines.map((line) => line.trim());
       lines = lines.map((line) => line.replaceAll("\r", ""));
       lines = lines.map((line) => line.replaceAll("\t", ""));
-      console.log(lines);
       compile(lines);
     }
   };

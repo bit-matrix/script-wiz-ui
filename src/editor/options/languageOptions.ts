@@ -1,7 +1,7 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 /* eslint-disable no-template-curly-in-string */
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
-import { opWordCodes } from "@script-wiz/lib";
+import * as scriptWiz from "@script-wiz/lib";
 
 const languageConfigurations = (monaco: typeof Monaco.languages): Monaco.languages.LanguageConfiguration => {
   return {
@@ -125,10 +125,13 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
 
 const hoverProvider: Monaco.languages.HoverProvider = {
   provideHover: function (model: Monaco.editor.ITextModel, position: Monaco.Position, token: Monaco.CancellationToken) {
-    // const modelValue = model.getValue();
-    const query = model.getWordAtPosition(position);
+    const modelValue = model.getValue(); // all lines
 
-    const currentModel = opWordCodes.find((opc) => opc.word === query?.word);
+    const query = model.getWordAtPosition(position); //["word",positions]
+
+    const queryWord = query?.word || "";
+
+    const currentModel = scriptWiz.opWordCodes.find((opc) => opc.word === queryWord);
 
     const columns = model.getWordUntilPosition(position);
     const range: Monaco.IRange = {
@@ -145,9 +148,25 @@ const hoverProvider: Monaco.languages.HoverProvider = {
       };
     }
 
+    let lines = modelValue.split("\n");
+    lines = lines.map((line) => line.trim());
+    lines = lines.map((line) => line.replaceAll("\r", ""));
+    lines = lines.map((line) => line.replaceAll("\t", ""));
+
+    const currentLineValue = lines[position.lineNumber - 1];
+
+    let compiledValue: string = "";
+
+    if (currentLineValue.startsWith("<") && currentLineValue.endsWith(">")) {
+      const finalInput = currentLineValue.substr(1, currentLineValue.length - 2);
+      compiledValue = scriptWiz.compileFinalInput(finalInput);
+    } else {
+      compiledValue = scriptWiz.compileFinalInput(currentLineValue);
+    }
+
     return {
       range,
-      contents: [{ value: "**SOURCE**" }, { value: "Hello world" }],
+      contents: [{ value: "compiled : " + compiledValue }],
     };
   },
 };
@@ -163,7 +182,7 @@ const languageSuggestions = (monaco: typeof Monaco.languages, model: Monaco.edit
     endLineNumber: position.lineNumber,
   };
 
-  return opWordCodes.map((opc) => ({
+  return scriptWiz.opWordCodes.map((opc) => ({
     label: opc.word,
     insertText: opc.word,
     kind: monaco.CompletionItemKind.Function,
