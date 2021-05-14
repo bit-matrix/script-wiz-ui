@@ -5,46 +5,53 @@ import ScriptEditorInput from "../ScriptEditorInput/ScriptEditorInput";
 import ScriptEditorOutput from "../ScriptEditorOutput/ScriptEditorOutput";
 import "./ScriptEditor.scss";
 
-const initialStackDataList: Array<IStackData | undefined> = [];
+const initialLineStackDataListArray: Array<Array<IStackData>> = [];
+const initialLastStackDataList: Array<IStackData> = [];
 
 const ScriptEditor = () => {
-    const [stackDataList, setStackDataList] = useState<Array<IStackData | undefined>>(initialStackDataList);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<IStackData>>>(initialLineStackDataListArray);
+  const [lastStackDataList, setLastStackDataList] = useState<Array<IStackData>>(initialLastStackDataList);
 
-    const compile = (lines: string[]) => {
-        setStackDataList(initialStackDataList);
-        scriptWiz.clearStack();
-        const newStackDataList: Array<IStackData | undefined> = [];
+  const compile = (lines: string[]) => {
+    setErrorMessage(undefined);
+    setLineStackDataListArray(initialLineStackDataListArray);
+    setLastStackDataList(lastStackDataList);
+    scriptWiz.clearStack();
 
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            let newStackData: IStackData | undefined = undefined;
+    const newLineStackDataListArray: Array<Array<IStackData>> = [];
+    let newLastStackDataList: Array<IStackData> = [];
 
-            try {
-                if (line !== "") {
-                    const libStackDataList = scriptWiz.parse(line);
-                    newStackData = libStackDataList.main[libStackDataList.main.length - 1];
-                }
-                newStackDataList.push(newStackData);
-            } catch (e) {
-                newStackData = e;
-                newStackDataList.push(newStackData);
-                continue;
-            }
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      try {
+        if (line !== "") {
+          newLastStackDataList = scriptWiz.parse(line).main;
+          newLineStackDataListArray.push(newLastStackDataList);
+        } else {
+          newLineStackDataListArray.push([]);
         }
+      } catch (e) {
+        setErrorMessage(e);
+        break;
+      }
+    }
 
-        setStackDataList(newStackDataList);
-    };
+    setLineStackDataListArray(newLineStackDataListArray);
+    setLastStackDataList(newLastStackDataList);
+  };
 
-    return (
-        <div className="script-editor-main-div">
-            <div className="script-editor-sub-item">
-                <ScriptEditorInput onChangeScriptEditorInput={compile} />
-            </div>
-            <div className="script-editor-sub-item">
-                <ScriptEditorOutput stackDataList={stackDataList} />
-            </div>
-        </div>
-    );
+  return (
+    <div className="script-editor-main-div">
+      <div className="script-editor-sub-item">
+        <ScriptEditorInput onChangeScriptEditorInput={compile} />
+      </div>
+      <div className="script-editor-sub-item">
+        <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+      </div>
+    </div>
+  );
 };
 
 export default ScriptEditor;

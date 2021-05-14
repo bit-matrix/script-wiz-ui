@@ -1,53 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import IStackData from "@script-wiz/lib/model/IStackData";
 import "./ScriptEditorOutput.scss";
 import { Tooltip, Whisper } from "rsuite";
 
 interface IScriptEditorInput {
-  stackDataList: Array<IStackData | undefined>;
+  lastStackDataList: Array<IStackData>;
+  lineStackDataListArray: Array<Array<IStackData>>;
+  errorMessage: string | undefined;
 }
 
-const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({ stackDataList }) => {
-  const [outputs, setOutputs] = useState<string[]>([]);
-
-  useEffect(() => {
-    const outputStrings: string[] = [];
-    stackDataList.forEach((d, i) => {
-      let lineOutput = "";
-      for (let j = 0; j < i + 1; j++) {
-        const data = stackDataList[j];
-        lineOutput += data ? (data.input ? data.input + "(" + data.byteValue : data) + ")" : "";
-        lineOutput += " ";
-      }
-      outputStrings.push(lineOutput);
+const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({ lastStackDataList, lineStackDataListArray, errorMessage }) => {
+  const getWhispers = (stackDataArray: IStackData[], lineNumber: number) =>
+    stackDataArray.map((stackData: IStackData, index: number) => {
+      const key = `whisper-${lineNumber.toString()}-${index.toString()}-text`;
+      return getWhisper(key, stackData.byteValue, stackData.byteValueDisplay);
     });
 
-    setOutputs(outputStrings);
-  }, [stackDataList]);
+  const getWhisper = (key: string, tooltip: string, display: string) => (
+    <Whisper placement="right" trigger="hover" speaker={<Tooltip>{tooltip}</Tooltip>}>
+      <span key={key} className="editor-output-text">
+        {display}
+      </span>
+    </Whisper>
+  );
 
   return (
     <>
-      {outputs.map((o, index) => (
-        <div className="script-editor-output-main" key={index.toString()}>
-          <span key={`${index.toString() + "index"}`} className="editor-output-text-page-number">
-            {index + 1}
+      {lineStackDataListArray.map((lineStackDataList, lineNumber: number) => (
+        <div className="script-editor-output-main" key={`script-editor-output-main-${lineNumber.toString()}`}>
+          <span key={`editor-output-text-page-number-${lineNumber.toString()}`} className="editor-output-text-page-number">
+            {lineNumber + 1}
           </span>
-          <Whisper
-            placement="right"
-            trigger="hover"
-            speaker={
-              <Tooltip>
-                This is a help <i>tooltip</i> .
-              </Tooltip>
-            }
-          >
-            <span key={`${index.toString() + "text"}`} className="editor-output-text">
-              {o}
-            </span>
-          </Whisper>
+          {getWhispers(lineStackDataList, lineNumber)}
           <br />
         </div>
       ))}
+      {errorMessage ? (
+        <div className="script-editor-output-main" key={`script-editor-output-main-error`}>
+          <span key={`editor-output-text-page-number-error`} className="editor-output-text-page-number"></span>
+          {errorMessage}
+        </div>
+      ) : undefined}
     </>
   );
 };

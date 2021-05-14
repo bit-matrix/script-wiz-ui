@@ -44,6 +44,7 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({ onChangeScriptEditorI
     if (value) {
       let lines = value.split("\n");
       lines = lines.map((line) => line.trim());
+      // TODO all replace list for format chars
       lines = lines.map((line) => line.replaceAll("\r", ""));
       lines = lines.map((line) => line.replaceAll("\t", ""));
       onChangeScriptEditorInput(lines);
