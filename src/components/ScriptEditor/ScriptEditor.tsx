@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import IStackData from "@script-wiz/lib/model/IStackData";
 import * as scriptWiz from "@script-wiz/lib";
-import ScriptEditorInput from "../ScriptEditorInput/ScriptEditorInput";
-import ScriptEditorOutput from "../ScriptEditorOutput/ScriptEditorOutput";
+import ScriptEditorInput from "./ScriptEditorInput/ScriptEditorInput";
+import ScriptEditorOutput from "./ScriptEditorOutput/ScriptEditorOutput";
 import "./ScriptEditor.scss";
 
 const initialLineStackDataListArray: Array<Array<IStackData>> = [];
