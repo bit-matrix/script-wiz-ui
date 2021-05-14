@@ -38,6 +38,12 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({ onChangeScriptEditorI
         },
       });
     }
+
+    /*    return () => {
+      if (monaco) {
+        monaco.editor.getModels().forEach((model) => model.dispose());
+      }
+    }; */
   }, [monaco]);
 
   const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
