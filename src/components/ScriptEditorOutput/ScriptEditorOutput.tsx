@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import IStackData from "@script-wiz/lib/model/IStackData";
 import "./ScriptEditorOutput.scss";
-import { Button, Tooltip, Whisper } from "rsuite";
+import { Tooltip, Whisper } from "rsuite";
 
 interface IScriptEditorInput {
   stackDataList: Array<IStackData | undefined>;
