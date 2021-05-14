@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-import * as languageOptions from "../../editor/options/languageOptions";
+import * as languageOptions from "../../options/editorOptions/languageOptions";
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
-import themeOptions from "../../editor/options/themeOptions";
+import themeOptions from "../../options/editorOptions/themeOptions";
 import Editor, { useMonaco } from "@monaco-editor/react";
-import editorOptions from "../../editor/options/editorOptions";
+import editorOptions from "../../options/editorOptions/editorOptions";
 
-import { scriptWizEditor } from "../../editor/utils/constant";
+import { scriptWizEditor } from "../../options/editorOptions/utils/constant";
 
 interface IScriptEditorInput {
   onChangeScriptEditorInput: (lines: string[]) => void;

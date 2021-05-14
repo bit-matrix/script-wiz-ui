@@ -1,4 +1,4 @@
-import { blue, darkOlive, fuchsia, lightBlue, lightOlive, mistBlue, oak, red, salmon, subtleGray, vibrantYellow } from "../utils/colors";
+import { blue, darkOlive, fuchsia, lightBlue, lightOlive, mistBlue, oak, red, salmon, subtleGray, vibrantYellow } from "./utils/colors";
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 
 const themeOptions: Monaco.editor.IStandaloneThemeData = {
