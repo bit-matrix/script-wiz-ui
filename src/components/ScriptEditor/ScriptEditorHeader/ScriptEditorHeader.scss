@@ -1,0 +1,21 @@
+.script-editor-headers-main {
+    display: flex;
+
+    .script-editor-header-sub-item {
+        height: 1.5rem;
+        background: #666;
+
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+    }
+
+    .editor {
+        width: 49%;
+        border-right: 1px solid #44474b;
+    }
+
+    .stack {
+        width: 51%;
+    }
+}
