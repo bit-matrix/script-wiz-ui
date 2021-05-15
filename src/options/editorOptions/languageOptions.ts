@@ -79,18 +79,10 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
   hex: /[0-9a-fA-F]_*(?:_*[0-9a-fA-F]_*[0-9a-fA-F]_*)*[0-9a-fA-F]/,
   tokenizer: {
     root: [
-      // [/0b(@binary)/, "literal.binary"], // BinaryLiteral
       [
         /[a-zA-Z_][.a-zA-Z0-9_-]+/,
         {
           cases: {
-            // "@flowControlOpcodes": "opcode.flow-control",
-            // "@signatureCheckingOpcodes": "opcode.signature",
-            // "@blockingOpcodes": "opcode.blocking",
-            // "@pushBytesOpcodes": "opcode.push",
-            // "@pushNumberOpcodes": "opcode.push-number",
-            // "@disabledOpcodes": "opcode.disabled",
-            // "@otherOpcodes": "opcode.other",
             "@default": "identifier",
           },
         },
@@ -190,30 +182,6 @@ const languageSuggestions = (monaco: typeof Monaco.languages, model: Monaco.edit
     documentation: opc.description,
     detail: opc.description,
   }));
-  // return [
-  //   {
-  //     label: "OP_ADD",
-  //     kind: monaco.CompletionItemKind.Function,
-  //     insertText: "OP_ADD",
-
-  //     range,
-  //   },
-  //   {
-  //     label: "OP_SUB",
-  //     kind: monaco.CompletionItemKind.Function,
-  //     insertText: "testing(${1:condition})",
-  //     insertTextRules: monaco.CompletionItemInsertTextRule.InsertAsSnippet,
-  //     range,
-  //   },
-  //   {
-  //     label: "OP_SHA256",
-  //     kind: monaco.CompletionItemKind.Function,
-  //     insertText: ["if (${1:condition}) {", "\t$0", "} else {", "\t", "}"].join("\n"),
-  //     insertTextRules: monaco.CompletionItemInsertTextRule.InsertAsSnippet,
-  //     documentation: "If-Else Statement",
-  //     range,
-  //   },
-  // ];
 };
 
 export { languageConfigurations, tokenProviders, hoverProvider, languageSuggestions };

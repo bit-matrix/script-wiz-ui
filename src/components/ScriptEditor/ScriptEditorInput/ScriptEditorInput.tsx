@@ -65,6 +65,7 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({ onChangeScriptEditorI
         onMount={() => {
           console.log("loading state");
         }}
+        // defaultValue={"<1> \n<2> \nOP_ADD \n \n "}
         options={editorOptions}
         language={scriptWizEditor.LANGUAGE}
         theme={scriptWizEditor.THEME}
