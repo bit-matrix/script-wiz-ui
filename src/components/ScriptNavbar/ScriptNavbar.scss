@@ -1,0 +1,43 @@
+.script-editor-header-bar {
+    display: flex;
+    justify-content: space-between;
+    height: 3rem;
+    width: 100%;
+
+    .script-editor-header-left-section {
+        display: flex;
+        width: 35rem;
+        justify-content: space-between;
+        align-items: center;
+
+        .script-wiz-logo {
+            width: 3rem;
+            margin-left: 1rem;
+        }
+
+        .script-editor-header-icon-item {
+            color: #fff !important;
+
+            .script-editor-header-icon-item-text {
+                margin-left: 0.5rem;
+            }
+        }
+    }
+
+    .script-editor-header-right-section {
+        display: flex;
+        align-items: center;
+
+        .script-editor-header-right-section-dropdown {
+            .rs-btn-subtle:active {
+                background-color: transparent !important;
+            }
+            .rs-btn-subtle:hover {
+                background-color: transparent !important;
+            }
+            .rs-btn-subtle:focus {
+                background-color: transparent !important;
+            }
+        }
+    }
+}
