@@ -14,17 +14,6 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({
     lineStackDataListArray,
     errorMessage,
 }) => {
-    const getWhispers = (stackDataArray: IStackData[], lineNumber: number) =>
-        stackDataArray.map((stackData: IStackData, index: number) => {
-            const key = `whisper-${lineNumber.toString()}-${index.toString()}-text`;
-            console.log(stackData.byteValueDisplay);
-            return getWhisper(
-                key,
-                stackData.byteValue,
-                stackData.byteValueDisplay,
-            );
-        });
-
     const getOutputValueType = (value: string): string => {
         if (value.startsWith("0x")) {
             return "hex";
@@ -36,6 +25,17 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({
 
         return "string";
     };
+
+    const getWhispers = (stackDataArray: IStackData[], lineNumber: number) =>
+        stackDataArray.map((stackData: IStackData, index: number) => {
+            const key = `whisper-${lineNumber.toString()}-${index.toString()}-text`;
+            console.log(stackData.byteValueDisplay);
+            return getWhisper(
+                key,
+                stackData.byteValue,
+                stackData.byteValueDisplay,
+            );
+        });
 
     const getWhisper = (key: string, tooltip: string, display: string) => (
         <Whisper

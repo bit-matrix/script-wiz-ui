@@ -56,6 +56,8 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
                     },
                 },
             );
+
+            monaco.editor.onDidChangeMarkers(listener => console.log(listener));
         }
 
         /*    return () => {
@@ -102,7 +104,9 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
                 onMount={() => {
                     console.log("loading state");
                 }}
-                // defaultValue={"<1> \n<2> \nOP_ADD \n \n "}
+                defaultValue={
+                    "// Welcome to Script Wizard online Bitcoin script editor."
+                }
                 options={editorOptions}
                 language={scriptWizEditor.LANGUAGE}
                 theme={scriptWizEditor.THEME}
