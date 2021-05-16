@@ -71,11 +71,25 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
     ) => {
         if (value) {
             let lines = value.split("\n");
-            lines = lines.map(line => line.trim());
+            lines = lines.map(line => line.replace(/ /g, ""));
             // TODO all replace list for format chars
+
             lines = lines.map(line => line.replaceAll("\r", ""));
+
             lines = lines.map(line => line.replaceAll("\t", ""));
+
+            lines = lines.map(line => {
+                const commentIndex = line.indexOf("//");
+
+                if (commentIndex > -1) {
+                    return line.substr(0, commentIndex);
+                }
+                return line;
+            });
+
             onChangeScriptEditorInput(lines);
+        } else {
+            onChangeScriptEditorInput([]);
         }
     };
 
