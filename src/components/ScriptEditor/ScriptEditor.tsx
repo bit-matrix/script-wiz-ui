@@ -45,7 +45,7 @@ const ScriptEditor = () => {
     };
 
     return (
-        <div className="script-editor-main-div">
+        <div className="script-editor-main-div scroll">
             <ScriptEditorHeader />
             <div className="script-editor-container">
                 <div className="script-editor-sub-item">
