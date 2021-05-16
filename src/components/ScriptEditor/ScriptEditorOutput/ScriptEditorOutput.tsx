@@ -1,7 +1,7 @@
 import React from "react";
 import IStackData from "@script-wiz/lib/model/IStackData";
 import "./ScriptEditorOutput.scss";
-import { Tooltip, Whisper } from "rsuite";
+import { Icon, Tooltip, Whisper } from "rsuite";
 
 interface IScriptEditorInput {
   lastStackDataList: Array<IStackData>;
@@ -38,7 +38,10 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({ lastStackDataList, l
       {errorMessage ? (
         <div className="script-editor-output-main" key={`script-editor-output-main-error`}>
           <span key={`editor-output-text-page-number-error`} className="editor-output-text-page-number"></span>
-          {errorMessage}
+          <span className="error-message">
+            <Icon icon="ban" className="error-message-ban-icon" />
+            {errorMessage}
+          </span>
         </div>
       ) : undefined}
     </>

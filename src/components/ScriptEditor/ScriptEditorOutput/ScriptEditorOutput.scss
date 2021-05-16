@@ -1,5 +1,13 @@
 .script-editor-output-main {
   display: flex;
+
+  .error-message {
+    color: #d62915;
+
+    .error-message-ban-icon {
+      margin-right: 0.5rem;
+    }
+  }
 }
 
 .editor-output-text {
