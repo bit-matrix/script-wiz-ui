@@ -6,9 +6,9 @@ import reportWebVitals from "./reportWebVitals";
 import "rsuite/dist/styles/rsuite-dark.css";
 
 ReactDOM.render(
-  <React.StrictMode>
+  <>
     <App />
-  </React.StrictMode>,
+  </>,
   document.getElementById("root")
 );
 
