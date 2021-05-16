@@ -10,71 +10,71 @@ import editorOptions from "../../../options/editorOptions/editorOptions";
 import { scriptWizEditor } from "../../../options/editorOptions/utils/constant";
 
 interface IScriptEditorInput {
-  onChangeScriptEditorInput: (lines: string[]) => void;
+    onChangeScriptEditorInput: (lines: string[]) => void;
 }
 
 const ScriptEditorInput: React.FC<IScriptEditorInput> = ({ onChangeScriptEditorInput }) => {
-  const monaco = useMonaco();
+    const monaco = useMonaco();
 
-  useEffect(() => {
-    // language define
-    if (monaco !== null) {
-      monaco.languages.register({ id: scriptWizEditor.LANGUAGE });
+    useEffect(() => {
+        // language define
+        if (monaco !== null) {
+            monaco.languages.register({ id: scriptWizEditor.LANGUAGE });
 
-      // Define a new theme that contains only rules that match this language
-      monaco.editor.defineTheme(scriptWizEditor.THEME, themeOptions);
+            // Define a new theme that contains only rules that match this language
+            monaco.editor.defineTheme(scriptWizEditor.THEME, themeOptions);
 
-      monaco.languages.setLanguageConfiguration(scriptWizEditor.LANGUAGE, languageOptions.languageConfigurations(monaco.languages));
+            monaco.languages.setLanguageConfiguration(scriptWizEditor.LANGUAGE, languageOptions.languageConfigurations(monaco.languages));
 
-      // Register a tokens provider for the language
-      monaco.languages.setMonarchTokensProvider(scriptWizEditor.LANGUAGE, languageOptions.tokenProviders);
+            // Register a tokens provider for the language
+            monaco.languages.setMonarchTokensProvider(scriptWizEditor.LANGUAGE, languageOptions.tokenProviders);
 
-      monaco.languages.registerHoverProvider(scriptWizEditor.LANGUAGE, languageOptions.hoverProvider);
+            monaco.languages.registerHoverProvider(scriptWizEditor.LANGUAGE, languageOptions.hoverProvider);
 
-      monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
-        provideCompletionItems: (model: any, position: any) => {
-          const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position);
-          return { suggestions: suggestions };
-        },
-      });
-    }
+            monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
+                provideCompletionItems: (model: any, position: any) => {
+                    const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position);
+                    return { suggestions: suggestions };
+                },
+            });
+        }
 
-    /*    return () => {
+        /*    return () => {
       if (monaco) {
         monaco.editor.getModels().forEach((model) => model.dispose());
       }
     }; */
-  }, [monaco]);
+    }, [monaco]);
 
-  const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
-    if (value) {
-      let lines = value.split("\n");
-      lines = lines.map((line) => line.trim());
-      // TODO all replace list for format chars
-      lines = lines.map((line) => line.replaceAll("\r", ""));
-      lines = lines.map((line) => line.replaceAll("\t", ""));
-      onChangeScriptEditorInput(lines);
+    const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
+        if (value) {
+            let lines = value.split("\n");
+            lines = lines.map(line => line.trim());
+            // TODO all replace list for format chars
+            lines = lines.map(line => line.replaceAll("\r", ""));
+            lines = lines.map(line => line.replaceAll("\t", ""));
+            onChangeScriptEditorInput(lines);
+        }
+    };
+
+    if (monaco != null) {
+        return (
+            <Editor
+                // height="100vh"
+                width="100%"
+                onMount={() => {
+                    console.log("loading state");
+                }}
+                // defaultValue={"<1> \n<2> \nOP_ADD \n \n "}
+                options={editorOptions}
+                language={scriptWizEditor.LANGUAGE}
+                theme={scriptWizEditor.THEME}
+                onChange={onChangeEditor}
+            />
+        );
     }
-  };
 
-  if (monaco != null) {
-    return (
-      <Editor
-        height="100vh"
-        width="100%"
-        onMount={() => {
-          console.log("loading state");
-        }}
-        // defaultValue={"<1> \n<2> \nOP_ADD \n \n "}
-        options={editorOptions}
-        language={scriptWizEditor.LANGUAGE}
-        theme={scriptWizEditor.THEME}
-        onChange={onChangeEditor}
-      />
-    );
-  }
-
-  return null;
+    return null;
 };
 
 export default ScriptEditorInput;

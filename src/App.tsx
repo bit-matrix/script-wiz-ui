@@ -6,7 +6,7 @@ import ScriptEditor from "./components/ScriptEditor/ScriptEditor";
 
 const App = () => {
     return (
-        <div>
+        <div style={{ height: "100%" }}>
             <ScriptNavbar />
             <ScriptEditor />
         </div>

@@ -1,12 +1,12 @@
 .script-editor-main-div {
-    height: calc(100% - 4.5rem);
+    height: calc(100% - 3rem);
     width: 100%;
 
     .script-editor-container {
         width: 100vw;
         background: #181b1e;
         display: flex;
-        height: 100%;
+        height: calc(100% - 1.5rem);
 
         .script-editor-sub-item {
             height: 100%;

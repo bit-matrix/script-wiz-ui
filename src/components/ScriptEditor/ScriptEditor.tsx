@@ -10,56 +10,56 @@ const initialLineStackDataListArray: Array<Array<IStackData>> = [];
 const initialLastStackDataList: Array<IStackData> = [];
 
 const ScriptEditor = () => {
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
-  const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<IStackData>>>(initialLineStackDataListArray);
-  const [lastStackDataList, setLastStackDataList] = useState<Array<IStackData>>(initialLastStackDataList);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>();
+    const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<IStackData>>>(initialLineStackDataListArray);
+    const [lastStackDataList, setLastStackDataList] = useState<Array<IStackData>>(initialLastStackDataList);
 
-  const compile = (lines: string[]) => {
-    scriptWiz.clearStack();
+    const compile = (lines: string[]) => {
+        scriptWiz.clearStack();
 
-    const newLineStackDataListArray: Array<Array<IStackData>> = [];
-    let newLastStackDataList: Array<IStackData> = [];
+        const newLineStackDataListArray: Array<Array<IStackData>> = [];
+        let newLastStackDataList: Array<IStackData> = [];
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
 
-      try {
-        if (line !== "") {
-          newLastStackDataList = scriptWiz.parse(line).main;
-          newLineStackDataListArray.push(newLastStackDataList);
-        } else {
-          newLineStackDataListArray.push([]);
+            try {
+                if (line !== "") {
+                    newLastStackDataList = scriptWiz.parse(line).main;
+                    newLineStackDataListArray.push(newLastStackDataList);
+                } else {
+                    newLineStackDataListArray.push([]);
+                }
+            } catch (e) {
+                setErrorMessage(e);
+                break;
+            }
         }
-      } catch (e) {
-        setErrorMessage(e);
-        break;
-      }
-    }
 
-    setLineStackDataListArray(newLineStackDataListArray);
-    setLastStackDataList(newLastStackDataList);
-  };
+        setLineStackDataListArray(newLineStackDataListArray);
+        setLastStackDataList(newLastStackDataList);
+    };
 
-  return (
-    <div className="script-editor-main-div">
-      <ScriptEditorHeader />
-      <div className="script-editor-container">
-        <div className="script-editor-sub-item">
-          <ScriptEditorInput
-            onChangeScriptEditorInput={(lines: string[]) => {
-              setErrorMessage(undefined);
-              setLineStackDataListArray(initialLineStackDataListArray);
-              setLastStackDataList(initialLastStackDataList);
-              compile(lines);
-            }}
-          />
+    return (
+        <div className="script-editor-main-div">
+            <ScriptEditorHeader />
+            <div className="script-editor-container">
+                <div className="script-editor-sub-item">
+                    <ScriptEditorInput
+                        onChangeScriptEditorInput={(lines: string[]) => {
+                            setErrorMessage(undefined);
+                            setLineStackDataListArray(initialLineStackDataListArray);
+                            setLastStackDataList(initialLastStackDataList);
+                            compile(lines);
+                        }}
+                    />
+                </div>
+                <div className="script-editor-sub-item">
+                    <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+                </div>
+            </div>
         </div>
-        <div className="script-editor-sub-item">
-          <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default ScriptEditor;
