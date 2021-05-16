@@ -41,9 +41,13 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({
         <Whisper
             key={key}
             delayShow={100}
-            placement="right"
+            placement="rightEnd"
             trigger="hover"
-            speaker={<Tooltip>{tooltip}</Tooltip>}
+            speaker={
+                <Tooltip className="whisper-tooltip">
+                    Compiled : {tooltip}
+                </Tooltip>
+            }
         >
             <span
                 className={`editor-output-text ${getOutputValueType(display)} `}
