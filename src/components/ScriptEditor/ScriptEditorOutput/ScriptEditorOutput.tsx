@@ -17,10 +17,8 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({ lastStackDataList, l
     });
 
   const getWhisper = (key: string, tooltip: string, display: string) => (
-    <Whisper placement="right" trigger="hover" speaker={<Tooltip>{tooltip}</Tooltip>}>
-      <span key={key} className="editor-output-text">
-        {display}
-      </span>
+    <Whisper key={key} delayShow={100} placement="right" trigger="hover" speaker={<Tooltip>{tooltip}</Tooltip>}>
+      <span className="editor-output-text">{display}</span>
     </Whisper>
   );
 
