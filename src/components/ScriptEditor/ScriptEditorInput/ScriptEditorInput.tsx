@@ -60,7 +60,7 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({ onChangeScriptEditorI
   if (monaco != null) {
     return (
       <Editor
-        height="100vh"
+        height="70vh"
         width="100%"
         onMount={() => {
           console.log("loading state");
