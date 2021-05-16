@@ -11,8 +11,12 @@ const initialLastStackDataList: Array<IStackData> = [];
 
 const ScriptEditor = () => {
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
-    const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<IStackData>>>(initialLineStackDataListArray);
-    const [lastStackDataList, setLastStackDataList] = useState<Array<IStackData>>(initialLastStackDataList);
+    const [lineStackDataListArray, setLineStackDataListArray] = useState<
+        Array<Array<IStackData>>
+    >(initialLineStackDataListArray);
+    const [lastStackDataList, setLastStackDataList] = useState<
+        Array<IStackData>
+    >(initialLastStackDataList);
 
     const compile = (lines: string[]) => {
         scriptWiz.clearStack();
@@ -48,14 +52,20 @@ const ScriptEditor = () => {
                     <ScriptEditorInput
                         onChangeScriptEditorInput={(lines: string[]) => {
                             setErrorMessage(undefined);
-                            setLineStackDataListArray(initialLineStackDataListArray);
+                            setLineStackDataListArray(
+                                initialLineStackDataListArray,
+                            );
                             setLastStackDataList(initialLastStackDataList);
                             compile(lines);
                         }}
                     />
                 </div>
-                <div className="script-editor-sub-item">
-                    <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+                <div className="script-editor-sub-item scroll">
+                    <ScriptEditorOutput
+                        lastStackDataList={lastStackDataList}
+                        lineStackDataListArray={lineStackDataListArray}
+                        errorMessage={errorMessage}
+                    />
                 </div>
             </div>
         </div>

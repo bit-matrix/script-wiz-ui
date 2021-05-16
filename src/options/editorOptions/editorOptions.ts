@@ -1,16 +1,16 @@
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 
 const editorOptions: Monaco.editor.IEditorConstructionOptions = {
-  cursorBlinking: "smooth",
-  dragAndDrop: true,
-  fontSize: 14,
-  lineHeight: 18,
-  fontFamily: "'Fira Mono', monospace",
-  scrollBeyondLastLine: false,
-  contextmenu: false,
-  folding: false,
-  wrappingIndent: "same",
-  scrollbar: { verticalScrollbarSize: 3 },
+    cursorBlinking: "smooth",
+    dragAndDrop: true,
+    fontSize: 14,
+    lineHeight: 18,
+    fontFamily: "'Fira Mono', monospace",
+    scrollBeyondLastLine: false,
+    contextmenu: false,
+    folding: false,
+    wrappingIndent: "same",
+    scrollbar: { verticalScrollbarSize: 6, horizontalScrollbarSize: 6 },
 };
 
 export default editorOptions;

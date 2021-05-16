@@ -1,23 +1,23 @@
 .script-editor-output-main {
-  display: flex;
+    display: flex;
 
-  .error-message {
-    color: #d62915;
+    .error-message {
+        color: #d62915;
 
-    .error-message-ban-icon {
-      margin-right: 0.5rem;
+        .error-message-ban-icon {
+            margin-right: 0.5rem;
+        }
     }
-  }
 }
 
 .editor-output-text {
-  color: #b5cea8;
-  margin-right: 0.75rem;
+    color: #b5cea8;
+    margin-right: 0.75rem;
 }
 
 .editor-output-text-page-number {
-  color: #c6c6c6;
-  text-align: end;
-  margin-right: 0.75rem;
-  min-width: 1rem;
+    color: #c6c6c6;
+    text-align: end;
+    margin-right: 0.75rem;
+    min-width: 1rem;
 }
