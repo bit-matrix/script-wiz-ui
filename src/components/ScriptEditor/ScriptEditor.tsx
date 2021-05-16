@@ -45,30 +45,32 @@ const ScriptEditor = () => {
     };
 
     return (
-        <div className="script-editor-main-div scroll">
+        <>
             <ScriptEditorHeader />
-            <div className="script-editor-container">
-                <div className="script-editor-sub-item">
-                    <ScriptEditorInput
-                        onChangeScriptEditorInput={(lines: string[]) => {
-                            setErrorMessage(undefined);
-                            setLineStackDataListArray(
-                                initialLineStackDataListArray,
-                            );
-                            setLastStackDataList(initialLastStackDataList);
-                            compile(lines);
-                        }}
-                    />
-                </div>
-                <div className="script-editor-sub-item scroll">
-                    <ScriptEditorOutput
-                        lastStackDataList={lastStackDataList}
-                        lineStackDataListArray={lineStackDataListArray}
-                        errorMessage={errorMessage}
-                    />
+            <div className="script-editor-main-div scroll">
+                <div className="script-editor-container">
+                    <div className="script-editor-sub-item">
+                        <ScriptEditorInput
+                            onChangeScriptEditorInput={(lines: string[]) => {
+                                setErrorMessage(undefined);
+                                setLineStackDataListArray(
+                                    initialLineStackDataListArray,
+                                );
+                                setLastStackDataList(initialLastStackDataList);
+                                compile(lines);
+                            }}
+                        />
+                    </div>
+                    <div className="script-editor-sub-item scroll">
+                        <ScriptEditorOutput
+                            lastStackDataList={lastStackDataList}
+                            lineStackDataListArray={lineStackDataListArray}
+                            errorMessage={errorMessage}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

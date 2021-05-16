@@ -1,5 +1,5 @@
 .script-editor-main-div {
-    height: calc(100% - 3rem);
+    height: calc(100% - 4.5rem);
     width: 100%;
 
     .script-editor-container {
@@ -16,7 +16,7 @@
 }
 
 .scroll {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .scroll::-webkit-scrollbar {
