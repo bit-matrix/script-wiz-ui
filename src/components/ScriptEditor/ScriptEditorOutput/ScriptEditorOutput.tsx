@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import IStackData from "@script-wiz/lib/model/IStackData";
 import "./ScriptEditorOutput.scss";
 import { Icon } from "rsuite";
@@ -26,27 +26,34 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({
         return "string";
     };
 
-    const getWhispers = (stackDataArray: IStackData[], lineNumber: number) =>
-        stackDataArray.map((stackData: IStackData, index: number) => {
-            const key = `whisper-${lineNumber.toString()}-${index.toString()}-text`;
-            console.log(stackData.byteValueDisplay);
-            return getWhisper(
-                key,
-                stackData.byteValue,
-                stackData.byteValueDisplay,
-            );
-        });
+    const getWhisper = useCallback(
+        (key: string, tooltip: string, display: string) => (
+            <div className="tooltip" key={key}>
+                <span
+                    className={`editor-output-text ${getOutputValueType(
+                        display,
+                    )} `}
+                >
+                    {display}
+                </span>
+                <span className="tooltiptext">Compiled : {tooltip}</span>
+            </div>
+        ),
+        [],
+    );
 
-    const getWhisper = (key: string, tooltip: string, display: string) => (
-        <div className="tooltip">
-            <span
-                key={key}
-                className={`editor-output-text ${getOutputValueType(display)} `}
-            >
-                {display}
-            </span>
-            <span className="tooltiptext">Compiled : {tooltip}</span>
-        </div>
+    const getWhispers = useCallback(
+        (stackDataArray: IStackData[], lineNumber: number) =>
+            stackDataArray.map((stackData: IStackData, index: number) => {
+                const key = `whisper-${lineNumber.toString()}-${index.toString()}-text`;
+
+                return getWhisper(
+                    key,
+                    stackData.byteValue,
+                    stackData.byteValueDisplay,
+                );
+            }),
+        [getWhisper],
     );
 
     // const getWhisper = (key: string, tooltip: string, display: string) => (
