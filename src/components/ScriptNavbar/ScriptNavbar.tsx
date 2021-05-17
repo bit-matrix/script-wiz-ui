@@ -26,10 +26,10 @@ const ScriptNavbar = () => {
                 <a
                     href="https://www.npmjs.com/package/@script-wiz/lib"
                     target="_blank"
-                    className="script-editor-header-icon-item"
+                    className="script-editor-header-icon-item npm-div"
                     rel="noreferrer"
                 >
-                    <Icon icon="project" />
+                    <i className="fab fa-npm fa-2x"></i>
                     <span className="script-editor-header-icon-item-text  hidden-mobile">
                         Npm
                     </span>
