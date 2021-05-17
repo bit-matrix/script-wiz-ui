@@ -61,7 +61,6 @@
         min-width: 120px;
         background-color: #252526 !important;
         color: #fff;
-        border-radius: 6px;
         padding: 5px 0;
         position: absolute;
         font-size: 0.875rem;
@@ -73,6 +72,7 @@
     &:hover {
         .tooltiptext {
             visibility: visible;
+            transition-delay: 0.5s;
         }
     }
 }
