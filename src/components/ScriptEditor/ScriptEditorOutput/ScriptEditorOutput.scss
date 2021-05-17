@@ -52,21 +52,23 @@
 .tooltip {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black;
     color: #cbcccc !important;
     border-radius: unset !important;
 
     .tooltiptext {
         visibility: hidden;
-        min-width: 120px;
+        min-width: 10rem;
         background-color: #252526 !important;
-        color: #fff;
-        padding: 5px 0;
+        color: #cbcccc;
+        padding: 0.25rem 0.375rem;
+        border: 1px solid #44474b;
         position: absolute;
         font-size: 0.875rem;
         z-index: 1;
         top: -5px;
-        left: 105%;
+        left: 100%;
+        word-wrap: break-word;
+        max-width: 15rem;
     }
 
     &:hover {
