@@ -68,7 +68,7 @@ const ScriptNavbar = () => {
                     className="script-editor-header-right-section-dropdown"
                     title={
                         <div className="dropdown-item">
-                            <span>Liquid Network</span>
+                            <span>Liquid VM</span>
                         </div>
                     }
                     activeKey="a"
@@ -76,7 +76,7 @@ const ScriptNavbar = () => {
                     <Dropdown.Item disabled eventKey="a">
                         {
                             <div className="dropdown-item">
-                                <span>Bitcoin Network</span>
+                                <span>Bitcoin VM</span>
                             </div>
                         }
                     </Dropdown.Item>

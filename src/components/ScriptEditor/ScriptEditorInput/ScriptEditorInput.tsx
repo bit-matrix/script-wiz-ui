@@ -56,8 +56,6 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
                     },
                 },
             );
-
-            monaco.editor.onDidChangeMarkers(listener => console.log(listener));
         }
 
         /*    return () => {

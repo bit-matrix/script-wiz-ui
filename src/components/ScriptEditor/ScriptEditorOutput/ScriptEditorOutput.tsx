@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
 import IStackData from "@script-wiz/lib/model/IStackData";
 import "./ScriptEditorOutput.scss";
-import { Icon, Tooltip, Whisper } from "rsuite";
+import { Icon } from "rsuite";
 
 interface IScriptEditorInput {
     lastStackDataList: Array<IStackData>;
@@ -26,36 +26,55 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({
         return "string";
     };
 
-    const getWhispers = (stackDataArray: IStackData[], lineNumber: number) =>
-        stackDataArray.map((stackData: IStackData, index: number) => {
-            const key = `whisper-${lineNumber.toString()}-${index.toString()}-text`;
-            console.log(stackData.byteValueDisplay);
-            return getWhisper(
-                key,
-                stackData.byteValue,
-                stackData.byteValueDisplay,
-            );
-        });
-
-    const getWhisper = (key: string, tooltip: string, display: string) => (
-        <Whisper
-            key={key}
-            delayShow={100}
-            placement="rightEnd"
-            trigger="hover"
-            speaker={
-                <Tooltip className="whisper-tooltip">
-                    Compiled : {tooltip}
-                </Tooltip>
-            }
-        >
-            <span
-                className={`editor-output-text ${getOutputValueType(display)} `}
-            >
-                {display}
-            </span>
-        </Whisper>
+    const getWhisper = useCallback(
+        (key: string, tooltip: string, display: string) => (
+            <div className="tooltip" key={key}>
+                <span
+                    className={`editor-output-text ${getOutputValueType(
+                        display,
+                    )} `}
+                >
+                    {display}
+                </span>
+                <span className="tooltiptext">Compiled : {tooltip}</span>
+            </div>
+        ),
+        [],
     );
+
+    const getWhispers = useCallback(
+        (stackDataArray: IStackData[], lineNumber: number) =>
+            stackDataArray.map((stackData: IStackData, index: number) => {
+                const key = `whisper-${lineNumber.toString()}-${index.toString()}-text`;
+
+                return getWhisper(
+                    key,
+                    stackData.byteValue,
+                    stackData.byteValueDisplay,
+                );
+            }),
+        [getWhisper],
+    );
+
+    // const getWhisper = (key: string, tooltip: string, display: string) => (
+    //     <Whisper
+    //         key={key}
+    //         delayShow={100}
+    //         placement="rightEnd"
+    //         trigger="hover"
+    //         speaker={
+    //             <Tooltip className="whisper-tooltip">
+    //                 Compiled : {tooltip}
+    //             </Tooltip>
+    //         }
+    //     >
+    //         <span
+    //             className={`editor-output-text ${getOutputValueType(display)} `}
+    //         >
+    //             {display}
+    //         </span>
+    //     </Whisper>
+    // );
 
     return (
         <>
