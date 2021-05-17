@@ -40,11 +40,39 @@
     min-width: 1rem;
 }
 
-.whisper-tooltip {
-    .rs-tooltip-inner {
-        color: #cbcccc !important;
-        font-size: 0.875rem;
+// .whisper-tooltip {
+//     .rs-tooltip-inner {
+//         color: #cbcccc !important;
+//         font-size: 0.875rem;
+//         background-color: #252526 !important;
+//         border-radius: unset !important;
+//     }
+// }
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+    color: #cbcccc !important;
+    border-radius: unset !important;
+
+    .tooltiptext {
+        visibility: hidden;
+        min-width: 120px;
         background-color: #252526 !important;
-        border-radius: unset !important;
+        color: #fff;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        font-size: 0.875rem;
+        z-index: 1;
+        top: -5px;
+        left: 105%;
+    }
+
+    &:hover {
+        .tooltiptext {
+            visibility: visible;
+        }
     }
 }

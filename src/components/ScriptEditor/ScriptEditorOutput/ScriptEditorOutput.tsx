@@ -1,7 +1,7 @@
 import React from "react";
 import IStackData from "@script-wiz/lib/model/IStackData";
 import "./ScriptEditorOutput.scss";
-import { Icon, Tooltip, Whisper } from "rsuite";
+import { Icon } from "rsuite";
 
 interface IScriptEditorInput {
     lastStackDataList: Array<IStackData>;
@@ -38,24 +38,36 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({
         });
 
     const getWhisper = (key: string, tooltip: string, display: string) => (
-        <Whisper
-            key={key}
-            delayShow={100}
-            placement="rightEnd"
-            trigger="hover"
-            speaker={
-                <Tooltip className="whisper-tooltip">
-                    Compiled : {tooltip}
-                </Tooltip>
-            }
-        >
+        <div className="tooltip">
             <span
+                key={key}
                 className={`editor-output-text ${getOutputValueType(display)} `}
             >
                 {display}
             </span>
-        </Whisper>
+            <span className="tooltiptext">Compiled : {tooltip}</span>
+        </div>
     );
+
+    // const getWhisper = (key: string, tooltip: string, display: string) => (
+    //     <Whisper
+    //         key={key}
+    //         delayShow={100}
+    //         placement="rightEnd"
+    //         trigger="hover"
+    //         speaker={
+    //             <Tooltip className="whisper-tooltip">
+    //                 Compiled : {tooltip}
+    //             </Tooltip>
+    //         }
+    //     >
+    //         <span
+    //             className={`editor-output-text ${getOutputValueType(display)} `}
+    //         >
+    //             {display}
+    //         </span>
+    //     </Whisper>
+    // );
 
     return (
         <>
