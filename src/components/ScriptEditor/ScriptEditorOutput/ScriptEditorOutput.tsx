@@ -36,7 +36,7 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({
                 >
                     {display}
                 </div>
-                <span className="tooltiptext">Compiled : {tooltip}</span>
+                <span className="tooltiptext">{tooltip}</span>
             </div>
         ),
         [],

@@ -16,6 +16,7 @@ const editorOptions: Monaco.editor.IEditorConstructionOptions = {
         horizontalScrollbarSize: 6,
         alwaysConsumeMouseWheel: false,
         horizontal: "hidden",
+        vertical: "auto",
     },
 };
 

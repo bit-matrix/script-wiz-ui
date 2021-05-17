@@ -19,10 +19,6 @@
 
 .editor-output-text {
     margin-right: 0.75rem;
-    white-space: nowrap;
-    width: 8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .number {
@@ -34,6 +30,10 @@
 }
 
 .hex {
+    white-space: nowrap;
+    width: 8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: #5bb498;
 }
 
@@ -61,13 +61,12 @@
 
     .tooltiptext {
         visibility: hidden;
-        min-width: 10rem;
         background-color: #252526 !important;
         color: #cbcccc;
         padding: 0.25rem 0.375rem;
         border: 1px solid #44474b;
         position: absolute;
-        font-size: 0.875rem;
+        font-size: 1rem;
         z-index: 1;
         top: -5px;
         left: 100%;
