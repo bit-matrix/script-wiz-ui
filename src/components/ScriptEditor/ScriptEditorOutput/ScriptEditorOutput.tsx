@@ -29,13 +29,13 @@ const ScriptEditorOutput: React.FC<IScriptEditorInput> = ({
     const getWhisper = useCallback(
         (key: string, tooltip: string, display: string) => (
             <div className="tooltip" key={key}>
-                <span
+                <div
                     className={`editor-output-text ${getOutputValueType(
                         display,
                     )} `}
                 >
                     {display}
-                </span>
+                </div>
                 <span className="tooltiptext">Compiled : {tooltip}</span>
             </div>
         ),

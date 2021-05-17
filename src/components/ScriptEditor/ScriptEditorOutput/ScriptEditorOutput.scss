@@ -19,6 +19,10 @@
 
 .editor-output-text {
     margin-right: 0.75rem;
+    white-space: nowrap;
+    width: 8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .number {
