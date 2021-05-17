@@ -97,7 +97,7 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
         return (
             <Editor
                 // height="100vh"
-                width="100%"
+                // width="50%"
                 className="script-wiz-monaco-editor"
                 onMount={() => {
                     console.log("loading state");
