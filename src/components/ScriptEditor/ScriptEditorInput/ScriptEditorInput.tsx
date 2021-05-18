@@ -9,6 +9,7 @@ import editorOptions from "../../../options/editorOptions/editorOptions";
 
 import { scriptWizEditor } from "../../../options/editorOptions/utils/constant";
 import "./ScriptEditorInput.scss";
+import initialEditorValue from "./initialEditorValue";
 
 interface IScriptEditorInput {
     onChangeScriptEditorInput: (lines: string[]) => void;
@@ -102,9 +103,7 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
                 onMount={() => {
                     console.log("loading state");
                 }}
-                defaultValue={
-                    "// Welcome to Script Wizard online Bitcoin script editor."
-                }
+                defaultValue={initialEditorValue}
                 options={editorOptions}
                 language={scriptWizEditor.LANGUAGE}
                 theme={scriptWizEditor.THEME}

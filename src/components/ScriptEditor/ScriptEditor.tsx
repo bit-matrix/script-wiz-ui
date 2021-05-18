@@ -5,6 +5,7 @@ import ScriptEditorInput from "./ScriptEditorInput/ScriptEditorInput";
 import ScriptEditorOutput from "./ScriptEditorOutput/ScriptEditorOutput";
 import "./ScriptEditor.scss";
 import ScriptEditorHeader from "./ScriptEditorHeader/ScriptEditorHeader";
+import { Button, Modal } from "rsuite";
 
 const initialLineStackDataListArray: Array<Array<IStackData>> = [];
 const initialLastStackDataList: Array<IStackData> = [];
@@ -17,6 +18,10 @@ const ScriptEditor = () => {
     const [lastStackDataList, setLastStackDataList] = useState<
         Array<IStackData>
     >(initialLastStackDataList);
+    const [compileModalData, setCompileModalData] = useState<{
+        show: boolean;
+        data?: string;
+    }>({ show: false });
 
     const compile = (lines: string[]) => {
         scriptWiz.clearStack();
@@ -44,9 +49,35 @@ const ScriptEditor = () => {
         setLastStackDataList(newLastStackDataList);
     };
 
+    const compileScripts = () => {
+        const compileScript = scriptWiz.compileScript();
+        setCompileModalData({ show: true, data: compileScript });
+    };
+
     return (
         <>
-            <ScriptEditorHeader />
+            <Modal
+                size="xs"
+                show={compileModalData.show}
+                backdrop={false}
+                onHide={() => setCompileModalData({ show: false })}
+            >
+                <Modal.Header>
+                    <Modal.Title>Compile Result</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <span>{compileModalData.data}</span>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        onClick={() => setCompileModalData({ show: false })}
+                        appearance="primary"
+                    >
+                        Ok
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <ScriptEditorHeader compileButtonClick={compileScripts} />
             <div className="script-editor-main-div scroll">
                 <div className="script-editor-container">
                     <div className="script-editor-sub-item">

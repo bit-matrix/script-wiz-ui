@@ -13,9 +13,16 @@
     .editor {
         width: calc(50% - 8px);
         border-right: 1px solid #44474b;
+        position: relative;
     }
 
     .stack {
         width: calc(50% + 8px);
+    }
+
+    .compile-button {
+        position: absolute !important;
+        right: 1rem !important;
+        z-index: 100;
     }
 }
