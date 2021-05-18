@@ -45,7 +45,10 @@ const ScriptNavbar = () => {
                         Twitter
                     </span>
                 </a>
-                <a className="script-editor-header-icon-item">
+                <a
+                    href="https://medium.com/script-wizard"
+                    className="script-editor-header-icon-item"
+                >
                     <Icon icon="medium" />
                     <span className="script-editor-header-icon-item-text  hidden-mobile">
                         Medium
