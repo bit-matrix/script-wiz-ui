@@ -50,21 +50,22 @@ const ScriptEditor = () => {
             const line = lines[i];
             // console.log(i, line);
 
-            try {
-                if (line !== "") {
-                    const parsed = scriptWiz.parse(line).main;
-                    if (!hasError) {
-                        newLastStackDataList = parsed;
-                        newLineStackDataListArray.push(newLastStackDataList);
-                    }
-                } else {
-                    if (!hasError) newLineStackDataListArray.push([]);
-                }
-            } catch (errMessage) {
+            if (line !== "") {
+                const scriptWizInstance = scriptWiz.parse(line);
+                const parsed = scriptWizInstance.main;
+                const scriptWizErrorMessage = scriptWizInstance.errorMessage;
+
                 if (!hasError) {
-                    hasError = true;
-                    setErrorMessage(errMessage);
+                    newLastStackDataList = parsed;
+                    newLineStackDataListArray.push(newLastStackDataList);
+
+                    if (scriptWizErrorMessage) {
+                        hasError = true;
+                        setErrorMessage(scriptWizErrorMessage);
+                    }
                 }
+            } else {
+                if (!hasError) newLineStackDataListArray.push([]);
             }
         }
 
