@@ -16,7 +16,7 @@ const ScriptEditorHeader: React.FC<IScriptEditorHeader> = ({
                 <Whisper
                     placement="top"
                     trigger="hover"
-                    speaker={<Tooltip>Compile your scripts.</Tooltip>}
+                    speaker={<Tooltip>Compile your script</Tooltip>}
                 >
                     <IconButton
                         className="compile-button"
