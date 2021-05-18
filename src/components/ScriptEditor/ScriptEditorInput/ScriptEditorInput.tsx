@@ -10,6 +10,7 @@ import editorOptions from "../../../options/editorOptions/editorOptions";
 import { scriptWizEditor } from "../../../options/editorOptions/utils/constant";
 import "./ScriptEditorInput.scss";
 import initialEditorValue from "./initialEditorValue";
+import { convertEditorLines } from "../../../helper";
 
 interface IScriptEditorInput {
     onChangeScriptEditorInput: (lines: string[]) => void;
@@ -71,22 +72,7 @@ const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
         ev: Monaco.editor.IModelContentChangedEvent,
     ) => {
         if (value) {
-            let lines = value.split("\n");
-            lines = lines.map(line => line.replace(/ /g, ""));
-            // TODO all replace list for format chars
-
-            lines = lines.map(line => line.replaceAll("\r", ""));
-
-            lines = lines.map(line => line.replaceAll("\t", ""));
-
-            lines = lines.map(line => {
-                const commentIndex = line.indexOf("//");
-
-                if (commentIndex > -1) {
-                    return line.substr(0, commentIndex);
-                }
-                return line;
-            });
+            let lines = convertEditorLines(value);
 
             onChangeScriptEditorInput(lines);
         } else {

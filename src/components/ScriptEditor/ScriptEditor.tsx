@@ -7,6 +7,7 @@ import "./ScriptEditor.scss";
 import ScriptEditorHeader from "./ScriptEditorHeader/ScriptEditorHeader";
 import { Button, Modal } from "rsuite";
 import initialEditorValue from "./ScriptEditorInput/initialEditorValue";
+import { convertEditorLines } from "../../helper";
 
 const initialLineStackDataListArray: Array<Array<IStackData>> = [];
 const initialLastStackDataList: Array<IStackData> = [];
@@ -28,21 +29,7 @@ const ScriptEditor = () => {
         let unmounted = false;
 
         if (!unmounted) {
-            let lines = initialEditorValue.split("\n");
-            lines = lines.map(line => line.replace(/ /g, ""));
-
-            lines = lines.map(line => line.replaceAll("\r", ""));
-
-            lines = lines.map(line => line.replaceAll("\t", ""));
-
-            lines = lines.map(line => {
-                const commentIndex = line.indexOf("//");
-
-                if (commentIndex > -1) {
-                    return line.substr(0, commentIndex);
-                }
-                return line;
-            });
+            let lines = convertEditorLines(initialEditorValue);
 
             compile(lines);
         }
