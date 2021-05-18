@@ -41,28 +41,36 @@ const ScriptEditor = () => {
 
     const compile = (lines: string[]) => {
         scriptWiz.clearStack();
+        let hasError: boolean = false;
 
         const newLineStackDataListArray: Array<Array<IStackData>> = [];
         let newLastStackDataList: Array<IStackData> = [];
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
+            // console.log(i, line);
 
             try {
                 if (line !== "") {
-                    newLastStackDataList = scriptWiz.parse(line).main;
-                    newLineStackDataListArray.push(newLastStackDataList);
+                    const parsed = scriptWiz.parse(line).main;
+                    if (!hasError) {
+                        newLastStackDataList = parsed;
+                        newLineStackDataListArray.push(newLastStackDataList);
+                    }
                 } else {
-                    newLineStackDataListArray.push([]);
+                    if (!hasError) newLineStackDataListArray.push([]);
                 }
-            } catch (e) {
-                setErrorMessage(e);
-                break;
+            } catch (errMessage) {
+                if (!hasError) {
+                    hasError = true;
+                    setErrorMessage(errMessage);
+                }
             }
         }
 
         setLineStackDataListArray(newLineStackDataListArray);
         setLastStackDataList(newLastStackDataList);
+        // console.log(scriptWiz.stackDataList);
     };
 
     const compileScripts = () => {
