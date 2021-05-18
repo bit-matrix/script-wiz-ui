@@ -8,7 +8,6 @@ import ScriptEditorHeader from "./ScriptEditorHeader/ScriptEditorHeader";
 import { Button, Modal } from "rsuite";
 import initialEditorValue from "./ScriptEditorInput/initialEditorValue";
 import { convertEditorLines } from "../../helper";
-import PlaceholderParagraph from "rsuite/lib/Placeholder/PlaceholderParagraph";
 
 const initialLineStackDataListArray: Array<Array<IStackData>> = [];
 const initialLastStackDataList: Array<IStackData> = [];
