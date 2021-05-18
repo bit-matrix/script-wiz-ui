@@ -8,6 +8,7 @@ import ScriptEditorHeader from "./ScriptEditorHeader/ScriptEditorHeader";
 import { Button, Modal } from "rsuite";
 import initialEditorValue from "./ScriptEditorInput/initialEditorValue";
 import { convertEditorLines } from "../../helper";
+import PlaceholderParagraph from "rsuite/lib/Placeholder/PlaceholderParagraph";
 
 const initialLineStackDataListArray: Array<Array<IStackData>> = [];
 const initialLastStackDataList: Array<IStackData> = [];
@@ -82,7 +83,7 @@ const ScriptEditor = () => {
                     <Modal.Title>Compile Result</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <span>{compileModalData.data}</span>
+                    <p className="compile-data-p">{compileModalData.data}</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
