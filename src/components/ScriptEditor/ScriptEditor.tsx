@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import IStackData from "@script-wiz/lib/model/IStackData";
 import * as scriptWiz from "@script-wiz/lib";
 import ScriptEditorInput from "./ScriptEditorInput/ScriptEditorInput";
@@ -6,6 +6,7 @@ import ScriptEditorOutput from "./ScriptEditorOutput/ScriptEditorOutput";
 import "./ScriptEditor.scss";
 import ScriptEditorHeader from "./ScriptEditorHeader/ScriptEditorHeader";
 import { Button, Modal } from "rsuite";
+import initialEditorValue from "./ScriptEditorInput/initialEditorValue";
 
 const initialLineStackDataListArray: Array<Array<IStackData>> = [];
 const initialLastStackDataList: Array<IStackData> = [];
@@ -22,6 +23,34 @@ const ScriptEditor = () => {
         show: boolean;
         data?: string;
     }>({ show: false });
+
+    useEffect(() => {
+        let unmounted = false;
+
+        if (!unmounted) {
+            let lines = initialEditorValue.split("\n");
+            lines = lines.map(line => line.replace(/ /g, ""));
+
+            lines = lines.map(line => line.replaceAll("\r", ""));
+
+            lines = lines.map(line => line.replaceAll("\t", ""));
+
+            lines = lines.map(line => {
+                const commentIndex = line.indexOf("//");
+
+                if (commentIndex > -1) {
+                    return line.substr(0, commentIndex);
+                }
+                return line;
+            });
+
+            compile(lines);
+        }
+
+        return () => {
+            unmounted = true;
+        };
+    }, []);
 
     const compile = (lines: string[]) => {
         scriptWiz.clearStack();
