@@ -1,13 +1,20 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from "react";
-import { Dropdown, Icon } from "rsuite";
+import React, { useState } from "react";
+import { Dropdown, Icon, IconButton, Tooltip, Whisper } from "rsuite";
 import logo from "../../images/transparent_white.png";
+import { SponsorModal } from "./SponsorModal/SponsorModal";
 import "./ScriptNavbar.scss";
 
 const ScriptNavbar = () => {
+    const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
+
     return (
         <div className="script-editor-header-bar">
+            <SponsorModal
+                show={showSponsorModal}
+                close={() => setShowSponsorModal(false)}
+            ></SponsorModal>
             <div className="script-editor-header-left-section">
                 <div>
                     <img className="script-wiz-logo" src={logo} />
@@ -67,6 +74,19 @@ const ScriptNavbar = () => {
                 </a>
             </div>
             <div className="script-editor-header-right-section">
+                <Whisper
+                    placement="bottom"
+                    trigger="hover"
+                    speaker={<Tooltip>Become a sponsor</Tooltip>}
+                >
+                    <IconButton
+                        icon={<Icon icon="heart" />}
+                        circle
+                        size="sm"
+                        onClick={() => setShowSponsorModal(true)}
+                    />
+                </Whisper>
+
                 <Dropdown
                     className="script-editor-header-right-section-dropdown"
                     title={
