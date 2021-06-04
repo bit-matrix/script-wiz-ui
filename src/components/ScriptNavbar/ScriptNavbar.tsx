@@ -83,6 +83,7 @@ const ScriptNavbar = () => {
                         icon={<Icon icon="heart" />}
                         circle
                         size="sm"
+                        className="sponsor-button"
                         onClick={() => setShowSponsorModal(true)}
                     />
                 </Whisper>
