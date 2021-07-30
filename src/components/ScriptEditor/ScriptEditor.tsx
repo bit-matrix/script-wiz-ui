@@ -1,133 +1,125 @@
-import React, { useEffect, useState } from "react";
-import IStackData from "@script-wiz/lib/model/IStackData";
-import * as scriptWiz from "@script-wiz/lib";
-import ScriptEditorInput from "./ScriptEditorInput/ScriptEditorInput";
-import ScriptEditorOutput from "./ScriptEditorOutput/ScriptEditorOutput";
-import "./ScriptEditor.scss";
-import ScriptEditorHeader from "./ScriptEditorHeader/ScriptEditorHeader";
-import { Button, Modal } from "rsuite";
-import initialEditorValue from "./ScriptEditorInput/initialEditorValue";
-import { convertEditorLines } from "../../helper";
+import React, { useEffect, useState } from 'react';
+import * as scriptWiz from '@script-wiz/lib';
+import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
+import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
+import './ScriptEditor.scss';
+import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
+import { Button, Modal } from 'rsuite';
+import initialEditorValue from './ScriptEditorInput/initialEditorValue';
+import { convertEditorLines } from '../../helper';
+import { ScriptWiz, WizData } from '@script-wiz/lib';
 
-const initialLineStackDataListArray: Array<Array<IStackData>> = [];
-const initialLastStackDataList: Array<IStackData> = [];
+type Props = {
+  scriptWiz: ScriptWiz;
+};
 
-const ScriptEditor = () => {
-    const [errorMessage, setErrorMessage] = useState<string | undefined>();
-    const [lineStackDataListArray, setLineStackDataListArray] = useState<
-        Array<Array<IStackData>>
-    >(initialLineStackDataListArray);
-    const [lastStackDataList, setLastStackDataList] = useState<
-        Array<IStackData>
-    >(initialLastStackDataList);
-    const [compileModalData, setCompileModalData] = useState<{
-        show: boolean;
-        data?: string;
-    }>({ show: false });
+const initialLineStackDataListArray: Array<Array<WizData>> = [];
+const initialLastStackDataList: Array<WizData> = [];
 
-    useEffect(() => {
-        let unmounted = false;
+const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
+  const [lastStackDataList, setLastStackDataList] = useState<Array<WizData>>(initialLastStackDataList);
 
-        if (!unmounted) {
-            let lines = convertEditorLines(initialEditorValue);
+  const [compileModalData, setCompileModalData] = useState<{
+    show: boolean;
+    data?: string;
+  }>({ show: false });
 
-            compile(lines);
-        }
+  useEffect(() => {
+    let unmounted = false;
 
-        return () => {
-            unmounted = true;
-        };
-    }, []);
+    if (!unmounted) {
+      let lines = convertEditorLines(initialEditorValue);
 
-    const compile = (lines: string[]) => {
-        scriptWiz.clearStack();
-        let hasError: boolean = false;
+      compile(lines);
+    }
 
-        const newLineStackDataListArray: Array<Array<IStackData>> = [];
-        let newLastStackDataList: Array<IStackData> = [];
-
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            // console.log(i, line);
-
-            if (line !== "") {
-                const scriptWizInstance = scriptWiz.parse(line);
-                const parsed = scriptWizInstance.main;
-                const scriptWizErrorMessage = scriptWizInstance.errorMessage;
-
-                if (!hasError) {
-                    newLastStackDataList = parsed;
-                    newLineStackDataListArray.push(newLastStackDataList);
-
-                    if (scriptWizErrorMessage) {
-                        hasError = true;
-                        setErrorMessage(scriptWizErrorMessage);
-                    }
-                }
-            } else {
-                if (!hasError) newLineStackDataListArray.push([]);
-            }
-        }
-
-        setLineStackDataListArray(newLineStackDataListArray);
-        setLastStackDataList(newLastStackDataList);
-        // console.log(scriptWiz.stackDataList);
+    return () => {
+      unmounted = true;
     };
+  }, []);
 
-    const compileScripts = () => {
-        const compileScript = scriptWiz.compileScript();
-        setCompileModalData({ show: true, data: compileScript });
-    };
+  const compile = (lines: string[]) => {
+    scriptWiz.clearStackDataList();
+    let hasError: boolean = false;
 
-    return (
-        <>
-            <Modal
-                size="xs"
-                show={compileModalData.show}
-                backdrop={false}
-                onHide={() => setCompileModalData({ show: false })}
-            >
-                <Modal.Header>
-                    <Modal.Title>Compile Result</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p className="compile-data-p">{compileModalData.data}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        onClick={() => setCompileModalData({ show: false })}
-                        appearance="primary"
-                    >
-                        Ok
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-            <ScriptEditorHeader compileButtonClick={compileScripts} />
-            <div className="script-editor-main-div scroll">
-                <div className="script-editor-container">
-                    <div className="script-editor-sub-item">
-                        <ScriptEditorInput
-                            onChangeScriptEditorInput={(lines: string[]) => {
-                                setErrorMessage(undefined);
-                                setLineStackDataListArray(
-                                    initialLineStackDataListArray,
-                                );
-                                setLastStackDataList(initialLastStackDataList);
-                                compile(lines);
-                            }}
-                        />
-                    </div>
-                    <div className="script-editor-sub-item scroll">
-                        <ScriptEditorOutput
-                            lastStackDataList={lastStackDataList}
-                            lineStackDataListArray={lineStackDataListArray}
-                            errorMessage={errorMessage}
-                        />
-                    </div>
-                </div>
-            </div>
-        </>
-    );
+    const newLineStackDataListArray: Array<Array<WizData>> = [];
+    let newLastStackDataList: Array<WizData> = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // console.log(i, line);
+
+      if (line !== '') {
+        // @To-do
+        const scriptWizInstance = scriptWiz.parseText(line);
+
+        const parsed = scriptWiz.stackDataList.main;
+
+        // @To-do scriptWiz error message
+        const scriptWizErrorMessage = '';
+
+        if (!hasError) {
+          newLastStackDataList = parsed;
+          newLineStackDataListArray.push(newLastStackDataList);
+
+          if (scriptWizErrorMessage) {
+            hasError = true;
+            setErrorMessage(scriptWizErrorMessage);
+          }
+        }
+      } else {
+        if (!hasError) newLineStackDataListArray.push([]);
+      }
+    }
+
+    setLineStackDataListArray(newLineStackDataListArray);
+    setLastStackDataList(newLastStackDataList);
+    // console.log(scriptWiz.stackDataList);
+  };
+
+  const compileScripts = () => {
+    const compileScript = scriptWiz.compile();
+    setCompileModalData({ show: true, data: compileScript });
+  };
+
+  return (
+    <>
+      <Modal size="xs" show={compileModalData.show} backdrop={false} onHide={() => setCompileModalData({ show: false })}>
+        <Modal.Header>
+          <Modal.Title>Compile Result</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="compile-data-p">{compileModalData.data}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => setCompileModalData({ show: false })} appearance="primary">
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <ScriptEditorHeader compileButtonClick={compileScripts} />
+      <div className="script-editor-main-div scroll">
+        <div className="script-editor-container">
+          <div className="script-editor-sub-item">
+            <ScriptEditorInput
+              scriptWiz={scriptWiz}
+              onChangeScriptEditorInput={(lines: string[]) => {
+                setErrorMessage(undefined);
+                setLineStackDataListArray(initialLineStackDataListArray);
+                setLastStackDataList(initialLastStackDataList);
+                compile(lines);
+              }}
+            />
+          </div>
+          <div className="script-editor-sub-item scroll">
+            <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default ScriptEditor;

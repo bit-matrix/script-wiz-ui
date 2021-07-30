@@ -1,104 +1,83 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { createRef, useEffect, useRef } from "react";
+import React, { useEffect } from 'react';
 
-import * as languageOptions from "../../../options/editorOptions/languageOptions";
-import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
-import themeOptions from "../../../options/editorOptions/themeOptions";
-import Editor, { useMonaco } from "@monaco-editor/react";
-import editorOptions from "../../../options/editorOptions/editorOptions";
+import * as languageOptions from '../../../options/editorOptions/languageOptions';
+import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import themeOptions from '../../../options/editorOptions/themeOptions';
+import Editor, { useMonaco } from '@monaco-editor/react';
+import editorOptions from '../../../options/editorOptions/editorOptions';
 
-import { scriptWizEditor } from "../../../options/editorOptions/utils/constant";
-import "./ScriptEditorInput.scss";
-import initialEditorValue from "./initialEditorValue";
-import { convertEditorLines } from "../../../helper";
+import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
+import initialEditorValue from './initialEditorValue';
+import { convertEditorLines } from '../../../helper';
+import { ScriptWiz } from '@script-wiz/lib';
+import './ScriptEditorInput.scss';
 
-interface IScriptEditorInput {
-    onChangeScriptEditorInput: (lines: string[]) => void;
-}
+type Props = {
+  scriptWiz: ScriptWiz;
+  onChangeScriptEditorInput: (lines: string[]) => void;
+};
 
-const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
-    onChangeScriptEditorInput,
-}) => {
-    const monaco = useMonaco();
+const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput }) => {
+  const monaco = useMonaco();
 
-    useEffect(() => {
-        // language define
-        if (monaco !== null) {
-            monaco.languages.register({ id: scriptWizEditor.LANGUAGE });
+  useEffect(() => {
+    // language define
+    if (monaco !== null) {
+      monaco.languages.register({ id: scriptWizEditor.LANGUAGE });
 
-            // Define a new theme that contains only rules that match this language
-            monaco.editor.defineTheme(scriptWizEditor.THEME, themeOptions);
+      // Define a new theme that contains only rules that match this language
+      monaco.editor.defineTheme(scriptWizEditor.THEME, themeOptions);
 
-            monaco.languages.setLanguageConfiguration(
-                scriptWizEditor.LANGUAGE,
-                languageOptions.languageConfigurations(monaco.languages),
-            );
+      monaco.languages.setLanguageConfiguration(scriptWizEditor.LANGUAGE, languageOptions.languageConfigurations(monaco.languages));
 
-            // Register a tokens provider for the language
-            monaco.languages.setMonarchTokensProvider(
-                scriptWizEditor.LANGUAGE,
-                languageOptions.tokenProviders,
-            );
+      // Register a tokens provider for the language
+      monaco.languages.setMonarchTokensProvider(scriptWizEditor.LANGUAGE, languageOptions.tokenProviders);
 
-            monaco.languages.registerHoverProvider(
-                scriptWizEditor.LANGUAGE,
-                languageOptions.hoverProvider,
-            );
+      monaco.languages.registerHoverProvider(scriptWizEditor.LANGUAGE, languageOptions.hoverProvider(scriptWiz));
 
-            monaco.languages.registerCompletionItemProvider(
-                scriptWizEditor.LANGUAGE,
-                {
-                    provideCompletionItems: (model: any, position: any) => {
-                        const suggestions = languageOptions.languageSuggestions(
-                            monaco.languages,
-                            model,
-                            position,
-                        );
-                        return { suggestions: suggestions };
-                    },
-                },
-            );
-        }
+      monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
+        provideCompletionItems: (model: any, position: any) => {
+          const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position, scriptWiz);
+          return { suggestions: suggestions };
+        },
+      });
+    }
 
-        /*    return () => {
+    /*    return () => {
       if (monaco) {
         monaco.editor.getModels().forEach((model) => model.dispose());
       }
     }; */
-    }, [monaco]);
+  }, [monaco, scriptWiz]);
 
-    const onChangeEditor = (
-        value: string | undefined,
-        ev: Monaco.editor.IModelContentChangedEvent,
-    ) => {
-        if (value) {
-            let lines = convertEditorLines(value);
+  const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
+    if (value) {
+      let lines = convertEditorLines(value);
 
-            onChangeScriptEditorInput(lines);
-        } else {
-            onChangeScriptEditorInput([]);
-        }
-    };
-
-    if (monaco != null) {
-        return (
-            <Editor
-                // height="100vh"
-                // width="50%"
-                className="script-wiz-monaco-editor"
-                onMount={() => {
-                    console.log("loading state");
-                }}
-                defaultValue={initialEditorValue}
-                options={editorOptions}
-                language={scriptWizEditor.LANGUAGE}
-                theme={scriptWizEditor.THEME}
-                onChange={onChangeEditor}
-            />
-        );
+      onChangeScriptEditorInput(lines);
+    } else {
+      onChangeScriptEditorInput([]);
     }
+  };
 
-    return null;
+  if (monaco != null) {
+    return (
+      <Editor
+        className="script-wiz-monaco-editor"
+        onMount={() => {
+          console.log('loading state');
+        }}
+        defaultValue={initialEditorValue}
+        options={editorOptions}
+        language={scriptWizEditor.LANGUAGE}
+        theme={scriptWizEditor.THEME}
+        onChange={onChangeEditor}
+      />
+    );
+  }
+
+  return null;
 };
 
 export default ScriptEditorInput;
