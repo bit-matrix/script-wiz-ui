@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import * as scriptWiz from '@script-wiz/lib';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import './ScriptEditor.scss';
@@ -38,6 +37,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     return () => {
       unmounted = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const compile = (lines: string[]) => {
@@ -52,8 +52,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       // console.log(i, line);
 
       if (line !== '') {
-        // @To-do
-        const scriptWizInstance = scriptWiz.parseText(line);
+        parseInput(line);
 
         const parsed = scriptWiz.stackDataList.main;
 
@@ -77,6 +76,33 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setLineStackDataListArray(newLineStackDataListArray);
     setLastStackDataList(newLastStackDataList);
     // console.log(scriptWiz.stackDataList);
+  };
+
+  const parseInput = (inputText: string) => {
+    if (inputText.startsWith('<') && inputText.endsWith('>')) {
+      const inputTextValue = inputText.substring(1, inputText.length - 1);
+
+      if (inputTextValue.startsWith('0x')) {
+        scriptWiz.parseHex(inputTextValue.substring(2));
+      } else if (inputTextValue.startsWith('0b')) {
+        scriptWiz.parseBin(inputTextValue.substring(2));
+      } else if (
+        (inputTextValue.startsWith('"') && inputTextValue.endsWith('"')) ||
+        (inputTextValue.startsWith("'") && inputTextValue.endsWith("'"))
+      ) {
+        const inputTextValueString = inputTextValue.substring(1, inputTextValue.length - 1);
+        scriptWiz.parseText(inputTextValueString);
+      } else if (!isNaN(Number(inputTextValue))) {
+        scriptWiz.parseNumber(Number(inputTextValue));
+      } else if (inputTextValue.startsWith('OP_')) {
+        const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
+        scriptWiz.parseHex(opwordToOphex.substring(2));
+      } else {
+        console.error('UI: Invalid input value!!!');
+      }
+    } else {
+      scriptWiz.parseOpcode(inputText);
+    }
   };
 
   const compileScripts = () => {

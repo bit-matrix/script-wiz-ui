@@ -26,7 +26,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
     (key: string, tooltip: string, display: string) => (
       <div className="tooltip" key={key}>
         <div className={`editor-output-text ${getOutputValueType(display)} `}>{display}</div>
-        <span className="tooltiptext">{tooltip}</span>
+        <span className="tooltiptext">{'0x' + tooltip}</span>
       </div>
     ),
     [],
@@ -46,26 +46,6 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
       }),
     [getWhisper],
   );
-
-  // const getWhisper = (key: string, tooltip: string, display: string) => (
-  //     <Whisper
-  //         key={key}
-  //         delayShow={100}
-  //         placement="rightEnd"
-  //         trigger="hover"
-  //         speaker={
-  //             <Tooltip className="whisper-tooltip">
-  //                 Compiled : {tooltip}
-  //             </Tooltip>
-  //         }
-  //     >
-  //         <span
-  //             className={`editor-output-text ${getOutputValueType(display)} `}
-  //         >
-  //             {display}
-  //         </span>
-  //     </Whisper>
-  // );
 
   return (
     <>
