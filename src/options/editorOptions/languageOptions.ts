@@ -1,7 +1,8 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 /* eslint-disable no-template-curly-in-string */
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { ScriptWiz, compileFinalInput } from '@script-wiz/lib';
+import { compileFinalInput } from '@script-wiz/lib';
+import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
 
 const languageConfigurations = (monaco: typeof Monaco.languages): Monaco.languages.LanguageConfiguration => {
   return {
@@ -120,7 +121,7 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
   },
 };
 
-const hoverProvider = (scriptWiz: ScriptWiz): Monaco.languages.HoverProvider => {
+const hoverProvider = (opcodesDatas: Opcode[]): Monaco.languages.HoverProvider => {
   const hoverProvider: Monaco.languages.HoverProvider = {
     provideHover: function (model: Monaco.editor.ITextModel, position: Monaco.Position, token: Monaco.CancellationToken) {
       const modelValue = model.getValue(); // all lines
@@ -129,7 +130,7 @@ const hoverProvider = (scriptWiz: ScriptWiz): Monaco.languages.HoverProvider => 
 
       const queryWord = query?.word || '';
 
-      const currentModel = scriptWiz.opCodes.data.find((opc) => opc.word === queryWord);
+      const currentModel = opcodesDatas.find((opc) => opc.word === queryWord);
 
       const columns = model.getWordUntilPosition(position);
       const range: Monaco.IRange = {
@@ -176,7 +177,7 @@ const languageSuggestions = (
   monaco: typeof Monaco.languages,
   model: Monaco.editor.ITextModel,
   position: Monaco.Position,
-  scriptWiz: ScriptWiz,
+  opcodesDatas: Opcode[],
 ): Monaco.languages.CompletionItem[] => {
   // const query = model.getWordAtPosition(position);
   const columns = model.getWordUntilPosition(position);
@@ -188,7 +189,7 @@ const languageSuggestions = (
     endLineNumber: position.lineNumber,
   };
 
-  return scriptWiz.opCodes.data.map((opc) => ({
+  return opcodesDatas.map((opc) => ({
     label: opc.word,
     insertText: opc.word,
     kind: monaco.CompletionItemKind.Function,

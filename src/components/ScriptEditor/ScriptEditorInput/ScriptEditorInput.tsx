@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -11,6 +11,8 @@ import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
 import initialEditorValue from './initialEditorValue';
 import { convertEditorLines } from '../../../helper';
 import { ScriptWiz } from '@script-wiz/lib';
+import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
+
 import './ScriptEditorInput.scss';
 
 type Props = {
@@ -21,7 +23,11 @@ type Props = {
 const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput }) => {
   const monaco = useMonaco();
 
+  const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
+
   useEffect(() => {
+    let dispos = () => {};
+
     // language define
     if (monaco !== null) {
       monaco.languages.register({ id: scriptWizEditor.LANGUAGE });
@@ -34,22 +40,25 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
       // Register a tokens provider for the language
       monaco.languages.setMonarchTokensProvider(scriptWizEditor.LANGUAGE, languageOptions.tokenProviders);
 
-      monaco.languages.registerHoverProvider(scriptWizEditor.LANGUAGE, languageOptions.hoverProvider(scriptWiz));
+      monaco.languages.registerHoverProvider(scriptWizEditor.LANGUAGE, languageOptions.hoverProvider(opcodesDatas));
 
-      monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
+      const { dispose } = monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
         provideCompletionItems: (model: any, position: any) => {
-          const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position, scriptWiz);
+          const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position, opcodesDatas);
           return { suggestions: suggestions };
         },
       });
+
+      dispos = dispose;
     }
 
-    /*    return () => {
-      if (monaco) {
-        monaco.editor.getModels().forEach((model) => model.dispose());
+    return () => {
+      if (monaco !== undefined && dispos !== undefined) {
+        dispos();
+        // monaco.editor.getModels().forEach((model) => model.dispose());
       }
-    }; */
-  }, [monaco, scriptWiz]);
+    };
+  }, [monaco, opcodesDatas]);
 
   const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
     if (value) {
