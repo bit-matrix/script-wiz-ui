@@ -1,104 +1,92 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { createRef, useEffect, useRef } from "react";
+import React, { useEffect, useMemo } from 'react';
 
-import * as languageOptions from "../../../options/editorOptions/languageOptions";
-import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
-import themeOptions from "../../../options/editorOptions/themeOptions";
-import Editor, { useMonaco } from "@monaco-editor/react";
-import editorOptions from "../../../options/editorOptions/editorOptions";
+import * as languageOptions from '../../../options/editorOptions/languageOptions';
+import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import themeOptions from '../../../options/editorOptions/themeOptions';
+import Editor, { useMonaco } from '@monaco-editor/react';
+import editorOptions from '../../../options/editorOptions/editorOptions';
 
-import { scriptWizEditor } from "../../../options/editorOptions/utils/constant";
-import "./ScriptEditorInput.scss";
-import initialEditorValue from "./initialEditorValue";
-import { convertEditorLines } from "../../../helper";
+import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
+import { initialBitcoinEditorValue, initialLiquidEditorValue } from './initialEditorValue';
+import { convertEditorLines } from '../../../helper';
+import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
+import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
 
-interface IScriptEditorInput {
-    onChangeScriptEditorInput: (lines: string[]) => void;
-}
+import './ScriptEditorInput.scss';
 
-const ScriptEditorInput: React.FC<IScriptEditorInput> = ({
-    onChangeScriptEditorInput,
-}) => {
-    const monaco = useMonaco();
+type Props = {
+  scriptWiz: ScriptWiz;
+  onChangeScriptEditorInput: (lines: string[]) => void;
+};
 
-    useEffect(() => {
-        // language define
-        if (monaco !== null) {
-            monaco.languages.register({ id: scriptWizEditor.LANGUAGE });
+const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput }) => {
+  const monaco = useMonaco();
 
-            // Define a new theme that contains only rules that match this language
-            monaco.editor.defineTheme(scriptWizEditor.THEME, themeOptions);
+  const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
 
-            monaco.languages.setLanguageConfiguration(
-                scriptWizEditor.LANGUAGE,
-                languageOptions.languageConfigurations(monaco.languages),
-            );
+  useEffect(() => {
+    let dispos = () => {};
 
-            // Register a tokens provider for the language
-            monaco.languages.setMonarchTokensProvider(
-                scriptWizEditor.LANGUAGE,
-                languageOptions.tokenProviders,
-            );
+    // language define
+    if (monaco !== null) {
+      monaco.languages.register({ id: scriptWizEditor.LANGUAGE });
 
-            monaco.languages.registerHoverProvider(
-                scriptWizEditor.LANGUAGE,
-                languageOptions.hoverProvider,
-            );
+      // Define a new theme that contains only rules that match this language
+      monaco.editor.defineTheme(scriptWizEditor.THEME, themeOptions);
 
-            monaco.languages.registerCompletionItemProvider(
-                scriptWizEditor.LANGUAGE,
-                {
-                    provideCompletionItems: (model: any, position: any) => {
-                        const suggestions = languageOptions.languageSuggestions(
-                            monaco.languages,
-                            model,
-                            position,
-                        );
-                        return { suggestions: suggestions };
-                    },
-                },
-            );
-        }
+      monaco.languages.setLanguageConfiguration(scriptWizEditor.LANGUAGE, languageOptions.languageConfigurations(monaco.languages));
 
-        /*    return () => {
-      if (monaco) {
-        monaco.editor.getModels().forEach((model) => model.dispose());
-      }
-    }; */
-    }, [monaco]);
+      // Register a tokens provider for the language
+      monaco.languages.setMonarchTokensProvider(scriptWizEditor.LANGUAGE, languageOptions.tokenProviders);
 
-    const onChangeEditor = (
-        value: string | undefined,
-        ev: Monaco.editor.IModelContentChangedEvent,
-    ) => {
-        if (value) {
-            let lines = convertEditorLines(value);
+      monaco.languages.registerHoverProvider(scriptWizEditor.LANGUAGE, languageOptions.hoverProvider(opcodesDatas));
 
-            onChangeScriptEditorInput(lines);
-        } else {
-            onChangeScriptEditorInput([]);
-        }
-    };
+      const { dispose } = monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
+        provideCompletionItems: (model: any, position: any) => {
+          const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position, opcodesDatas);
+          return { suggestions: suggestions };
+        },
+      });
 
-    if (monaco != null) {
-        return (
-            <Editor
-                // height="100vh"
-                // width="50%"
-                className="script-wiz-monaco-editor"
-                onMount={() => {
-                    console.log("loading state");
-                }}
-                defaultValue={initialEditorValue}
-                options={editorOptions}
-                language={scriptWizEditor.LANGUAGE}
-                theme={scriptWizEditor.THEME}
-                onChange={onChangeEditor}
-            />
-        );
+      dispos = dispose;
     }
 
-    return null;
+    return () => {
+      if (monaco !== undefined && dispos !== undefined) {
+        dispos();
+        // monaco.editor.getModels().forEach((model) => model.dispose());
+      }
+    };
+  }, [monaco, opcodesDatas]);
+
+  const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
+    if (value) {
+      let lines = convertEditorLines(value);
+
+      onChangeScriptEditorInput(lines);
+    } else {
+      onChangeScriptEditorInput([]);
+    }
+  };
+
+  if (monaco != null) {
+    return (
+      <Editor
+        className="script-wiz-monaco-editor"
+        onMount={() => {
+          console.log('loading state');
+        }}
+        value={scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue}
+        options={editorOptions}
+        language={scriptWizEditor.LANGUAGE}
+        theme={scriptWizEditor.THEME}
+        onChange={onChangeEditor}
+      />
+    );
+  }
+
+  return null;
 };
 
 export default ScriptEditorInput;
