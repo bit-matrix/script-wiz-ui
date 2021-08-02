@@ -4,9 +4,9 @@ import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import './ScriptEditor.scss';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
 import { Button, Modal } from 'rsuite';
-import initialEditorValue from './ScriptEditorInput/initialEditorValue';
 import { convertEditorLines } from '../../helper';
-import { ScriptWiz, WizData } from '@script-wiz/lib';
+import { ScriptWiz, VM_NETWORK, WizData } from '@script-wiz/lib';
+import { initialBitcoinEditorValue, initialLiquidEditorValue } from './ScriptEditorInput/initialEditorValue';
 
 type Props = {
   scriptWiz: ScriptWiz;
@@ -29,7 +29,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     let unmounted = false;
 
     if (!unmounted) {
-      let lines = convertEditorLines(initialEditorValue);
+      let lines = convertEditorLines(scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue);
 
       compile(lines);
     }
@@ -37,8 +37,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     return () => {
       unmounted = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [scriptWiz.vm.network]);
 
   const compile = (lines: string[]) => {
     scriptWiz.clearStackDataList();

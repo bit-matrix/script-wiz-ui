@@ -8,9 +8,9 @@ import Editor, { useMonaco } from '@monaco-editor/react';
 import editorOptions from '../../../options/editorOptions/editorOptions';
 
 import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
-import initialEditorValue from './initialEditorValue';
+import { initialBitcoinEditorValue, initialLiquidEditorValue } from './initialEditorValue';
 import { convertEditorLines } from '../../../helper';
-import { ScriptWiz } from '@script-wiz/lib';
+import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
 
 import './ScriptEditorInput.scss';
@@ -77,7 +77,7 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
         onMount={() => {
           console.log('loading state');
         }}
-        defaultValue={initialEditorValue}
+        value={scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue}
         options={editorOptions}
         language={scriptWizEditor.LANGUAGE}
         theme={scriptWizEditor.THEME}
