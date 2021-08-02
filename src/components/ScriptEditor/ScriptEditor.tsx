@@ -1,12 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
-import './ScriptEditor.scss';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
 import { Button, Modal } from 'rsuite';
 import { convertEditorLines } from '../../helper';
 import { ScriptWiz, VM_NETWORK, WizData } from '@script-wiz/lib';
 import { initialBitcoinEditorValue, initialLiquidEditorValue } from './ScriptEditorInput/initialEditorValue';
+import './ScriptEditor.scss';
 
 type Props = {
   scriptWiz: ScriptWiz;
