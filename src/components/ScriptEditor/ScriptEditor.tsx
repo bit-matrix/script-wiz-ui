@@ -57,7 +57,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         const parsed = scriptWiz.stackDataList.main;
 
         // @To-do scriptWiz error message
-        const scriptWizErrorMessage = '';
+        const scriptWizErrorMessage = scriptWiz.stackDataList.errorMessage;
 
         if (!hasError) {
           newLastStackDataList = parsed;
