@@ -54,4 +54,8 @@ export const initialBitcoinEditorValue =
   '\n' +
   '<2>' +
   '\n' +
-  'OP_ADD';
+  'OP_ADD' +
+  '\n' +
+  '<3>' +
+  '\n' +
+  'OP_EQUAL';
