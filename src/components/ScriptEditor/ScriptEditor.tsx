@@ -16,6 +16,19 @@ type Props = {
 const initialLineStackDataListArray: Array<Array<WizData>> = [];
 const initialLastStackDataList: Array<WizData> = [];
 
+const fromHexString = (hexString: string) => {
+  const matches = hexString.match(/.{1,2}/g);
+  if (matches) {
+    console.log('mathes:', matches);
+    return new Uint8Array(matches.map((byte) => parseInt(byte, 16)));
+  }
+
+  console.error('hex matches error!');
+  return new Uint8Array();
+};
+
+const toHexString = (bytes: Uint8Array | null): string => (bytes ? bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '') : '');
+
 const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
@@ -110,6 +123,30 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setCompileModalData({ show: true, data: compileScript });
   };
 
+  const taprootCompile = () => {
+    const promise = import('tiny-secp256k1');
+    promise.then((a) => {
+      const compressed: boolean = true;
+
+      const pubkeyString: string = '021dae61a4a8f841952be3a511502d4f56e889ffa0685aa0098773ea2d4309f624';
+      const tweakString: string = '542d433b81daf3e28069bccbb0d951d7d9ca57cc0f563f2de126e91deba7d6a6';
+      const testResultString: string = '0326fef75b96729c1753eeac93309ae90c8a06192ea5b1b13175e239743ec11c4a';
+
+      const pubkey: Uint8Array = fromHexString(pubkeyString);
+      const tweak: Uint8Array = fromHexString(tweakString);
+      const testResult: Uint8Array = fromHexString(testResultString);
+
+      const result: Uint8Array | null = a.pointAddScalar(pubkey, tweak, compressed);
+
+      const resultString: string = toHexString(result);
+      console.log(resultString);
+      console.log(testResultString);
+      console.log(toHexString(result) === toHexString(testResult));
+
+      return result;
+    });
+  };
+
   return (
     <>
       <Modal size="xs" show={compileModalData.show} backdrop={false} onHide={() => setCompileModalData({ show: false })}>
@@ -120,6 +157,15 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           <p className="compile-data-p">{compileModalData.data}</p>
         </Modal.Body>
         <Modal.Footer>
+          <Button
+            onClick={() => {
+              setCompileModalData({ show: false });
+              taprootCompile();
+            }}
+            appearance="ghost"
+          >
+            Taproot Compile
+          </Button>
           <Button onClick={() => setCompileModalData({ show: false })} appearance="primary">
             Ok
           </Button>
