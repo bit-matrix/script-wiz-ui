@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
-import { Button, ControlLabel, Form, FormGroup, Input, Modal, Radio, RadioGroup } from 'rsuite';
+import { Button, ControlLabel, Form, FormGroup, Icon, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { convertEditorLines } from '../../helper';
 import { ScriptWiz, VM_NETWORK, WizData } from '@script-wiz/lib';
 import { initialBitcoinEditorValue, initialLiquidEditorValue } from './ScriptEditorInput/initialEditorValue';
@@ -242,15 +242,36 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               <h6>Tweak Result</h6>
               <div className="compile-modal-item">
                 <ControlLabel>Tweaked key:</ControlLabel>
-                <Input value={tweakedResult} />
+                <InputGroup className="compile-modal-input-group">
+                  <Input value={tweakedResult} />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult)}>
+                      <Icon icon="copy" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
               </div>
               <div className="compile-modal-item">
                 <ControlLabel>ScriptPubkey:</ControlLabel>
-                <Input value={tweakedResult} />
+                <InputGroup className="compile-modal-input-group">
+                  <Input value={tweakedResult} />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult)}>
+                      <Icon icon="copy" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
               </div>
               <div className="compile-modal-item">
                 <ControlLabel>Bech32 address:</ControlLabel>
-                <Input value={tweakedResult} />
+                <InputGroup className="compile-modal-input-group">
+                  <Input value={tweakedResult} />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult)}>
+                      <Icon icon="copy" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
               </div>
             </FormGroup>
           </Form>
