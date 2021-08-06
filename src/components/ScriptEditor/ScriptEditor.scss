@@ -1,38 +1,46 @@
 .script-editor-main-div {
-    height: calc(100% - 4.5rem);
+  height: calc(100% - 4.5rem);
+  width: 100%;
+  background: #181b1e;
+
+  .script-editor-container {
     width: 100%;
     background: #181b1e;
+    display: flex;
+    min-height: calc(100% - 1.5rem);
 
-    .script-editor-container {
-        width: 100%;
-        background: #181b1e;
-        display: flex;
-        min-height: calc(100% - 1.5rem);
-
-        .script-editor-sub-item {
-            /* height: 100%; */
-            width: 50%;
-        }
+    .script-editor-sub-item {
+      /* height: 100%; */
+      width: 50%;
     }
+  }
 }
 
 .scroll {
-    overflow-y: auto;
+  overflow-y: auto;
 }
 
 .scroll::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+  width: 6px;
+  height: 6px;
 }
 
 .scroll::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .scroll::-webkit-scrollbar-thumb {
-    background: #4d4e4f;
+  background: #4d4e4f;
 }
 
 .compile-data-p {
-    word-break: break-all;
+  word-break: break-all;
+}
+
+.compile-modal-item {
+  margin: 0.5rem 0;
+}
+
+.tapleaf-input {
+  width: 25% !important;
 }
