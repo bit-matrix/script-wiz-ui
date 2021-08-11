@@ -1,11 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
 import { Button, ControlLabel, Form, FormGroup, Icon, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { convertEditorLines } from '../../helper';
-import { ScriptWiz, VM_NETWORK, WizData } from '@script-wiz/lib';
+import { ScriptWiz, VM_NETWORK, WizData, tapRoot } from '@script-wiz/lib';
 import { initialBitcoinEditorValue, initialLiquidEditorValue } from './ScriptEditorInput/initialEditorValue';
 import './ScriptEditor.scss';
 
@@ -26,8 +25,6 @@ enum TapleafVersion {
 const initialLineStackDataListArray: Array<Array<WizData>> = [];
 const initialLastStackDataList: Array<WizData> = [];
 
-const toHexString = (bytes: Uint8Array | null): string => (bytes ? bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '') : '');
-
 const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
@@ -38,14 +35,15 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     data?: string;
   }>({ show: false });
 
-  const [keyPath, setKeyPath] = useState<KeyPath>(KeyPath.CUSTOM);
+  const [keyPath, setKeyPath] = useState<KeyPath>(KeyPath.UNKNOWN);
   const [tapleafVersion, setTapleafVersion] = useState<TapleafVersion>(TapleafVersion.DEFAULT);
   const [pubKeyInput, setPubKeyInput] = useState<string>('');
-  const [tweakInput, setTweakInput] = useState<string>('');
   const [tapleafInput, setTapleafInput] = useState<string>('');
+
   const [tweakedResult, setTweakedResult] = useState<string>('');
 
   const pubkeyDefaultValue: string = '021dae61a4a8f841952be3a511502d4f56e889ffa0685aa0098773ea2d4309f624';
+
   const tapleafDefaultValue: string = '0xc0';
 
   useEffect(() => {
@@ -54,20 +52,13 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     if (!unmounted) {
       let lines = convertEditorLines(scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue);
       compile(lines);
-
-      if ((pubKeyInput.length >= 64 && tweakInput.length >= 64) || (keyPath === KeyPath.UNKNOWN && tweakInput.length >= 64)) {
-        taprootCompile();
-      } else if ((pubKeyInput.length < 64 && pubKeyInput.length > 0) || (tweakInput.length < 64 && tweakInput.length > 0)) {
-        setTweakedResult('Invalid Result');
-      } else {
-        setTweakedResult('');
-      }
     }
 
     return () => {
       unmounted = true;
     };
-  }, [scriptWiz.vm.network, pubKeyInput, tweakInput, keyPath]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scriptWiz.vm.network, pubKeyInput, keyPath]);
 
   const compile = (lines: string[]) => {
     scriptWiz.clearStackDataList();
@@ -104,7 +95,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
     setLineStackDataListArray(newLineStackDataListArray);
     setLastStackDataList(newLastStackDataList);
-    // console.log(scriptWiz.stackDataList);
   };
 
   const parseInput = (inputText: string) => {
@@ -139,39 +129,33 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setCompileModalData({ show: true, data: compileScript });
   };
 
-  const taprootCompile = () => {
-    const promise = import('tiny-secp256k1');
-    promise
-      .then((a) => {
-        const compressed: boolean = true;
+  useEffect(() => {
+    const script = compileModalData.data?.substr(2) || scriptWiz.compile().substr(2);
+    let pubkey = pubkeyDefaultValue;
+    let version = undefined;
 
-        // const pubkeyString: string = '021dae61a4a8f841952be3a511502d4f56e889ffa0685aa0098773ea2d4309f624';
-        // const tweakString: string = '542d433b81daf3e28069bccbb0d951d7d9ca57cc0f563f2de126e91deba7d6a6';
-        // const testResultString: string = '0326fef75b96729c1753eeac93309ae90c8a06192ea5b1b13175e239743ec11c4a';
+    if (keyPath === KeyPath.CUSTOM) pubkey = pubKeyInput;
 
-        const pubkeyString: string = keyPath === KeyPath.UNKNOWN ? pubkeyDefaultValue : pubKeyInput;
-        const tweakString: string = tweakInput;
-        const testResultString: string = '0326fef75b96729c1753eeac93309ae90c8a06192ea5b1b13175e239743ec11c4a';
+    if (tapleafVersion === TapleafVersion.CUSTOM) version = tapleafInput.substr(2);
 
-        const pubkey: Uint8Array = WizData.fromHex(pubkeyString).bytes;
-        const tweak: Uint8Array = WizData.fromHex(tweakString).bytes;
-        const testResult: Uint8Array = WizData.fromHex(testResultString).bytes;
-
-        const result: Uint8Array | null = a.pointAddScalar(pubkey, tweak, compressed);
-
-        const resultString: string = toHexString(result);
-        setTweakedResult(resultString);
-
-        console.log(resultString);
-        console.log(testResultString);
-        console.log(toHexString(result) === toHexString(testResult));
-
-        return result;
-      })
-      .catch(() => {
-        setTweakedResult('Invalid Result');
-      });
-  };
+    if (
+      (pubkey.length >= 64 && tapleafVersion === TapleafVersion.DEFAULT) ||
+      (tapleafVersion === TapleafVersion.CUSTOM && version !== undefined && version?.length >= 2)
+    ) {
+      try {
+        const result = tapRoot(pubkey, script, version);
+        setTweakedResult(result);
+      } catch {
+        setTweakedResult('Invalid result');
+      }
+    } else if (pubKeyInput.length < 64 && pubKeyInput.length > 0) {
+      setTweakedResult('Invalid Result');
+    } else if (tapleafVersion === TapleafVersion.CUSTOM && version !== undefined && version.length < 4) {
+      setTweakedResult('Invalid Result');
+    } else {
+      setTweakedResult('');
+    }
+  }, [compileModalData.data, keyPath, pubKeyInput, scriptWiz, tapleafInput, tapleafVersion]);
 
   return (
     <>
@@ -199,17 +183,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 <Input
                   disabled={keyPath === KeyPath.UNKNOWN}
                   value={keyPath === KeyPath.UNKNOWN ? pubkeyDefaultValue : pubKeyInput}
-                  onChange={(value: string, event: React.SyntheticEvent<HTMLElement, Event>) => {
-                    setPubKeyInput(value);
-                  }}
-                />
-              </div>
-              <div className="compile-modal-item">
-                <ControlLabel>Tweak as HEX string:</ControlLabel>
-                <Input
-                  value={tweakInput}
                   onChange={(value: string) => {
-                    setTweakInput(value);
+                    setPubKeyInput(value);
                   }}
                 />
               </div>
