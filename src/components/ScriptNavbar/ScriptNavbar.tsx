@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Dropdown, Icon, IconButton, Tooltip, Whisper } from 'rsuite';
 import logo from '../../images/transparent_white.png';
 import { SponsorModal } from './SponsorModal/SponsorModal';
@@ -14,6 +14,16 @@ type Props = {
 
 const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
   const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
+
+  const title = useMemo(() => {
+    if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
+      return 'Liquid (SegWit/Legacy)';
+    } else if (vm.network === VM_NETWORK.BTC && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
+      return 'Bitcoin (SegWit/Legacy)';
+    } else if (vm.network === VM_NETWORK.BTC && vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) {
+      return 'Bitcoin (Tapscript)';
+    }
+  }, [vm]);
 
   return (
     <div className="script-editor-header-bar">
@@ -48,11 +58,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           <IconButton icon={<Icon icon="heart" />} circle size="sm" className="sponsor-button" onClick={() => setShowSponsorModal(true)} />
         </Whisper>
 
-        <Dropdown
-          className="script-editor-header-right-section-dropdown"
-          title={<span>{vm.network === VM_NETWORK.LIQUID ? 'Liquid (SegWit/Legacy)' : 'Bitcoin (SegWit/Legacy)'}</span>}
-          activeKey={`${vm.network} - ${vm.ver}`}
-        >
+        <Dropdown className="script-editor-header-right-section-dropdown" title={<span>{title}</span>} activeKey={`${vm.network} - ${vm.ver}`}>
           <Dropdown.Item
             eventKey={`${VM_NETWORK.LIQUID} - ${VM_NETWORK_VERSION.SEGWIT}`}
             onSelect={() => {
@@ -77,17 +83,22 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
               </div>
             }
           </Dropdown.Item>
+          <Dropdown.Item
+            eventKey={`${VM_NETWORK.BTC} - ${VM_NETWORK_VERSION.TAPSCRIPT}`}
+            onSelect={() => {
+              onSelectVm({ network: VM_NETWORK.BTC, ver: VM_NETWORK_VERSION.TAPSCRIPT });
+            }}
+          >
+            {
+              <div className="dropdown-item">
+                <span>Bitcoin (TapScript)</span>
+              </div>
+            }
+          </Dropdown.Item>
           <Dropdown.Item disabled eventKey={`${VM_NETWORK.LIQUID} - ${VM_NETWORK_VERSION.TAPSCRIPT}`}>
             {
               <div className="dropdown-item">
                 <span>Liquid (Tapscript)</span>
-              </div>
-            }
-          </Dropdown.Item>
-          <Dropdown.Item disabled eventKey={`${VM_NETWORK.BTC} - ${VM_NETWORK_VERSION.TAPSCRIPT}`}>
-            {
-              <div className="dropdown-item">
-                <span>Bitcoin (TapScript)</span>
               </div>
             }
           </Dropdown.Item>

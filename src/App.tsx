@@ -15,7 +15,7 @@ const App = () => {
   useEffect(() => {
     const scriptWizInstance = new ScriptWiz(vm);
     setScriptWiz(scriptWizInstance);
-  }, [vm]);
+  }, [vm, vm.network, vm.ver]);
 
   if (scriptWiz !== undefined) {
     return (

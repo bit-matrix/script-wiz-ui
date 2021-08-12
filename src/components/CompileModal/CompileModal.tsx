@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScriptWiz, tapRoot, WizData } from '@script-wiz/lib';
+import { ScriptWiz, tapRoot, VM_NETWORK, VM_NETWORK_VERSION, WizData } from '@script-wiz/lib';
 import { Button, Form, FormGroup, Icon, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import './CompileModal.scss';
 
@@ -69,94 +69,96 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       <Modal.Body className="compile-modal-body scroll">
         <h5 className="compile-modal-item">Compile Result</h5>
         <p className="compile-data-p">{compileModalData.data}</p>
-        <Form fluid>
-          <h5 className="compile-modal-item">Taproot Output</h5>
-          <div>
-            <div className="compile-modal-label">Key-path:</div>
-            <RadioGroup
-              className="compile-modal-radio-group"
-              inline
-              value={keyPath}
-              onChange={(value: KeyPath) => {
-                setKeyPath(value);
-              }}
-            >
-              <Radio value={KeyPath.UNKNOWN}>Unknown discrete logarithm</Radio>
-              <Radio value={KeyPath.CUSTOM}>Custom</Radio>
-            </RadioGroup>
+        {scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT && (
+          <Form fluid>
+            <h5 className="compile-modal-item">Taproot Output</h5>
+            <div>
+              <div className="compile-modal-label">Key-path:</div>
+              <RadioGroup
+                className="compile-modal-radio-group"
+                inline
+                value={keyPath}
+                onChange={(value: KeyPath) => {
+                  setKeyPath(value);
+                }}
+              >
+                <Radio value={KeyPath.UNKNOWN}>Unknown discrete logarithm</Radio>
+                <Radio value={KeyPath.CUSTOM}>Custom</Radio>
+              </RadioGroup>
+              <div className="compile-modal-item">
+                <div className="compile-modal-label">Inner Key:</div>
+                <Input
+                  disabled={keyPath === KeyPath.UNKNOWN}
+                  value={keyPath === KeyPath.UNKNOWN ? pubkeyDefaultValue : pubKeyInput}
+                  onChange={(value: string) => {
+                    setPubKeyInput(value);
+                  }}
+                />
+              </div>
+            </div>
+
             <div className="compile-modal-item">
-              <div className="compile-modal-label">Inner Key:</div>
+              <div className="compile-modal-label">Tapleaf version:</div>
+              <RadioGroup
+                className="compile-modal-radio-group"
+                inline
+                value={tapleafVersion}
+                onChange={(value: TapleafVersion) => {
+                  setTapleafVersion(value);
+                }}
+              >
+                <Radio value={TapleafVersion.DEFAULT}>Default</Radio>
+                <Radio value={TapleafVersion.CUSTOM}>Custom</Radio>
+              </RadioGroup>
+
               <Input
-                disabled={keyPath === KeyPath.UNKNOWN}
-                value={keyPath === KeyPath.UNKNOWN ? pubkeyDefaultValue : pubKeyInput}
-                onChange={(value: string) => {
-                  setPubKeyInput(value);
+                className="tapleaf-input"
+                disabled={tapleafVersion === TapleafVersion.DEFAULT}
+                value={tapleafVersion === TapleafVersion.DEFAULT ? tapleafDefaultValue : tapleafInput}
+                onChange={(value: string, event: React.SyntheticEvent<HTMLElement, Event>) => {
+                  setTapleafInput(value);
                 }}
               />
             </div>
-          </div>
 
-          <div className="compile-modal-item">
-            <div className="compile-modal-label">Tapleaf version:</div>
-            <RadioGroup
-              className="compile-modal-radio-group"
-              inline
-              value={tapleafVersion}
-              onChange={(value: TapleafVersion) => {
-                setTapleafVersion(value);
-              }}
-            >
-              <Radio value={TapleafVersion.DEFAULT}>Default</Radio>
-              <Radio value={TapleafVersion.CUSTOM}>Custom</Radio>
-            </RadioGroup>
-
-            <Input
-              className="tapleaf-input"
-              disabled={tapleafVersion === TapleafVersion.DEFAULT}
-              value={tapleafVersion === TapleafVersion.DEFAULT ? tapleafDefaultValue : tapleafInput}
-              onChange={(value: string, event: React.SyntheticEvent<HTMLElement, Event>) => {
-                setTapleafInput(value);
-              }}
-            />
-          </div>
-
-          <FormGroup>
-            <h6>Tweak Result</h6>
-            <div className="compile-modal-item">
-              <div className="compile-modal-label">Tweaked Key:</div>
-              <InputGroup className="compile-modal-input-group">
-                <Input value={tweakedResult.tweak} />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.tweak)}>
-                    <Icon icon="copy" />
-                  </InputGroup.Button>
-                </Whisper>
-              </InputGroup>
-            </div>
-            <div className="compile-modal-item">
-              <div className="compile-modal-label">scriptPubkey:</div>
-              <InputGroup className="compile-modal-input-group">
-                <Input value={tweakedResult.scriptPubkey} />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.scriptPubkey)}>
-                    <Icon icon="copy" />
-                  </InputGroup.Button>
-                </Whisper>
-              </InputGroup>
-            </div>
-            <div className="compile-modal-item">
-              <div className="compile-modal-label">Bech32m address:</div>
-              <InputGroup className="compile-modal-input-group">
-                <Input value={tweakedResult.bech32} />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.bech32)}>
-                    <Icon icon="copy" />
-                  </InputGroup.Button>
-                </Whisper>
-              </InputGroup>
-            </div>
-          </FormGroup>
-        </Form>
+            <FormGroup>
+              <h6>Tweak Result</h6>
+              <div className="compile-modal-item">
+                <div className="compile-modal-label">Tweaked Key:</div>
+                <InputGroup className="compile-modal-input-group">
+                  <Input value={tweakedResult.tweak} />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.tweak)}>
+                      <Icon icon="copy" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
+              <div className="compile-modal-item">
+                <div className="compile-modal-label">scriptPubkey:</div>
+                <InputGroup className="compile-modal-input-group">
+                  <Input value={tweakedResult.scriptPubkey} />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.scriptPubkey)}>
+                      <Icon icon="copy" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
+              <div className="compile-modal-item">
+                <div className="compile-modal-label">Bech32m address:</div>
+                <InputGroup className="compile-modal-input-group">
+                  <Input value={tweakedResult.bech32} />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.bech32)}>
+                      <Icon icon="copy" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
+            </FormGroup>
+          </Form>
+        )}
       </Modal.Body>
       <Modal.Footer className="compile-modal-footer">
         <Button onClick={() => showCompileModal(false)} appearance="primary">
