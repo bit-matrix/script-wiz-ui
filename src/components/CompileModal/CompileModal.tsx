@@ -162,7 +162,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       </Modal.Body>
       <Modal.Footer className="compile-modal-footer">
         <Button onClick={() => showCompileModal(false)} appearance="primary">
-          Ok
+          Done
         </Button>
       </Modal.Footer>
     </Modal>
