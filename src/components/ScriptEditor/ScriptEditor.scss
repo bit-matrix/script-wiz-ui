@@ -48,3 +48,25 @@
 .compile-modal-input-group {
   width: 100% !important;
 }
+
+.compile-modal-label {
+  margin-bottom: 0.25rem;
+}
+
+.compile-modal-radio-group .rs-radio-inline {
+  margin-left: 0 !important;
+}
+
+.compile-modal-body {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.compile-modal-footer {
+  text-align: center !important;
+  padding-top: 0.5rem;
+}
+
+.compile-modal-footer button {
+  width: 8rem;
+}

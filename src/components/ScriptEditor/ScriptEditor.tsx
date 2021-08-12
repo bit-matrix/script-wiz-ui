@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
-import { Button, ControlLabel, Form, FormGroup, Icon, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
+import { Button, Form, FormGroup, Icon, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { convertEditorLines } from '../../helper';
 import { ScriptWiz, VM_NETWORK, WizData, tapRoot } from '@script-wiz/lib';
 import { initialBitcoinEditorValue, initialLiquidEditorValue } from './ScriptEditorInput/initialEditorValue';
@@ -161,14 +161,15 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     <>
       <Modal size="sm" show={compileModalData.show} backdrop={false} onHide={() => setCompileModalData({ show: false })}>
         <Modal.Header />
-        <Modal.Body>
+        <Modal.Body className="compile-modal-body scroll">
           <h5 className="compile-modal-item">Compile Result</h5>
           <p className="compile-data-p">{compileModalData.data}</p>
           <Form fluid>
             <h5 className="compile-modal-item">Taproot Output</h5>
             <div>
-              <ControlLabel style={{ display: 'block' }}>Key-path:</ControlLabel>
+              <div className="compile-modal-label">Key-path:</div>
               <RadioGroup
+                className="compile-modal-radio-group"
                 inline
                 value={keyPath}
                 onChange={(value: KeyPath) => {
@@ -179,7 +180,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 <Radio value={KeyPath.CUSTOM}>Custom</Radio>
               </RadioGroup>
               <div className="compile-modal-item">
-                <ControlLabel>Public Key as HEX string:</ControlLabel>
+                <div className="compile-modal-label">Public Key as HEX string:</div>
                 <Input
                   disabled={keyPath === KeyPath.UNKNOWN}
                   value={keyPath === KeyPath.UNKNOWN ? pubkeyDefaultValue : pubKeyInput}
@@ -191,8 +192,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             </div>
 
             <div className="compile-modal-item">
-              <ControlLabel style={{ display: 'block' }}>Tapleaf version:</ControlLabel>
+              <div className="compile-modal-label">Tapleaf version:</div>
               <RadioGroup
+                className="compile-modal-radio-group"
                 inline
                 value={tapleafVersion}
                 onChange={(value: TapleafVersion) => {
@@ -216,7 +218,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             <FormGroup>
               <h6>Tweak Result</h6>
               <div className="compile-modal-item">
-                <ControlLabel>Tweaked key:</ControlLabel>
+                <div className="compile-modal-label">Tweaked key:</div>
                 <InputGroup className="compile-modal-input-group">
                   <Input value={tweakedResult} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
@@ -227,7 +229,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 </InputGroup>
               </div>
               <div className="compile-modal-item">
-                <ControlLabel>ScriptPubkey:</ControlLabel>
+                <div className="compile-modal-label">ScriptPubkey:</div>
                 <InputGroup className="compile-modal-input-group">
                   <Input value={tweakedResult} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
@@ -238,7 +240,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 </InputGroup>
               </div>
               <div className="compile-modal-item">
-                <ControlLabel>Bech32 address:</ControlLabel>
+                <div className="compile-modal-label">Bech32 address:</div>
                 <InputGroup className="compile-modal-input-group">
                   <Input value={tweakedResult} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
@@ -251,7 +253,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             </FormGroup>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="compile-modal-footer">
           <Button onClick={() => setCompileModalData({ show: false })} appearance="primary">
             Ok
           </Button>
