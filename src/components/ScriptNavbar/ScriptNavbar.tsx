@@ -91,7 +91,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           >
             {
               <div className="dropdown-item">
-                <span>Bitcoin (TapScript)</span>
+                <span>Bitcoin (Tapscript)</span>
               </div>
             }
           </Dropdown.Item>

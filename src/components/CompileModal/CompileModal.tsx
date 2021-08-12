@@ -135,7 +135,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                 </InputGroup>
               </div>
               <div className="compile-modal-item">
-                <div className="compile-modal-label">scriptPubkey:</div>
+                <div className="compile-modal-label">scriptPubKey:</div>
                 <InputGroup className="compile-modal-input-group">
                   <Input value={tweakedResult.scriptPubkey} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>

@@ -37,7 +37,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       unmounted = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scriptWiz.vm.network]);
+  }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
 
   const compile = (lines: string[]) => {
     scriptWiz.clearStackDataList();
