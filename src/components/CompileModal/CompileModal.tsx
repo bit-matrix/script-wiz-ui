@@ -22,6 +22,7 @@ enum TapleafVersion {
 type Taproot = {
   tweak: string;
   scriptPubkey: string;
+  bech32: string;
 };
 
 const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompileModal }) => {
@@ -29,7 +30,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
   const [tapleafVersion, setTapleafVersion] = useState<TapleafVersion>(TapleafVersion.DEFAULT);
   const [pubKeyInput, setPubKeyInput] = useState<string>('');
   const [tapleafInput, setTapleafInput] = useState<string>('');
-  const [tweakedResult, setTweakedResult] = useState<Taproot>({ tweak: '', scriptPubkey: '' });
+  const [tweakedResult, setTweakedResult] = useState<Taproot>({ tweak: '', scriptPubkey: '', bech32: '' });
 
   const pubkeyDefaultValue: string = '021dae61a4a8f841952be3a511502d4f56e889ffa0685aa0098773ea2d4309f624';
   const tapleafDefaultValue: string = '0xc0';
@@ -49,16 +50,16 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
     ) {
       try {
         const result = tapRoot(WizData.fromHex(pubkey), WizData.fromHex(script), version);
-        setTweakedResult({ tweak: result.tweak.hex, scriptPubkey: result.scriptPubKey.hex });
+        setTweakedResult({ tweak: result.tweak.hex, scriptPubkey: result.scriptPubKey.hex, bech32: result.bech32 });
       } catch {
-        setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result' });
+        setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result', bech32: 'Invalid result' });
       }
     } else if (pubKeyInput.length < 64 && pubKeyInput.length > 0) {
-      setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result' });
+      setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result', bech32: 'Invalid result' });
     } else if (tapleafVersion === TapleafVersion.CUSTOM && version !== undefined && version.length < 4) {
-      setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result' });
+      setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result', bech32: 'Invalid result' });
     } else {
-      setTweakedResult({ tweak: '', scriptPubkey: '' });
+      setTweakedResult({ tweak: '', scriptPubkey: '', bech32: '' });
     }
   }, [compileModalData.data, keyPath, pubKeyInput, scriptWiz, tapleafInput, tapleafVersion]);
 
@@ -84,7 +85,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
               <Radio value={KeyPath.CUSTOM}>Custom</Radio>
             </RadioGroup>
             <div className="compile-modal-item">
-              <div className="compile-modal-label">Public Key as HEX string:</div>
+              <div className="compile-modal-label">Inner Key:</div>
               <Input
                 disabled={keyPath === KeyPath.UNKNOWN}
                 value={keyPath === KeyPath.UNKNOWN ? pubkeyDefaultValue : pubKeyInput}
@@ -122,7 +123,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
           <FormGroup>
             <h6>Tweak Result</h6>
             <div className="compile-modal-item">
-              <div className="compile-modal-label">Tweak:</div>
+              <div className="compile-modal-label">Tweaked Key:</div>
               <InputGroup className="compile-modal-input-group">
                 <Input value={tweakedResult.tweak} />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
@@ -133,7 +134,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
               </InputGroup>
             </div>
             <div className="compile-modal-item">
-              <div className="compile-modal-label">ScriptPubkey:</div>
+              <div className="compile-modal-label">scriptPubkey:</div>
               <InputGroup className="compile-modal-input-group">
                 <Input value={tweakedResult.scriptPubkey} />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
@@ -144,11 +145,11 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
               </InputGroup>
             </div>
             <div className="compile-modal-item">
-              <div className="compile-modal-label">Bech32 address:</div>
+              <div className="compile-modal-label">Bech32m address:</div>
               <InputGroup className="compile-modal-input-group">
-                <Input value={''} />
+                <Input value={tweakedResult.bech32} />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText('')}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.bech32)}>
                     <Icon icon="copy" />
                   </InputGroup.Button>
                 </Whisper>
