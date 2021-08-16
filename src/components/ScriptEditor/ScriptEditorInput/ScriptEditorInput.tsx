@@ -26,7 +26,10 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
   const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
 
   useEffect(() => {
-    let dispos = () => {};
+    let disposeLanguageConfiguration = () => {};
+    let disposeMonarchTokensProvider = () => {};
+    let disposeHoverProvider = () => {};
+    let disposeCompletionItemProvider = () => {};
 
     // language define
     if (monaco !== null) {
@@ -35,27 +38,42 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
       // Define a new theme that contains only rules that match this language
       monaco.editor.defineTheme(scriptWizEditor.THEME, themeOptions);
 
-      monaco.languages.setLanguageConfiguration(scriptWizEditor.LANGUAGE, languageOptions.languageConfigurations(monaco.languages));
+      const { dispose: disposeSetLanguageConfiguration } = monaco.languages.setLanguageConfiguration(
+        scriptWizEditor.LANGUAGE,
+        languageOptions.languageConfigurations(monaco.languages),
+      );
+      disposeLanguageConfiguration = disposeSetLanguageConfiguration;
 
       // Register a tokens provider for the language
-      monaco.languages.setMonarchTokensProvider(scriptWizEditor.LANGUAGE, languageOptions.tokenProviders);
+      const { dispose: disposeSetMonarchTokensProvider } = monaco.languages.setMonarchTokensProvider(
+        scriptWizEditor.LANGUAGE,
+        languageOptions.tokenProviders,
+      );
+      disposeMonarchTokensProvider = disposeSetMonarchTokensProvider;
 
-      monaco.languages.registerHoverProvider(scriptWizEditor.LANGUAGE, languageOptions.hoverProvider(opcodesDatas));
+      const { dispose: disposeRegisterHoverProvider } = monaco.languages.registerHoverProvider(
+        scriptWizEditor.LANGUAGE,
+        languageOptions.hoverProvider(opcodesDatas),
+      );
+      disposeHoverProvider = disposeRegisterHoverProvider;
 
-      const { dispose } = monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
+      const { dispose: disposeRegisterCompletionItemProvider } = monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
         provideCompletionItems: (model: any, position: any) => {
           const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position, opcodesDatas);
           return { suggestions: suggestions };
         },
       });
-
-      dispos = dispose;
+      disposeCompletionItemProvider = disposeRegisterCompletionItemProvider;
     }
 
     return () => {
-      if (monaco !== undefined && dispos !== undefined) {
-        dispos();
+      if (monaco !== undefined) {
         // monaco.editor.getModels().forEach((model) => model.dispose());
+
+        disposeLanguageConfiguration();
+        disposeMonarchTokensProvider();
+        disposeHoverProvider();
+        disposeCompletionItemProvider();
       }
     };
   }, [monaco, opcodesDatas]);
