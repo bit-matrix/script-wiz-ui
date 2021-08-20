@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import './ScriptEditorOutput.scss';
 import { Icon } from 'rsuite';
-import { WizData } from '@script-wiz/lib';
+import WizData from '@script-wiz/wiz-data';
 
 type Props = {
   lastStackDataList: Array<WizData>;

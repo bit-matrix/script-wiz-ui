@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ScriptWiz, tapRoot, VM_NETWORK, VM_NETWORK_VERSION, WizData } from '@script-wiz/lib';
+import { ScriptWiz, tapRoot, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import { Button, Form, FormGroup, Icon, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
+import WizData from '@script-wiz/wiz-data';
 import './CompileModal.scss';
 
 type Props = {
