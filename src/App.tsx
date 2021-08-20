@@ -20,7 +20,13 @@ const App = () => {
   if (scriptWiz !== undefined) {
     return (
       <div style={{ height: '100%' }}>
-        <ScriptNavbar vm={vm} onSelectVm={(selectedVm: VM) => setVm(selectedVm)} />
+        <ScriptNavbar
+          vm={vm}
+          onSelectVm={(selectedVm: VM) => {
+            // Todo review
+            if (selectedVm.network !== vm.network || selectedVm.ver !== vm.ver) setVm(selectedVm);
+          }}
+        />
         <ScriptEditor scriptWiz={scriptWiz} />
       </div>
     );
