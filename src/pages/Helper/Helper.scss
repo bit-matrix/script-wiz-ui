@@ -1,0 +1,67 @@
+.helper-page-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.helper-page-main {
+  padding: 1rem;
+}
+
+.helper-page-item {
+  // margin: 1rem 0;
+}
+
+.helper-tab-item {
+  display: flex;
+  // align-items: center;
+  margin-top: 2rem;
+}
+
+.helper-tab-header {
+  margin-bottom: 0.25rem;
+}
+
+.helper-input-text {
+  width: 100%;
+  padding: 0 2rem;
+}
+
+.helper-result-text {
+  width: 100%;
+  padding: 0 2rem;
+}
+
+.helper-result-item {
+  margin: 0.75rem 0;
+}
+
+.helper-result-sub {
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.helper-result-sub-item-left {
+  width: 100%;
+  padding-right: 0.5rem;
+}
+
+.helper-result-sub-item-right {
+  width: 100%;
+  padding-left: 0.5rem;
+}
+
+.helper-result-sub-item-single {
+  width: 100%;
+}
+
+.helper-page-input {
+  display: flex;
+  align-items: center;
+}
+
+.helper-convert-button {
+  margin-left: 1rem;
+  min-width: 7rem;
+}
