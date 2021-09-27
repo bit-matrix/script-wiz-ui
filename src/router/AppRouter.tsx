@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ROUTE_PATH } from './ROUTE_PATH';
-import { Helper } from '../components/Helper/Helper';
-import { Home } from '../pages/Home';
+import { Helper } from '../pages/Helper/Helper';
+import { Home } from '../pages/Home/Home';
 
 export const AppRouter = (): JSX.Element => {
   return (
