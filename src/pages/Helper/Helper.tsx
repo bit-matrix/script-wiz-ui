@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import WizData from '@script-wiz/wiz-data';
-import { Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
+import { Button, Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { hash160v2, sha256v2 } from '@script-wiz/lib';
 import './Helper.scss';
 
@@ -12,22 +12,23 @@ enum CONVERT_TYPE {
 }
 
 export const Helper = () => {
+  const [input, setInput] = useState<string>('');
   const [convertWizData, setConvertWizData] = useState<WizData>();
   const [convertType, setConvertType] = useState<CONVERT_TYPE>(CONVERT_TYPE.FROM_HEX);
 
-  const handleChange = (value: string) => {
+  const handleConvert = () => {
     let result: WizData | undefined;
     if (convertType === CONVERT_TYPE.FROM_BIN) {
-      result = WizData.fromBin(value);
+      result = WizData.fromBin(input);
     }
     if (convertType === CONVERT_TYPE.FROM_HEX) {
-      result = WizData.fromHex(value);
+      result = WizData.fromHex(input);
     }
     if (convertType === CONVERT_TYPE.FROM_NUMBER) {
-      result = WizData.fromNumber(parseInt(value));
+      result = WizData.fromNumber(parseInt(input));
     }
     if (convertType === CONVERT_TYPE.FROM_TEXT) {
-      result = WizData.fromText(value);
+      result = WizData.fromText(input);
     }
     setConvertWizData(result);
   };
@@ -64,7 +65,19 @@ export const Helper = () => {
         <Form>
           <div className="helper-input-text">
             <h6 className="helper-tab-header">{convertType}</h6>
-            <Input type={setInputType()} value={convertWizData?.text} onChange={handleChange} />
+            <div className="helper-page-input">
+              <Input
+                type={setInputType()}
+                value={input}
+                onChange={(value: string) => {
+                  setConvertWizData(undefined);
+                  setInput(value);
+                }}
+              />
+              <Button className="helper-convert-button" appearance="primary" onClick={handleConvert}>
+                Convert
+              </Button>
+            </div>
           </div>
         </Form>
         <div className="helper-tab-item">
