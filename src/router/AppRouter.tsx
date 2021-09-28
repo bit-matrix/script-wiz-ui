@@ -6,7 +6,7 @@ import { Home } from '../pages/Home/Home';
 
 export const AppRouter = (): JSX.Element => {
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router>
       <Switch>
         <Route exact path={ROUTE_PATH.HOME} component={Home} />
         <Route exact path={ROUTE_PATH.HELPER} component={Helper} />
