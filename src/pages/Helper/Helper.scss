@@ -8,10 +8,6 @@
   padding: 1rem;
 }
 
-.helper-page-item {
-  // margin: 1rem 0;
-}
-
 .helper-tab-item {
   display: flex;
   // align-items: center;
@@ -39,7 +35,7 @@
 .helper-result-sub {
   display: flex;
   align-items: center;
-  margin-top: 0.25rem;
+  margin-top: 1rem;
 }
 
 .helper-result-sub-item-left {
@@ -56,12 +52,16 @@
   width: 100%;
 }
 
-.helper-page-input {
-  display: flex;
-  align-items: center;
+.helper-result-item .rs-input[disabled] {
+  background-color: #292d33;
+  color: #169de0 !important;
+  font-weight: 600;
+  cursor: not-allowed;
 }
 
-.helper-convert-button {
-  margin-left: 1rem;
-  min-width: 7rem;
+.helper-error-message {
+  color: red;
+  font-size: 1rem;
+  font-weight: 500;
+  padding-top: 0.5rem;
 }
