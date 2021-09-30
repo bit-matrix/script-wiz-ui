@@ -11,7 +11,7 @@
 .helper-tab-item {
   display: flex;
   // align-items: center;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .helper-main-input {
@@ -73,4 +73,21 @@
 
 .helper-error-message {
   color: red;
+}
+
+.helper-long-items {
+  padding: 0 2rem;
+}
+
+.helper-footer-items {
+  display: flex;
+}
+
+.helper-mb {
+  margin-bottom: 2rem;
+}
+
+.helper-item-length {
+  font-size: 0.875rem;
+  font-weight: 600;
 }
