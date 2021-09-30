@@ -52,7 +52,7 @@ export const Helper = () => {
         }
       }
       if (convertType === CONVERT_TYPE.FROM_NUMBER) {
-        if (!validNumber(parseInt(input))) {
+        if (!validNumber(Number(input))) {
           setConvertWizData(undefined);
           errorMessageText = ERROR_MESSAGE.NUMBER_ERROR;
         } else {
@@ -120,11 +120,11 @@ export const Helper = () => {
         <Form>
           <div className="helper-input-text">
             <h6 className="helper-tab-header">{convertType}</h6>
-            <Input className="helper-main-input" type="text" value={input} onChange={(value: string) => setInput(value)} />
+            <Input className="helper-main-input" type="text" value={input} onChange={(value: string) => setInput(value.replace(/\s/g, ''))} />
             <div className="helper-tab-info">
               <div>
                 <span>Input Length: </span>
-                <span>{input.replace(/\s/g, '').length}</span>
+                <span>{input.length}</span>
               </div>
               {errorMessage ? <div className="helper-error-message">{errorMessage}</div> : null}
             </div>
