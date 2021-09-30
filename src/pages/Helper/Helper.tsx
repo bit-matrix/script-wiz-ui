@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import WizData from '@script-wiz/wiz-data';
 import { Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { hash160v2, sha256v2 } from '@script-wiz/lib';
@@ -30,69 +30,72 @@ export const Helper = () => {
   const [convertType, setConvertType] = useState<CONVERT_TYPE>(CONVERT_TYPE.FROM_HEX);
   const [errorMessage, setErrorMessage] = useState<ERROR_MESSAGE | undefined>(undefined);
 
-  const handleConvert = () => {
-    let result: WizData | undefined;
-    let errorMessageText = undefined;
-
-    if (convertType === CONVERT_TYPE.FROM_BIN) {
-      if (!validBin(input)) {
-        setConvertWizData(undefined);
-        errorMessageText = ERROR_MESSAGE.BIN_ERROR;
-      } else {
-        result = WizData.fromBin(input);
-      }
-    }
-    if (convertType === CONVERT_TYPE.FROM_HEX) {
-      if (!validHex(input)) {
-        setConvertWizData(undefined);
-        errorMessageText = ERROR_MESSAGE.HEX_ERROR;
-      } else {
-        result = WizData.fromHex(input);
-      }
-    }
-    if (convertType === CONVERT_TYPE.FROM_NUMBER) {
-      if (!validNumber(parseInt(input))) {
-        setConvertWizData(undefined);
-        errorMessageText = ERROR_MESSAGE.NUMBER_ERROR;
-      } else {
-        result = WizData.fromNumber(parseInt(input));
-      }
-    }
-    if (convertType === CONVERT_TYPE.FROM_TEXT) {
-      result = WizData.fromText(input);
-    }
-    if (convertType === CONVERT_TYPE.FROM_BYTES) {
-      if (!validByte(parseInt(input))) {
-        setConvertWizData(undefined);
-        errorMessageText = ERROR_MESSAGE.BYTE_ERROR;
-      } else {
-        const stringToArray = input.split(',');
-        const convertNumberArray = stringToArray.map((str) => Number(str));
-        const uint8Array = new Uint8Array(convertNumberArray);
-        result = WizData.fromBytes(uint8Array);
-      }
-    }
-    setErrorMessage(errorMessageText);
-    setConvertWizData(result);
-  };
-
-  const isInitialMount = useRef(true);
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-      handleConvert();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [convertType, input]);
+    const handleConvert = () => {
+      let result: WizData | undefined;
+      let errorMessageText = undefined;
 
-  const leBeReverseResult = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex;
+      if (convertType === CONVERT_TYPE.FROM_BIN) {
+        if (!validBin(input)) {
+          setConvertWizData(undefined);
+          errorMessageText = ERROR_MESSAGE.BIN_ERROR;
+        } else {
+          result = WizData.fromBin(input);
+        }
+      }
+      if (convertType === CONVERT_TYPE.FROM_HEX) {
+        if (!validHex(input)) {
+          setConvertWizData(undefined);
+          errorMessageText = ERROR_MESSAGE.HEX_ERROR;
+        } else {
+          result = WizData.fromHex(input);
+        }
+      }
+      if (convertType === CONVERT_TYPE.FROM_NUMBER) {
+        if (!validNumber(parseInt(input))) {
+          setConvertWizData(undefined);
+          errorMessageText = ERROR_MESSAGE.NUMBER_ERROR;
+        } else {
+          result = WizData.fromNumber(parseInt(input));
+        }
+      }
+      if (convertType === CONVERT_TYPE.FROM_TEXT) {
+        result = WizData.fromText(input);
+      }
+      if (convertType === CONVERT_TYPE.FROM_BYTES) {
+        if (!validByte(parseInt(input))) {
+          setConvertWizData(undefined);
+          errorMessageText = ERROR_MESSAGE.BYTE_ERROR;
+        } else {
+          const stringToArray = input.split(',');
+          const convertNumberArray = stringToArray.map((str) => Number(str));
+          const uint8Array = new Uint8Array(convertNumberArray);
+          result = WizData.fromBytes(uint8Array);
+        }
+      }
+      setErrorMessage(errorMessageText);
+      setConvertWizData(result);
+    };
+    if (input !== '') handleConvert();
+  }, [convertType, input]);
 
   const base64Result = Buffer.from(convertWizData?.hex || '', 'base64').toString();
 
   const sha256Result = convertWizData && convertWizData?.hex !== '' ? sha256v2(convertWizData) : '';
 
   const hash160Result = convertWizData && convertWizData?.hex !== '' ? hash160v2(convertWizData) : '';
+
+  const hexResult =
+    convertType === CONVERT_TYPE.FROM_HEX ? convertWizData?.hex : WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex;
+
+  const hexLeResult =
+    convertType === CONVERT_TYPE.FROM_HEX ? WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex : convertWizData?.hex;
+
+  const binResult =
+    convertType === CONVERT_TYPE.FROM_BIN ? convertWizData?.bin : WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin;
+
+  const binLeResult =
+    convertType === CONVERT_TYPE.FROM_BIN ? WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin : convertWizData?.bin;
 
   return (
     <div className="helper-page-main">
@@ -117,7 +120,14 @@ export const Helper = () => {
         <Form>
           <div className="helper-input-text">
             <h6 className="helper-tab-header">{convertType}</h6>
-            <Input type="text" value={input} onChange={(value: string) => setInput(value)} />
+            <Input className="helper-main-input" type="text" value={input} onChange={(value: string) => setInput(value)} />
+            <div className="helper-tab-info">
+              <div>
+                <span>Input Length: </span>
+                <span>{input.replace(/\s/g, '').length}</span>
+              </div>
+              {errorMessage ? <div className="helper-error-message">{errorMessage}</div> : null}
+            </div>
           </div>
         </Form>
         <div className="helper-tab-item">
@@ -126,18 +136,17 @@ export const Helper = () => {
               <h6 className="helper-tab-header">HEX</h6>
               <div>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={convertWizData ? convertWizData.hex : ''} disabled />
+                  <Input value={hexResult || ''} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.hex || '')}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
-                {errorMessage === ERROR_MESSAGE.HEX_ERROR ? <div className="helper-error-message">{ERROR_MESSAGE.HEX_ERROR}</div> : null}
               </div>
               <div className="helper-result-sub">
                 <div className="helper-result-sub-item-single">
-                  <span>Hex String Length:</span>
+                  <span>Hex Length:</span>
                   <Input value={convertWizData ? convertWizData.hex?.length.toString() : ''} disabled />
                 </div>
               </div>
@@ -146,35 +155,25 @@ export const Helper = () => {
             <div className="helper-result-item">
               <h6 className="helper-tab-header">BIN</h6>
               <InputGroup className="compile-modal-input-group">
-                <Input value={convertWizData ? convertWizData.bin : ''} disabled />
+                <Input value={binResult} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.bin || '')}>
                     <Icon icon="copy" />
                   </InputGroup.Button>
                 </Whisper>
               </InputGroup>
-              {errorMessage === ERROR_MESSAGE.BIN_ERROR ? <div className="helper-error-message">{ERROR_MESSAGE.BIN_ERROR}</div> : null}
             </div>
 
             <div className="helper-result-item">
-              <div>
-                <h6 className="helper-tab-header">BYTES</h6>
-                <InputGroup className="compile-modal-input-group">
-                  <Input value={convertWizData ? convertWizData.bytes.toString() : ''} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.bytes.toString() || '')}>
-                      <Icon icon="copy" />
-                    </InputGroup.Button>
-                  </Whisper>
-                </InputGroup>
-                {errorMessage === ERROR_MESSAGE.BYTE_ERROR ? <div className="helper-error-message">{ERROR_MESSAGE.BYTE_ERROR}</div> : null}
-              </div>
-              <div className="helper-result-sub">
-                <div className="helper-result-sub-item-single">
-                  <span>Byte Length:</span>
-                  <Input value={convertWizData ? convertWizData.bytes?.length.toString() : ''} disabled />
-                </div>
-              </div>
+              <h6 className="helper-tab-header">BIN LITTLE ENDIAN</h6>
+              <InputGroup className="compile-modal-input-group">
+                <Input value={binLeResult} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(binLeResult || '')}>
+                    <Icon icon="copy" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
             </div>
 
             <div className="helper-result-item">
@@ -187,17 +186,16 @@ export const Helper = () => {
                   </InputGroup.Button>
                 </Whisper>
               </InputGroup>
-              {errorMessage === ERROR_MESSAGE.NUMBER_ERROR ? <div className="helper-error-message">{ERROR_MESSAGE.NUMBER_ERROR}</div> : null}
             </div>
           </div>
           <div className="helper-result-text">
             <div className="helper-result-item">
-              <h6 className="helper-tab-header">TEXT</h6>
+              <h6 className="helper-tab-header">HEX LITTLE ENDIAN</h6>
               <div>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={convertWizData ? convertWizData.text : ''} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>TEXT has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.text || '')}>
+                  <Input value={hexLeResult} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(hexLeResult || '')}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -206,11 +204,11 @@ export const Helper = () => {
             </div>
 
             <div className="helper-result-item">
-              <h6 className="helper-tab-header">LE - BE REVERSE</h6>
+              <h6 className="helper-tab-header">TEXT</h6>
               <div>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={leBeReverseResult} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>LE - BE REVERSE has been copied to clipboard!</Tooltip>}>
+                  <Input value={convertWizData ? convertWizData.text : ''} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>TEXT has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.text || '')}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
