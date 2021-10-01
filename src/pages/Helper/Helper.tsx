@@ -77,12 +77,6 @@ export const Helper = () => {
     }
   };
 
-  const base64Result = Buffer.from(convertWizData?.hex || '', 'base64').toString();
-
-  const sha256Result = convertWizData && convertWizData?.hex !== '' ? sha256v2(convertWizData) : '';
-
-  const hash160Result = convertWizData && convertWizData?.hex !== '' ? hash160v2(convertWizData) : '';
-
   const hexResult =
     convertType === CONVERT_TYPE.FROM_HEX ? convertWizData?.hex : WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex;
 
@@ -100,6 +94,12 @@ export const Helper = () => {
   const bytesLeResult = convertType === CONVERT_TYPE.FROM_BYTES ? convertWizData?.bytes : convertWizData?.bytes.reverse();
 
   const numberResult = convertType === CONVERT_TYPE.FROM_NUMBER ? convertWizData?.number : parseInt(convertWizData?.hex || '', 16);
+
+  const base64Result = Buffer.from(convertWizData?.hex || '', 'hex').toString('base64');
+
+  const sha256Result = convertWizData && convertWizData?.hex !== '' ? sha256v2(convertWizData) : '';
+
+  const hash160Result = convertWizData && convertWizData?.hex !== '' ? hash160v2(convertWizData) : '';
 
   return (
     <div className="helper-page-main">
