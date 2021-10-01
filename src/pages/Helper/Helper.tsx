@@ -142,7 +142,13 @@ export const Helper = () => {
 
             <InputGroup inside>
               <Input className="helper-main-input" type="text" value={input} onChange={(value: string) => setInput(value.replace(/\s/g, ''))} />
-              <InputGroup.Button onClick={() => setInput('')}>
+              <InputGroup.Button
+                onClick={() => {
+                  setConvertWizData(undefined);
+                  setErrorMessage(undefined);
+                  setInput('');
+                }}
+              >
                 <Icon icon="close" />
               </InputGroup.Button>
             </InputGroup>
