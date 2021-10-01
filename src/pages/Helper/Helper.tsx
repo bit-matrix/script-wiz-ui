@@ -169,7 +169,7 @@ export const Helper = () => {
                 <InputGroup className="compile-modal-input-group">
                   <Input value={hexResult || ''} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.hex || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(hexResult || '')}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -204,7 +204,7 @@ export const Helper = () => {
               <InputGroup className="compile-modal-input-group">
                 <Input value={binResult || ''} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.bin || '')}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(binResult || '')}>
                     <Icon icon="copy" />
                   </InputGroup.Button>
                 </Whisper>
@@ -216,7 +216,7 @@ export const Helper = () => {
               <h6 className="helper-tab-header">HEX LITTLE ENDIAN</h6>
               <div>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={hexLeResult} disabled />
+                  <Input value={hexLeResult || ''} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(hexLeResult || '')}>
                       <Icon icon="copy" />
@@ -259,7 +259,7 @@ export const Helper = () => {
             <InputGroup className="compile-modal-input-group">
               <Input value={numberResult ? numberResult.toString() : ''} disabled />
               <Whisper placement="top" trigger="click" speaker={<Tooltip>NUMBER has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.number?.toString() || '')}>
+                <InputGroup.Button onClick={() => navigator.clipboard.writeText(numberResult ? numberResult.toString() : '')}>
                   <Icon icon="copy" />
                 </InputGroup.Button>
               </Whisper>
@@ -271,7 +271,7 @@ export const Helper = () => {
             <InputGroup className="compile-modal-input-group">
               <Input value={sha256Result} disabled />
               <Whisper placement="top" trigger="click" speaker={<Tooltip>SHA256 has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData ? sha256v2(convertWizData) : '')}>
+                <InputGroup.Button onClick={() => navigator.clipboard.writeText(sha256Result)}>
                   <Icon icon="copy" />
                 </InputGroup.Button>
               </Whisper>
@@ -283,7 +283,7 @@ export const Helper = () => {
             <InputGroup className="compile-modal-input-group">
               <Input value={hash160Result} disabled />
               <Whisper placement="top" trigger="click" speaker={<Tooltip>HASH160 has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData ? hash160v2(convertWizData) : '')}>
+                <InputGroup.Button onClick={() => navigator.clipboard.writeText(hash160Result)}>
                   <Icon icon="copy" />
                 </InputGroup.Button>
               </Whisper>
@@ -311,7 +311,7 @@ export const Helper = () => {
             <div className="helper-result-item">
               <h6 className="helper-tab-header">BASE 64</h6>
               <InputGroup className="compile-modal-input-group">
-                <Input value={base64Result} disabled />
+                <Input value={base64Result || ''} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>BASE 64 has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(base64Result)}>
                     <Icon icon="copy" />
