@@ -63,17 +63,19 @@ export const Helper = () => {
   }, [convertType, input]);
 
   const inputlLeChange = () => {
-    if (convertType === CONVERT_TYPE.FROM_HEX) {
-      const leHex = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex;
-      setInput(leHex);
-    }
-    if (convertType === CONVERT_TYPE.FROM_BIN) {
-      const leBin = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin;
-      setInput(leBin);
-    }
-    if (convertType === CONVERT_TYPE.FROM_BYTES) {
-      const leBytes = convertWizData?.bytes.reverse();
-      leBytes && setInput(leBytes?.toString());
+    if (input !== '') {
+      if (convertType === CONVERT_TYPE.FROM_HEX) {
+        const leHex = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex;
+        setInput(leHex);
+      }
+      if (convertType === CONVERT_TYPE.FROM_BIN) {
+        const leBin = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin;
+        setInput(leBin);
+      }
+      if (convertType === CONVERT_TYPE.FROM_BYTES) {
+        const leBytes = convertWizData?.bytes.reverse();
+        leBytes && setInput(leBytes?.toString());
+      }
     }
   };
 
@@ -137,7 +139,13 @@ export const Helper = () => {
                 </Checkbox>
               ) : null}
             </div>
-            <Input className="helper-main-input" type="text" value={input} onChange={(value: string) => setInput(value.replace(/\s/g, ''))} />
+
+            <InputGroup inside>
+              <Input className="helper-main-input" type="text" value={input} onChange={(value: string) => setInput(value.replace(/\s/g, ''))} />
+              <InputGroup.Button onClick={() => setInput('')}>
+                <Icon icon="close" />
+              </InputGroup.Button>
+            </InputGroup>
             <div className="helper-tab-info">
               <div>
                 <span>Input Length: </span>
