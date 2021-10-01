@@ -95,7 +95,12 @@ export const Helper = () => {
 
   const numberResult = convertType === CONVERT_TYPE.FROM_NUMBER ? convertWizData?.number : parseInt(convertWizData?.hex || '', 16);
 
-  const base64Result = Buffer.from(convertWizData?.hex || '', 'hex').toString('base64');
+  const base64Result =
+    convertType === CONVERT_TYPE.FROM_NUMBER
+      ? Buffer.from(convertWizData?.hex || '', 'hex')
+          .reverse()
+          .toString('base64')
+      : Buffer.from(convertWizData?.hex || '', 'hex').toString('base64');
 
   const sha256Result = convertWizData && convertWizData?.hex !== '' ? sha256v2(convertWizData) : '';
 
