@@ -2,28 +2,10 @@ import React, { useEffect, useState } from 'react';
 import WizData from '@script-wiz/wiz-data';
 import { Checkbox, Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { hash160v2, sha256v2 } from '@script-wiz/lib';
+import { CONVERT_TYPE } from '../../utils/enum/CONVERT_TYPE';
+import { ERROR_MESSAGE } from '../../utils/enum/ERROR_MESSAGE';
+import { validBin, validBytes, validHex, validNumber } from '../../utils/helper';
 import './Helper.scss';
-
-enum CONVERT_TYPE {
-  FROM_HEX = 'From Hex',
-  FROM_BIN = 'From Bin',
-  FROM_NUMBER = 'From Number',
-  FROM_TEXT = 'From Text',
-  FROM_BYTES = 'From Bytes',
-}
-
-enum ERROR_MESSAGE {
-  BIN_ERROR = 'Invalid bin string!',
-  HEX_ERROR = 'Invalid hex string!',
-  BYTE_ERROR = 'Invalid byte number!',
-  NUMBER_ERROR = 'Invalid number!',
-}
-
-const validByte = (byte: number): boolean => 0 <= byte && byte <= 255;
-const validBin = (bin: string): boolean => !/[^01]/u.test(bin) && bin.length % 8 === 0;
-const validHex = (hex: string) => hex.length % 2 === 0 && !/[^a-fA-F0-9]/u.test(hex);
-const validNumber = (number: number): boolean => !isNaN(number);
-const validBytes = (bytes: number[]) => bytes.every(validByte) && bytes.every(validNumber);
 
 export const Helper = () => {
   const [input, setInput] = useState<string>('');
