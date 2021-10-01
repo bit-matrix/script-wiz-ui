@@ -134,7 +134,7 @@ export const Helper = () => {
             <div className="helper-tab-header-container">
               <h6 className="helper-tab-header">{convertType}</h6>
               {convertType === CONVERT_TYPE.FROM_BIN || convertType === CONVERT_TYPE.FROM_BYTES || convertType === CONVERT_TYPE.FROM_HEX ? (
-                <Checkbox value="LE" onChange={inputlLeChange}>
+                <Checkbox className="helper-le-checkbox" value="LE" onChange={inputlLeChange}>
                   LE
                 </Checkbox>
               ) : null}
