@@ -91,3 +91,9 @@
   font-size: 0.875rem;
   font-weight: 600;
 }
+
+.helper-tab-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import WizData from '@script-wiz/wiz-data';
-import { Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
+import { Checkbox, Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { hash160v2, sha256v2 } from '@script-wiz/lib';
 import './Helper.scss';
 
@@ -80,6 +80,21 @@ export const Helper = () => {
     if (input !== '') handleConvert();
   }, [convertType, input]);
 
+  const inputlLeChange = () => {
+    if (convertType === CONVERT_TYPE.FROM_HEX) {
+      const leHex = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex;
+      setInput(leHex);
+    }
+    if (convertType === CONVERT_TYPE.FROM_BIN) {
+      const leBin = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin;
+      setInput(leBin);
+    }
+    if (convertType === CONVERT_TYPE.FROM_BYTES) {
+      const leBytes = convertWizData?.bytes.reverse();
+      leBytes && setInput(leBytes?.toString());
+    }
+  };
+
   const base64Result = Buffer.from(convertWizData?.hex || '', 'base64').toString();
 
   const sha256Result = convertWizData && convertWizData?.hex !== '' ? sha256v2(convertWizData) : '';
@@ -98,9 +113,9 @@ export const Helper = () => {
   const binLeResult =
     convertType === CONVERT_TYPE.FROM_BIN ? WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin : convertWizData?.bin;
 
-  const byteResult = convertWizData?.bytes;
+  const bytesResult = convertType === CONVERT_TYPE.FROM_BYTES ? convertWizData?.bytes.reverse() : convertWizData?.bytes;
 
-  const byteLeResult = byteResult && WizData.fromBytes(byteResult.reverse()).bytes;
+  const bytesLeResult = convertType === CONVERT_TYPE.FROM_BYTES ? convertWizData?.bytes : convertWizData?.bytes.reverse();
 
   const numberResult = convertType === CONVERT_TYPE.FROM_NUMBER ? convertWizData?.number : parseInt(convertWizData?.hex || '', 16);
 
@@ -127,7 +142,14 @@ export const Helper = () => {
       <div className="helper-page-item">
         <Form>
           <div className="helper-input-text">
-            <h6 className="helper-tab-header">{convertType}</h6>
+            <div className="helper-tab-header-container">
+              <h6 className="helper-tab-header">{convertType}</h6>
+              {convertType === CONVERT_TYPE.FROM_BIN || convertType === CONVERT_TYPE.FROM_BYTES || convertType === CONVERT_TYPE.FROM_HEX ? (
+                <Checkbox value="LE" onChange={inputlLeChange}>
+                  LE
+                </Checkbox>
+              ) : null}
+            </div>
             <Input className="helper-main-input" type="text" value={input} onChange={(value: string) => setInput(value.replace(/\s/g, ''))} />
             <div className="helper-tab-info">
               <div>
@@ -162,9 +184,9 @@ export const Helper = () => {
               <div>
                 <h6 className="helper-tab-header">BYTES</h6>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={byteResult?.toString()} disabled />
+                  <Input value={bytesResult?.toString() || ''} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(byteResult?.toString() || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(bytesResult?.toString() || '')}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -179,7 +201,7 @@ export const Helper = () => {
             <div className="helper-result-item">
               <h6 className="helper-tab-header">BIN</h6>
               <InputGroup className="compile-modal-input-group">
-                <Input value={binResult} disabled />
+                <Input value={binResult || ''} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.bin || '')}>
                     <Icon icon="copy" />
@@ -207,9 +229,9 @@ export const Helper = () => {
               <div>
                 <h6 className="helper-tab-header">BYTES LITTLE ENDIAN</h6>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={byteLeResult?.toString()} disabled />
+                  <Input value={bytesLeResult?.toString() || ''} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(byteLeResult?.toString() || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(bytesLeResult?.toString() || '')}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -220,7 +242,7 @@ export const Helper = () => {
             <div className="helper-result-item">
               <h6 className="helper-tab-header">BIN LITTLE ENDIAN</h6>
               <InputGroup className="compile-modal-input-group">
-                <Input value={binLeResult} disabled />
+                <Input value={binLeResult || ''} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(binLeResult || '')}>
                     <Icon icon="copy" />
@@ -234,7 +256,7 @@ export const Helper = () => {
           <div className="helper-result-item">
             <h6 className="helper-tab-header">NUMBER</h6>
             <InputGroup className="compile-modal-input-group">
-              <Input value={numberResult?.toString()} disabled />
+              <Input value={numberResult ? numberResult.toString() : ''} disabled />
               <Whisper placement="top" trigger="click" speaker={<Tooltip>NUMBER has been copied to clipboard!</Tooltip>}>
                 <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.number?.toString() || '')}>
                   <Icon icon="copy" />
