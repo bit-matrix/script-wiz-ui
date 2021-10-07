@@ -112,7 +112,7 @@
 }
 
 .helper-content {
-  height: 70vh;
+  height: 80vh;
   overflow-y: auto;
   padding-right: 0.75rem;
 }
@@ -146,5 +146,11 @@
 
   .helper-mb {
     margin-bottom: 2rem;
+  }
+}
+
+@media only screen and (max-height: 780px) {
+  .helper-content {
+    height: 65vh;
   }
 }
