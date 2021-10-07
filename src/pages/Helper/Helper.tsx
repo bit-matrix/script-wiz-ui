@@ -154,6 +154,7 @@ export const Helper = () => {
           getResults(wizData);
         }
       }
+
       if (convertType === CONVERT_TYPE.FROM_HEX) {
         if (!validHex(input)) {
           setConvertedWizData(initialState);
@@ -163,6 +164,7 @@ export const Helper = () => {
           getResults(wizData);
         }
       }
+
       if (convertType === CONVERT_TYPE.FROM_NUMBER) {
         if (!validNumber(Number(input))) {
           setConvertedWizData(initialState);
@@ -172,10 +174,12 @@ export const Helper = () => {
           getResults(wizData);
         }
       }
+
       if (convertType === CONVERT_TYPE.FROM_TEXT) {
         wizData = WizData.fromText(input);
         getResults(wizData);
       }
+
       if (convertType === CONVERT_TYPE.FROM_BYTES) {
         const stringToArray = input.split(',');
         const convertNumberArray = stringToArray.map((str) => Number(str));
@@ -188,6 +192,7 @@ export const Helper = () => {
           getResults(wizData);
         }
       }
+
       setErrorMessage(errorMessageText);
     };
 
@@ -199,10 +204,15 @@ export const Helper = () => {
     }
   }, [convertType, input, checkedLe]);
 
+  const inputLength = input.replace(/,/g, '').length;
+
   const byteLength = convertedWizData.bytesLeResult ? convertedWizData.bytesResult.split(',').length : '';
+
   const hexLength = convertedWizData.hexResult ? convertedWizData.hexResult.length.toString() : '';
+
   const splittedBinResult =
     convertedWizData.binResult.substring(0, 8) + ' ' + convertedWizData.binResult.substring(8, convertedWizData.binResult.length);
+
   const splittedtBinLeReult =
     convertedWizData.binLeResult.substring(0, 8) + ' ' + convertedWizData.binLeResult.substring(8, convertedWizData.binResult.length);
 
@@ -253,7 +263,7 @@ export const Helper = () => {
             <div className="helper-tab-info">
               <div>
                 <span>Input Length: </span>
-                <span>{input.length}</span>
+                <span>{inputLength}</span>
               </div>
               {errorMessage ? <div className="helper-error-message">{errorMessage}</div> : null}
             </div>
