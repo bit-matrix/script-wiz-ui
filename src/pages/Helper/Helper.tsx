@@ -43,7 +43,6 @@ export const Helper = () => {
   const [checkedLe, setCheckedLe] = useState<boolean>();
 
   const reverseHex = (value: string) => Buffer.from(value, 'hex').reverse().toString('hex');
-
   const convertBase64 = (hexValue: string) => Buffer.from(hexValue, 'hex').toString('base64');
 
   useEffect(() => {
@@ -56,68 +55,79 @@ export const Helper = () => {
       let bytesLeResult = '';
       let numberResult = '';
       let base64Result = '';
+      let sha256Result = '';
+      let hash160Result = '';
 
       const reverseHexValue = reverseHex(wizdataInput.hex);
-      const wizdataReverse = WizData.fromHex(reverseHexValue);
+
+      const wizdata = checkedLe ? WizData.fromHex(reverseHexValue) : wizdataInput;
+      const wizdataReverse = checkedLe ? wizdataInput : WizData.fromHex(reverseHexValue);
 
       if (convertType === CONVERT_TYPE.FROM_HEX) {
-        hexResult = wizdataInput.hex;
-        hexLeResult = reverseHexValue;
+        hexResult = wizdata.hex;
+        hexLeResult = wizdataReverse.hex;
         binResult = wizdataReverse.bin;
-        binLeResult = wizdataInput.bin;
+        binLeResult = wizdata.bin;
         bytesResult = wizdataReverse.bytes.join(',');
-        bytesLeResult = wizdataInput.bytes.join(',');
+        bytesLeResult = wizdata.bytes.join(',');
         numberResult = wizdataReverse.number?.toString() || '';
-        base64Result = convertBase64(wizdataInput.hex);
+        base64Result = convertBase64(wizdata.hex);
+        sha256Result = sha256v2(wizdata);
+        hash160Result = hash160v2(wizdata);
       }
 
       if (convertType === CONVERT_TYPE.FROM_NUMBER) {
-        hexResult = reverseHexValue;
-        hexLeResult = wizdataInput.hex;
-        binResult = wizdataInput.bin;
+        hexResult = wizdataReverse.hex;
+        hexLeResult = wizdata.hex;
+        binResult = wizdata.bin;
         binLeResult = wizdataReverse.bin;
-        bytesResult = wizdataInput.bytes.join(',');
+        bytesResult = wizdata.bytes.join(',');
         bytesLeResult = wizdataReverse.bytes.join(',');
-        numberResult = wizdataInput.number?.toString() || '';
-        base64Result = convertBase64(wizdataInput.hex);
+        numberResult = wizdata.number?.toString() || '';
+        base64Result = convertBase64(wizdataReverse.hex);
+        sha256Result = sha256v2(wizdataReverse);
+        hash160Result = hash160v2(wizdataReverse);
       }
 
       if (convertType === CONVERT_TYPE.FROM_BYTES) {
-        hexResult = reverseHexValue;
-        hexLeResult = wizdataInput.hex;
-        binResult = wizdataInput.bin;
+        hexResult = wizdataReverse.hex;
+        hexLeResult = wizdata.hex;
+        binResult = wizdata.bin;
         binLeResult = wizdataReverse.bin;
-        bytesResult = wizdataInput.bytes.join(',');
+        bytesResult = wizdata.bytes.join(',');
         bytesLeResult = wizdataReverse.bytes.join(',');
-        numberResult = wizdataInput.number?.toString() || '';
-        base64Result = convertBase64(wizdataInput.hex);
+        numberResult = wizdata.number?.toString() || '';
+        base64Result = convertBase64(wizdataReverse.hex);
+        sha256Result = sha256v2(wizdataReverse);
+        hash160Result = hash160v2(wizdataReverse);
       }
 
       if (convertType === CONVERT_TYPE.FROM_BIN) {
-        hexResult = reverseHexValue;
-        hexLeResult = wizdataInput.hex;
-        binResult = wizdataInput.bin;
+        hexResult = wizdataReverse.hex;
+        hexLeResult = wizdata.hex;
+        binResult = wizdata.bin;
         binLeResult = wizdataReverse.bin;
-        bytesResult = wizdataInput.bytes.join(',');
+        bytesResult = wizdata.bytes.join(',');
         bytesLeResult = wizdataReverse.bytes.join(',');
-        numberResult = wizdataInput.number?.toString() || '';
-        base64Result = convertBase64(wizdataInput.hex);
+        numberResult = wizdata.number?.toString() || '';
+        base64Result = convertBase64(wizdataReverse.hex);
+        sha256Result = sha256v2(wizdataReverse);
+        hash160Result = hash160v2(wizdataReverse);
       }
 
       if (convertType === CONVERT_TYPE.FROM_TEXT) {
-        hexResult = wizdataInput.hex;
-        hexLeResult = reverseHexValue;
+        hexResult = wizdata.hex;
+        hexLeResult = wizdataReverse.hex;
         binResult = wizdataReverse.bin;
-        binLeResult = wizdataInput.bin;
+        binLeResult = wizdata.bin;
         bytesResult = wizdataReverse.bytes.join(',');
-        bytesLeResult = wizdataInput.bytes.join(',');
+        bytesLeResult = wizdata.bytes.join(',');
         numberResult = wizdataReverse.number?.toString() || '';
-        base64Result = convertBase64(wizdataInput.hex);
+        base64Result = convertBase64(wizdata.hex);
+        sha256Result = sha256v2(wizdata);
       }
 
-      const sha256Result = sha256v2(wizdataInput);
-      const hash160Result = hash160v2(wizdataInput);
-      const textResult = wizdataInput.text || '';
+      const textResult = wizdata.text || '';
 
       setConvertedWizData({
         hexResult,
