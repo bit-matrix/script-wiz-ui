@@ -4,7 +4,7 @@ import { Checkbox, Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Wh
 import { hash160v2, sha256v2 } from '@script-wiz/lib';
 import { CONVERT_TYPE } from '../../utils/enum/CONVERT_TYPE';
 import { ERROR_MESSAGE } from '../../utils/enum/ERROR_MESSAGE';
-import { validBin, validBytes, validHex, validNumber } from '../../utils/helper';
+import { convertBase64, reverseHex, validBin, validBytes, validHex, validNumber } from '../../utils/helper';
 import './Helper.scss';
 
 type Result = {
@@ -41,9 +41,6 @@ export const Helper = () => {
   const [convertType, setConvertType] = useState<CONVERT_TYPE>(CONVERT_TYPE.FROM_HEX);
   const [errorMessage, setErrorMessage] = useState<ERROR_MESSAGE | undefined>(undefined);
   const [checkedLe, setCheckedLe] = useState<boolean>();
-
-  const reverseHex = (value: string) => Buffer.from(value, 'hex').reverse().toString('hex');
-  const convertBase64 = (hexValue: string) => Buffer.from(hexValue, 'hex').toString('base64');
 
   useEffect(() => {
     const getResults = (wizdataInput: WizData) => {
