@@ -269,163 +269,167 @@ export const Helper = () => {
             </div>
           </div>
         </Form>
-        <div className="helper-tab-item">
-          <div className="helper-result-text">
-            <div className="helper-result-item">
-              <h6 className="helper-tab-header">HEX</h6>
-              <div>
+        <div className="helper-content">
+          <div className="helper-tab-item">
+            <div className="helper-result-text">
+              <div className="helper-result-item">
+                <h6 className="helper-tab-header">HEX</h6>
+                <div>
+                  <InputGroup className="compile-modal-input-group">
+                    <Input value={convertedWizData.hexResult} disabled />
+                    <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX has been copied to clipboard!</Tooltip>}>
+                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexResult)}>
+                        <Icon icon="copy" />
+                      </InputGroup.Button>
+                    </Whisper>
+                  </InputGroup>
+                </div>
+                <div className="helper-item-length">
+                  <span>Hex Length: </span>
+                  <span>{hexLength}</span>
+                </div>
+              </div>
+
+              <div className="helper-result-item">
+                <div>
+                  <h6 className="helper-tab-header">BYTES</h6>
+                  <InputGroup className="compile-modal-input-group">
+                    <Input value={convertedWizData.bytesResult} disabled />
+                    <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES has been copied to clipboard!</Tooltip>}>
+                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesResult)}>
+                        <Icon icon="copy" />
+                      </InputGroup.Button>
+                    </Whisper>
+                  </InputGroup>
+                </div>
+                <div className="helper-item-length">
+                  <span>Byte Length: </span>
+                  <span>{byteLength}</span>
+                </div>
+              </div>
+
+              <div className="helper-result-item">
+                <h6 className="helper-tab-header">BIN</h6>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={convertedWizData.hexResult} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexResult)}>
+                  <Input value={splittedBinResult} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binResult)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
               </div>
-              <div className="helper-item-length">
-                <span>Hex Length: </span>
-                <span>{hexLength}</span>
-              </div>
             </div>
+            <div className="helper-result-text">
+              <div className="helper-result-item helper-mb">
+                <h6 className="helper-tab-header">HEX LE</h6>
+                <div>
+                  <InputGroup className="compile-modal-input-group">
+                    <Input value={convertedWizData.hexLeResult} disabled />
+                    <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LE has been copied to clipboard!</Tooltip>}>
+                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexLeResult)}>
+                        <Icon icon="copy" />
+                      </InputGroup.Button>
+                    </Whisper>
+                  </InputGroup>
+                </div>
+              </div>
 
-            <div className="helper-result-item">
-              <div>
-                <h6 className="helper-tab-header">BYTES</h6>
+              <div className="helper-result-item helper-mb">
+                <div>
+                  <h6 className="helper-tab-header">BYTES LE</h6>
+                  <InputGroup className="compile-modal-input-group">
+                    <Input value={convertedWizData.bytesLeResult} disabled />
+                    <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES LE has been copied to clipboard!</Tooltip>}>
+                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesLeResult)}>
+                        <Icon icon="copy" />
+                      </InputGroup.Button>
+                    </Whisper>
+                  </InputGroup>
+                </div>
+              </div>
+
+              <div className="helper-result-item">
+                <h6 className="helper-tab-header">BIN LE</h6>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={convertedWizData.bytesResult} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesResult)}>
+                  <Input value={splittedtBinLeReult} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN LE has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binLeResult)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
               </div>
-              <div className="helper-item-length">
-                <span>Byte Length: </span>
-                <span>{byteLength}</span>
-              </div>
             </div>
-
+          </div>
+          <div className="helper-long-items">
             <div className="helper-result-item">
-              <h6 className="helper-tab-header">BIN</h6>
+              <h6 className="helper-tab-header">NUMBER</h6>
               <InputGroup className="compile-modal-input-group">
-                <Input value={splittedBinResult} disabled />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binResult)}>
+                <Input value={convertedWizData.numberResult || ''} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>NUMBER has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button
+                    onClick={() => navigator.clipboard.writeText(convertedWizData.numberResult ? convertedWizData.numberResult : '')}
+                  >
+                    <Icon icon="copy" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
+            </div>
+
+            <div className="helper-result-item">
+              <h6 className="helper-tab-header">SHA256</h6>
+              <InputGroup className="compile-modal-input-group">
+                <Input value={convertedWizData.sha256Result} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>SHA256 has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.sha256Result)}>
+                    <Icon icon="copy" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
+            </div>
+
+            <div className="helper-result-item">
+              <h6 className="helper-tab-header">HASH160</h6>
+              <InputGroup className="compile-modal-input-group">
+                <Input value={convertedWizData.hash160Result} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>HASH160 has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hash160Result)}>
                     <Icon icon="copy" />
                   </InputGroup.Button>
                 </Whisper>
               </InputGroup>
             </div>
           </div>
-          <div className="helper-result-text">
-            <div className="helper-result-item helper-mb">
-              <h6 className="helper-tab-header">HEX LE</h6>
-              <div>
+          <div className="helper-footer-items">
+            <div className="helper-result-text">
+              <div className="helper-result-item">
+                <h6 className="helper-tab-header">TEXT</h6>
+                <div>
+                  <InputGroup className="compile-modal-input-group">
+                    <Input value={convertedWizData.textResult || ''} disabled />
+                    <Whisper placement="top" trigger="click" speaker={<Tooltip>TEXT has been copied to clipboard!</Tooltip>}>
+                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.textResult || '')}>
+                        <Icon icon="copy" />
+                      </InputGroup.Button>
+                    </Whisper>
+                  </InputGroup>
+                </div>
+              </div>
+            </div>
+
+            <div className="helper-result-text">
+              <div className="helper-result-item">
+                <h6 className="helper-tab-header">BASE 64</h6>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={convertedWizData.hexLeResult} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LE has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexLeResult)}>
+                  <Input value={convertedWizData.base64Result} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BASE 64 has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.base64Result)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
               </div>
-            </div>
-
-            <div className="helper-result-item helper-mb">
-              <div>
-                <h6 className="helper-tab-header">BYTES LE</h6>
-                <InputGroup className="compile-modal-input-group">
-                  <Input value={convertedWizData.bytesLeResult} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES LE has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesLeResult)}>
-                      <Icon icon="copy" />
-                    </InputGroup.Button>
-                  </Whisper>
-                </InputGroup>
-              </div>
-            </div>
-
-            <div className="helper-result-item">
-              <h6 className="helper-tab-header">BIN LE</h6>
-              <InputGroup className="compile-modal-input-group">
-                <Input value={splittedtBinLeReult} disabled />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN LE has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binLeResult)}>
-                    <Icon icon="copy" />
-                  </InputGroup.Button>
-                </Whisper>
-              </InputGroup>
-            </div>
-          </div>
-        </div>
-        <div className="helper-long-items">
-          <div className="helper-result-item">
-            <h6 className="helper-tab-header">NUMBER</h6>
-            <InputGroup className="compile-modal-input-group">
-              <Input value={convertedWizData.numberResult || ''} disabled />
-              <Whisper placement="top" trigger="click" speaker={<Tooltip>NUMBER has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.numberResult ? convertedWizData.numberResult : '')}>
-                  <Icon icon="copy" />
-                </InputGroup.Button>
-              </Whisper>
-            </InputGroup>
-          </div>
-
-          <div className="helper-result-item">
-            <h6 className="helper-tab-header">SHA256</h6>
-            <InputGroup className="compile-modal-input-group">
-              <Input value={convertedWizData.sha256Result} disabled />
-              <Whisper placement="top" trigger="click" speaker={<Tooltip>SHA256 has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.sha256Result)}>
-                  <Icon icon="copy" />
-                </InputGroup.Button>
-              </Whisper>
-            </InputGroup>
-          </div>
-
-          <div className="helper-result-item">
-            <h6 className="helper-tab-header">HASH160</h6>
-            <InputGroup className="compile-modal-input-group">
-              <Input value={convertedWizData.hash160Result} disabled />
-              <Whisper placement="top" trigger="click" speaker={<Tooltip>HASH160 has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hash160Result)}>
-                  <Icon icon="copy" />
-                </InputGroup.Button>
-              </Whisper>
-            </InputGroup>
-          </div>
-        </div>
-        <div className="helper-footer-items">
-          <div className="helper-result-text">
-            <div className="helper-result-item">
-              <h6 className="helper-tab-header">TEXT</h6>
-              <div>
-                <InputGroup className="compile-modal-input-group">
-                  <Input value={convertedWizData.textResult || ''} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>TEXT has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.textResult || '')}>
-                      <Icon icon="copy" />
-                    </InputGroup.Button>
-                  </Whisper>
-                </InputGroup>
-              </div>
-            </div>
-          </div>
-
-          <div className="helper-result-text">
-            <div className="helper-result-item">
-              <h6 className="helper-tab-header">BASE 64</h6>
-              <InputGroup className="compile-modal-input-group">
-                <Input value={convertedWizData.base64Result} disabled />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>BASE 64 has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.base64Result)}>
-                    <Icon icon="copy" />
-                  </InputGroup.Button>
-                </Whisper>
-              </InputGroup>
             </div>
           </div>
         </div>
