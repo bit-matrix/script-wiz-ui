@@ -7,106 +7,197 @@ import { ERROR_MESSAGE } from '../../utils/enum/ERROR_MESSAGE';
 import { validBin, validBytes, validHex, validNumber } from '../../utils/helper';
 import './Helper.scss';
 
+type Result = {
+  hexResult: string;
+  hexLeResult: string;
+  binResult: string;
+  binLeResult: string;
+  bytesResult: string;
+  bytesLeResult: string;
+  numberResult?: string;
+  base64Result: string;
+  sha256Result: string;
+  hash160Result: string;
+  textResult: string;
+};
+
+const initialState = {
+  hexResult: '',
+  hexLeResult: '',
+  binResult: '',
+  binLeResult: '',
+  bytesResult: '',
+  bytesLeResult: '',
+  numberResult: '',
+  base64Result: '',
+  sha256Result: '',
+  hash160Result: '',
+  textResult: '',
+};
+
 export const Helper = () => {
   const [input, setInput] = useState<string>('');
-  const [convertWizData, setConvertWizData] = useState<WizData>();
+  const [convertedWizData, setConvertedWizData] = useState<Result>(initialState);
   const [convertType, setConvertType] = useState<CONVERT_TYPE>(CONVERT_TYPE.FROM_HEX);
   const [errorMessage, setErrorMessage] = useState<ERROR_MESSAGE | undefined>(undefined);
+  const [checkedLe, setCheckedLe] = useState<boolean>();
+
+  const reverseHex = (value: string) => Buffer.from(value, 'hex').reverse().toString('hex');
+
+  const convertBase64 = (hexValue: string) => Buffer.from(hexValue, 'hex').toString('base64');
 
   useEffect(() => {
+    const getResults = (wizdataInput: WizData) => {
+      let hexResult = '';
+      let hexLeResult = '';
+      let binResult = '';
+      let binLeResult = '';
+      let bytesResult = '';
+      let bytesLeResult = '';
+      let numberResult = '';
+      let base64Result = '';
+
+      const reverseHexValue = reverseHex(wizdataInput.hex);
+      const wizdataReverse = WizData.fromHex(reverseHexValue);
+
+      if (convertType === CONVERT_TYPE.FROM_HEX) {
+        hexResult = wizdataInput.hex;
+        hexLeResult = reverseHexValue;
+        binResult = wizdataReverse.bin;
+        binLeResult = wizdataInput.bin;
+        bytesResult = wizdataReverse.bytes.join(',');
+        bytesLeResult = wizdataInput.bytes.join(',');
+        numberResult = wizdataReverse.number?.toString() || '';
+        base64Result = convertBase64(wizdataInput.hex);
+      }
+
+      if (convertType === CONVERT_TYPE.FROM_NUMBER) {
+        hexResult = reverseHexValue;
+        hexLeResult = wizdataInput.hex;
+        binResult = wizdataInput.bin;
+        binLeResult = wizdataReverse.bin;
+        bytesResult = wizdataInput.bytes.join(',');
+        bytesLeResult = wizdataReverse.bytes.join(',');
+        numberResult = wizdataInput.number?.toString() || '';
+        base64Result = convertBase64(wizdataInput.hex);
+      }
+
+      if (convertType === CONVERT_TYPE.FROM_BYTES) {
+        hexResult = reverseHexValue;
+        hexLeResult = wizdataInput.hex;
+        binResult = wizdataInput.bin;
+        binLeResult = wizdataReverse.bin;
+        bytesResult = wizdataInput.bytes.join(',');
+        bytesLeResult = wizdataReverse.bytes.join(',');
+        numberResult = wizdataInput.number?.toString() || '';
+        base64Result = convertBase64(wizdataInput.hex);
+      }
+
+      if (convertType === CONVERT_TYPE.FROM_BIN) {
+        hexResult = reverseHexValue;
+        hexLeResult = wizdataInput.hex;
+        binResult = wizdataInput.bin;
+        binLeResult = wizdataReverse.bin;
+        bytesResult = wizdataInput.bytes.join(',');
+        bytesLeResult = wizdataReverse.bytes.join(',');
+        numberResult = wizdataInput.number?.toString() || '';
+        base64Result = convertBase64(wizdataInput.hex);
+      }
+
+      if (convertType === CONVERT_TYPE.FROM_TEXT) {
+        hexResult = wizdataInput.hex;
+        hexLeResult = reverseHexValue;
+        binResult = wizdataReverse.bin;
+        binLeResult = wizdataInput.bin;
+        bytesResult = wizdataReverse.bytes.join(',');
+        bytesLeResult = wizdataInput.bytes.join(',');
+        numberResult = wizdataReverse.number?.toString() || '';
+        base64Result = convertBase64(wizdataInput.hex);
+      }
+
+      const sha256Result = sha256v2(wizdataInput);
+      const hash160Result = hash160v2(wizdataInput);
+      const textResult = wizdataInput.text || '';
+
+      setConvertedWizData({
+        hexResult,
+        hexLeResult,
+        binResult,
+        binLeResult,
+        bytesResult,
+        bytesLeResult,
+        numberResult,
+        base64Result,
+        sha256Result,
+        hash160Result,
+        textResult,
+      });
+    };
+
     const handleConvert = () => {
-      let result: WizData | undefined;
+      let wizData: WizData | undefined;
       let errorMessageText = undefined;
 
       if (convertType === CONVERT_TYPE.FROM_BIN) {
         if (!validBin(input)) {
-          setConvertWizData(undefined);
+          setConvertedWizData(initialState);
           errorMessageText = ERROR_MESSAGE.BIN_ERROR;
         } else {
-          result = WizData.fromBin(input);
+          wizData = WizData.fromBin(input);
+          getResults(wizData);
         }
       }
       if (convertType === CONVERT_TYPE.FROM_HEX) {
         if (!validHex(input)) {
-          setConvertWizData(undefined);
+          setConvertedWizData(initialState);
           errorMessageText = ERROR_MESSAGE.HEX_ERROR;
         } else {
-          result = WizData.fromHex(input);
+          wizData = WizData.fromHex(input);
+          getResults(wizData);
         }
       }
       if (convertType === CONVERT_TYPE.FROM_NUMBER) {
         if (!validNumber(Number(input))) {
-          setConvertWizData(undefined);
+          setConvertedWizData(initialState);
           errorMessageText = ERROR_MESSAGE.NUMBER_ERROR;
         } else {
-          result = WizData.fromNumber(parseInt(input));
+          wizData = WizData.fromNumber(parseInt(input));
+          getResults(wizData);
         }
       }
       if (convertType === CONVERT_TYPE.FROM_TEXT) {
-        result = WizData.fromText(input);
+        wizData = WizData.fromText(input);
+        getResults(wizData);
       }
       if (convertType === CONVERT_TYPE.FROM_BYTES) {
         const stringToArray = input.split(',');
         const convertNumberArray = stringToArray.map((str) => Number(str));
         if (!validBytes(convertNumberArray)) {
-          setConvertWizData(undefined);
+          setConvertedWizData(initialState);
           errorMessageText = ERROR_MESSAGE.BYTE_ERROR;
         } else {
           const uint8Array = new Uint8Array(convertNumberArray);
-          result = WizData.fromBytes(uint8Array);
+          wizData = WizData.fromBytes(uint8Array);
+          getResults(wizData);
         }
       }
       setErrorMessage(errorMessageText);
-      setConvertWizData(result);
     };
-    if (input !== '') handleConvert();
-  }, [convertType, input]);
 
-  const inputlLeChange = () => {
     if (input !== '') {
-      if (convertType === CONVERT_TYPE.FROM_HEX) {
-        const leHex = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex;
-        setInput(leHex);
-      }
-      if (convertType === CONVERT_TYPE.FROM_BIN) {
-        const leBin = WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin;
-        setInput(leBin);
-      }
-      if (convertType === CONVERT_TYPE.FROM_BYTES) {
-        const leBytes = convertWizData?.bytes.reverse();
-        leBytes && setInput(leBytes?.toString());
-      }
+      handleConvert();
+    } else {
+      setConvertedWizData(initialState);
+      setErrorMessage(undefined);
     }
-  };
+  }, [convertType, input, checkedLe]);
 
-  const hexResult =
-    convertType === CONVERT_TYPE.FROM_HEX ? convertWizData?.hex : WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex;
-
-  const hexLeResult =
-    convertType === CONVERT_TYPE.FROM_HEX ? WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).hex : convertWizData?.hex;
-
-  const binResult =
-    convertType === CONVERT_TYPE.FROM_BIN ? convertWizData?.bin : WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin;
-
-  const binLeResult =
-    convertType === CONVERT_TYPE.FROM_BIN ? WizData.fromBytes(Buffer.from(convertWizData?.hex || '', 'hex').reverse()).bin : convertWizData?.bin;
-
-  const bytesResult = convertType === CONVERT_TYPE.FROM_BYTES ? convertWizData?.bytes.reverse() : convertWizData?.bytes;
-
-  const bytesLeResult = convertType === CONVERT_TYPE.FROM_BYTES ? convertWizData?.bytes : convertWizData?.bytes.reverse();
-
-  const numberResult = convertType === CONVERT_TYPE.FROM_NUMBER ? convertWizData?.number : parseInt(convertWizData?.hex || '', 16);
-
-  const base64Result =
-    convertType === CONVERT_TYPE.FROM_NUMBER
-      ? Buffer.from(convertWizData?.hex || '', 'hex')
-          .reverse()
-          .toString('base64')
-      : Buffer.from(convertWizData?.hex || '', 'hex').toString('base64');
-
-  const sha256Result = convertWizData && convertWizData?.hex !== '' ? sha256v2(convertWizData) : '';
-
-  const hash160Result = convertWizData && convertWizData?.hex !== '' ? hash160v2(convertWizData) : '';
+  const byteLength = convertedWizData.bytesLeResult ? convertedWizData.bytesResult.split(',').length : '';
+  const hexLength = convertedWizData.hexResult ? convertedWizData.hexResult.length.toString() : '';
+  const splittedBinResult =
+    convertedWizData.binResult.substring(0, 8) + ' ' + convertedWizData.binResult.substring(8, convertedWizData.binResult.length);
+  const splittedtBinLeReult =
+    convertedWizData.binLeResult.substring(0, 8) + ' ' + convertedWizData.binLeResult.substring(8, convertedWizData.binResult.length);
 
   return (
     <div className="helper-page-main">
@@ -134,7 +225,7 @@ export const Helper = () => {
             <div className="helper-tab-header-container">
               <h6 className="helper-tab-header">{convertType}</h6>
               {convertType === CONVERT_TYPE.FROM_BIN || convertType === CONVERT_TYPE.FROM_BYTES || convertType === CONVERT_TYPE.FROM_HEX ? (
-                <Checkbox className="helper-le-checkbox" value="LE" onChange={inputlLeChange}>
+                <Checkbox className="helper-le-checkbox" value="LE" onChange={(value, checked) => setCheckedLe(checked)}>
                   LE
                 </Checkbox>
               ) : null}
@@ -144,7 +235,7 @@ export const Helper = () => {
               <Input className="helper-main-input" type="text" value={input} onChange={(value: string) => setInput(value.replace(/\s/g, ''))} />
               <InputGroup.Button
                 onClick={() => {
-                  setConvertWizData(undefined);
+                  setConvertedWizData(initialState);
                   setErrorMessage(undefined);
                   setInput('');
                 }}
@@ -167,9 +258,9 @@ export const Helper = () => {
               <h6 className="helper-tab-header">HEX</h6>
               <div>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={hexResult || ''} disabled />
+                  <Input value={convertedWizData.hexResult} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(hexResult || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexResult)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -177,7 +268,7 @@ export const Helper = () => {
               </div>
               <div className="helper-item-length">
                 <span>Hex Length: </span>
-                <span>{convertWizData ? convertWizData.hex?.length.toString() : ''}</span>
+                <span>{hexLength}</span>
               </div>
             </div>
 
@@ -185,9 +276,9 @@ export const Helper = () => {
               <div>
                 <h6 className="helper-tab-header">BYTES</h6>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={bytesResult?.toString() || ''} disabled />
+                  <Input value={convertedWizData.bytesResult} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(bytesResult?.toString() || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesResult)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -195,16 +286,16 @@ export const Helper = () => {
               </div>
               <div className="helper-item-length">
                 <span>Byte Length: </span>
-                <span>{convertWizData ? convertWizData.bytes?.length.toString() : ''}</span>
+                <span>{byteLength}</span>
               </div>
             </div>
 
             <div className="helper-result-item">
               <h6 className="helper-tab-header">BIN</h6>
               <InputGroup className="compile-modal-input-group">
-                <Input value={binResult || ''} disabled />
+                <Input value={splittedBinResult} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(binResult || '')}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binResult)}>
                     <Icon icon="copy" />
                   </InputGroup.Button>
                 </Whisper>
@@ -216,9 +307,9 @@ export const Helper = () => {
               <h6 className="helper-tab-header">HEX LITTLE ENDIAN</h6>
               <div>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={hexLeResult || ''} disabled />
+                  <Input value={convertedWizData.hexLeResult} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(hexLeResult || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexLeResult)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -230,9 +321,9 @@ export const Helper = () => {
               <div>
                 <h6 className="helper-tab-header">BYTES LITTLE ENDIAN</h6>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={bytesLeResult?.toString() || ''} disabled />
+                  <Input value={convertedWizData.bytesLeResult} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(bytesLeResult?.toString() || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesLeResult)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -243,9 +334,9 @@ export const Helper = () => {
             <div className="helper-result-item">
               <h6 className="helper-tab-header">BIN LITTLE ENDIAN</h6>
               <InputGroup className="compile-modal-input-group">
-                <Input value={binLeResult || ''} disabled />
+                <Input value={splittedtBinLeReult} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(binLeResult || '')}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binLeResult)}>
                     <Icon icon="copy" />
                   </InputGroup.Button>
                 </Whisper>
@@ -257,9 +348,9 @@ export const Helper = () => {
           <div className="helper-result-item">
             <h6 className="helper-tab-header">NUMBER</h6>
             <InputGroup className="compile-modal-input-group">
-              <Input value={numberResult ? numberResult.toString() : ''} disabled />
+              <Input value={convertedWizData.numberResult || ''} disabled />
               <Whisper placement="top" trigger="click" speaker={<Tooltip>NUMBER has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(numberResult ? numberResult.toString() : '')}>
+                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.numberResult ? convertedWizData.numberResult : '')}>
                   <Icon icon="copy" />
                 </InputGroup.Button>
               </Whisper>
@@ -269,9 +360,9 @@ export const Helper = () => {
           <div className="helper-result-item">
             <h6 className="helper-tab-header">SHA256</h6>
             <InputGroup className="compile-modal-input-group">
-              <Input value={sha256Result} disabled />
+              <Input value={convertedWizData.sha256Result} disabled />
               <Whisper placement="top" trigger="click" speaker={<Tooltip>SHA256 has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(sha256Result)}>
+                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.sha256Result)}>
                   <Icon icon="copy" />
                 </InputGroup.Button>
               </Whisper>
@@ -281,9 +372,9 @@ export const Helper = () => {
           <div className="helper-result-item">
             <h6 className="helper-tab-header">HASH160</h6>
             <InputGroup className="compile-modal-input-group">
-              <Input value={hash160Result} disabled />
+              <Input value={convertedWizData.hash160Result} disabled />
               <Whisper placement="top" trigger="click" speaker={<Tooltip>HASH160 has been copied to clipboard!</Tooltip>}>
-                <InputGroup.Button onClick={() => navigator.clipboard.writeText(hash160Result)}>
+                <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hash160Result)}>
                   <Icon icon="copy" />
                 </InputGroup.Button>
               </Whisper>
@@ -296,9 +387,9 @@ export const Helper = () => {
               <h6 className="helper-tab-header">TEXT</h6>
               <div>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={convertWizData?.text || ''} disabled />
+                  <Input value={convertedWizData.textResult || ''} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>TEXT has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertWizData?.text || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.textResult || '')}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
                   </Whisper>
@@ -311,9 +402,9 @@ export const Helper = () => {
             <div className="helper-result-item">
               <h6 className="helper-tab-header">BASE 64</h6>
               <InputGroup className="compile-modal-input-group">
-                <Input value={base64Result || ''} disabled />
+                <Input value={convertedWizData.base64Result} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>BASE 64 has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(base64Result)}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.base64Result)}>
                     <Icon icon="copy" />
                   </InputGroup.Button>
                 </Whisper>
