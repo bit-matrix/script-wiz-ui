@@ -321,11 +321,11 @@ export const Helper = () => {
           </div>
           <div className="helper-result-text">
             <div className="helper-result-item helper-mb">
-              <h6 className="helper-tab-header">HEX LITTLE ENDIAN</h6>
+              <h6 className="helper-tab-header">HEX LE</h6>
               <div>
                 <InputGroup className="compile-modal-input-group">
                   <Input value={convertedWizData.hexLeResult} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LE has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexLeResult)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
@@ -336,10 +336,10 @@ export const Helper = () => {
 
             <div className="helper-result-item helper-mb">
               <div>
-                <h6 className="helper-tab-header">BYTES LITTLE ENDIAN</h6>
+                <h6 className="helper-tab-header">BYTES LE</h6>
                 <InputGroup className="compile-modal-input-group">
                   <Input value={convertedWizData.bytesLeResult} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES LE has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesLeResult)}>
                       <Icon icon="copy" />
                     </InputGroup.Button>
@@ -349,10 +349,10 @@ export const Helper = () => {
             </div>
 
             <div className="helper-result-item">
-              <h6 className="helper-tab-header">BIN LITTLE ENDIAN</h6>
+              <h6 className="helper-tab-header">BIN LE</h6>
               <InputGroup className="compile-modal-input-group">
                 <Input value={splittedtBinLeReult} disabled />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN LITTLE ENDIAN has been copied to clipboard!</Tooltip>}>
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN LE has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binLeResult)}>
                     <Icon icon="copy" />
                   </InputGroup.Button>
