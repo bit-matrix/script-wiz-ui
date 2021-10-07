@@ -65,8 +65,8 @@ export const Helper = () => {
         hexLeResult = wizdataReverse.hex;
         binResult = wizdataReverse.bin;
         binLeResult = wizdata.bin;
-        bytesResult = wizdataReverse.bytes.join(',');
-        bytesLeResult = wizdata.bytes.join(',');
+        bytesResult = wizdata.bytes.join(',');
+        bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdataReverse.number?.toString() || '';
         base64Result = convertBase64(wizdata.hex);
         sha256Result = sha256v2(wizdata);
@@ -78,8 +78,8 @@ export const Helper = () => {
         hexLeResult = wizdata.hex;
         binResult = wizdata.bin;
         binLeResult = wizdataReverse.bin;
-        bytesResult = wizdata.bytes.join(',');
-        bytesLeResult = wizdataReverse.bytes.join(',');
+        bytesResult = wizdataReverse.bytes.join(',');
+        bytesLeResult = wizdata.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
         base64Result = convertBase64(wizdataReverse.hex);
         sha256Result = sha256v2(wizdataReverse);
@@ -87,16 +87,16 @@ export const Helper = () => {
       }
 
       if (convertType === CONVERT_TYPE.FROM_BYTES) {
-        hexResult = wizdataReverse.hex;
-        hexLeResult = wizdata.hex;
-        binResult = wizdata.bin;
-        binLeResult = wizdataReverse.bin;
+        hexResult = wizdata.hex;
+        hexLeResult = wizdataReverse.hex;
+        binResult = wizdataReverse.bin;
+        binLeResult = wizdata.bin;
         bytesResult = wizdata.bytes.join(',');
         bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
-        base64Result = convertBase64(wizdataReverse.hex);
-        sha256Result = sha256v2(wizdataReverse);
-        hash160Result = hash160v2(wizdataReverse);
+        base64Result = convertBase64(wizdata.hex);
+        sha256Result = sha256v2(wizdata);
+        hash160Result = hash160v2(wizdata);
       }
 
       if (convertType === CONVERT_TYPE.FROM_BIN) {
@@ -104,8 +104,8 @@ export const Helper = () => {
         hexLeResult = wizdata.hex;
         binResult = wizdata.bin;
         binLeResult = wizdataReverse.bin;
-        bytesResult = wizdata.bytes.join(',');
-        bytesLeResult = wizdataReverse.bytes.join(',');
+        bytesResult = wizdataReverse.bytes.join(',');
+        bytesLeResult = wizdata.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
         base64Result = convertBase64(wizdataReverse.hex);
         sha256Result = sha256v2(wizdataReverse);
@@ -117,8 +117,8 @@ export const Helper = () => {
         hexLeResult = wizdataReverse.hex;
         binResult = wizdataReverse.bin;
         binLeResult = wizdata.bin;
-        bytesResult = wizdataReverse.bytes.join(',');
-        bytesLeResult = wizdata.bytes.join(',');
+        bytesResult = wizdata.bytes.join(',');
+        bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdataReverse.number?.toString() || '';
         base64Result = convertBase64(wizdata.hex);
         sha256Result = sha256v2(wizdata);
