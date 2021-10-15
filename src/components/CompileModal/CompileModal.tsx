@@ -50,7 +50,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       (tapleafVersion === TapleafVersion.CUSTOM && version !== undefined && version?.length >= 2)
     ) {
       try {
-        const result = tapRoot(WizData.fromHex(pubkey), WizData.fromHex(script), version);
+        const result = tapRoot(WizData.fromHex(pubkey), [WizData.fromHex(script)], version);
         setTweakedResult({ tweak: result.tweak.hex, scriptPubkey: result.scriptPubKey.hex, bech32: result.bech32 });
       } catch {
         setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result', bech32: 'Invalid result' });
