@@ -18,9 +18,10 @@ import './ScriptEditorInput.scss';
 type Props = {
   scriptWiz: ScriptWiz;
   onChangeScriptEditorInput: (lines: string[]) => void;
+  failedLineNumber?: number;
 };
 
-const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput }) => {
+const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput, failedLineNumber }) => {
   const monaco = useMonaco();
 
   const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
@@ -53,7 +54,7 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
 
       const { dispose: disposeRegisterHoverProvider } = monaco.languages.registerHoverProvider(
         scriptWizEditor.LANGUAGE,
-        languageOptions.hoverProvider(opcodesDatas),
+        languageOptions.hoverProvider(opcodesDatas, failedLineNumber),
       );
       disposeHoverProvider = disposeRegisterHoverProvider;
 
@@ -76,7 +77,7 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
         disposeCompletionItemProvider();
       }
     };
-  }, [monaco, opcodesDatas]);
+  }, [monaco, opcodesDatas, failedLineNumber]);
 
   const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
     if (value) {
