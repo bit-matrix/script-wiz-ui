@@ -136,7 +136,7 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
   },
 };
 
-const hoverProvider = (opcodesDatas: Opcode[]): Monaco.languages.HoverProvider => {
+const hoverProvider = (opcodesDatas: Opcode[], failedLineNumber?: number): Monaco.languages.HoverProvider => {
   const hoverProvider: Monaco.languages.HoverProvider = {
     provideHover: function (model: Monaco.editor.ITextModel, position: Monaco.Position, token: Monaco.CancellationToken) {
       const modelValue = model.getValue(); // all lines
@@ -180,6 +180,10 @@ const hoverProvider = (opcodesDatas: Opcode[]): Monaco.languages.HoverProvider =
         }
       } catch (error: any) {
         compiledValue = `Unknown identifier '${currentLineValue}'.`;
+      }
+
+      if (failedLineNumber && failedLineNumber < position.lineNumber) {
+        return { range, contents: [{ value: '' }] };
       }
 
       return {
