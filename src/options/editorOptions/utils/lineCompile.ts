@@ -1,6 +1,6 @@
 import WizData from '@script-wiz/wiz-data';
 
-export const compileInput = (input: string): WizData => {
+export const lineCompile = (input: string): WizData => {
   // HEX DATA INPUT
   if (input.startsWith('0x')) {
     const newInput = input.substr(2, input.length);
