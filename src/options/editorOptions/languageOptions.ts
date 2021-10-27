@@ -3,6 +3,7 @@
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { compileFinalInput } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
+import { languageBTC } from './utils/btc-language';
 
 const languageConfigurations = (monaco: typeof Monaco.languages): Monaco.languages.LanguageConfiguration => {
   return {
@@ -23,6 +24,7 @@ const languageConfigurations = (monaco: typeof Monaco.languages): Monaco.languag
       ['<', '>'],
       ['$(', ')'],
     ],
+
     comments: {
       lineComment: '//',
       blockComment: ['/*', '*/'],
@@ -82,13 +84,26 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
   ],
   binary: /[01]+(?:[01_]*[01]+)*/,
   hex: /[0-9a-fA-F]_*(?:_*[0-9a-fA-F]_*[0-9a-fA-F]_*)*[0-9a-fA-F]/,
-
+  flowControlOpcodes: languageBTC.flowControlOpcodes,
+  arithmeticOpcodes: languageBTC.arithmeticOpcodes,
+  blockingOpcodes: languageBTC.blockingOpcodes,
+  cryptoOpcodes: languageBTC.cryptoOpcodes,
+  pushNumberOpcodes: languageBTC.pushNumberOpcodes,
+  disabledOpcodes: [...languageBTC.disabledOpcodes, ...languageBTC.nopOpcodes],
+  otherOpcodes: languageBTC.otherOpcodes,
   tokenizer: {
     root: [
       [
         /[a-zA-Z_][.a-zA-Z0-9_-]+/,
         {
           cases: {
+            '@flowControlOpcodes': 'opcode.flow-control',
+            '@arithmeticOpcodes': 'opcode.arithmetic',
+            '@blockingOpcodes': 'opcode.blocking',
+            '@cryptoOpcodes': 'opcode.crypto',
+            '@pushNumberOpcodes': 'opcode.push-number',
+            '@disabledOpcodes': 'opcode.disabled',
+            '@otherOpcodes': 'opcode.other',
             '@default': 'identifier',
           },
         },
