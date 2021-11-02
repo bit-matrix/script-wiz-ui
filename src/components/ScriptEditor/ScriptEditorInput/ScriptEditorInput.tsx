@@ -21,7 +21,7 @@ type Props = {
   failedLineNumber?: number;
 };
 
-const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput, failedLineNumber }) => {
+const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput, failedLineNumber = undefined }) => {
   const monaco = useMonaco();
 
   const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
