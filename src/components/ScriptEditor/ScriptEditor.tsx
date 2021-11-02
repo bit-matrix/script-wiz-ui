@@ -44,7 +44,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const compile = (lines: string[]) => {
     scriptWiz.clearStackDataList();
     let hasError: boolean = false;
-
     const newLineStackDataListArray: Array<Array<WizData>> = [];
     let newLastStackDataList: Array<WizData> = [];
 
@@ -63,7 +62,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         if (!hasError) {
           newLastStackDataList = parsed;
           newLineStackDataListArray.push(newLastStackDataList);
-          setFailedLineNumber(undefined);
+
           if (scriptWizErrorMessage) {
             hasError = true;
             setErrorMessage(scriptWizErrorMessage);
