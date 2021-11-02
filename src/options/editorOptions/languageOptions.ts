@@ -1,9 +1,9 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 /* eslint-disable no-template-curly-in-string */
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { compileFinalInput } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
 import { languageBTC } from './utils/btc-language';
+import { lineCompile } from './utils/lineCompile';
 
 const languageConfigurations = (monaco: typeof Monaco.languages): Monaco.languages.LanguageConfiguration => {
   return {
@@ -136,7 +136,7 @@ const tokenProviders: Monaco.languages.IMonarchLanguage = {
   },
 };
 
-const hoverProvider = (opcodesDatas: Opcode[]): Monaco.languages.HoverProvider => {
+const hoverProvider = (opcodesDatas: Opcode[], failedLineNumber?: number): Monaco.languages.HoverProvider => {
   const hoverProvider: Monaco.languages.HoverProvider = {
     provideHover: function (model: Monaco.editor.ITextModel, position: Monaco.Position, token: Monaco.CancellationToken) {
       const modelValue = model.getValue(); // all lines
@@ -171,11 +171,19 @@ const hoverProvider = (opcodesDatas: Opcode[]): Monaco.languages.HoverProvider =
 
       let compiledValue: string = '';
 
-      if (currentLineValue.startsWith('<') && currentLineValue.endsWith('>')) {
-        const finalInput = currentLineValue.substr(1, currentLineValue.length - 2);
-        compiledValue = '0x' + compileFinalInput(finalInput).hex;
-      } else {
-        compiledValue = '0x' + compileFinalInput(currentLineValue).hex;
+      try {
+        if (currentLineValue.startsWith('<') && currentLineValue.endsWith('>')) {
+          const finalInput = currentLineValue.substr(1, currentLineValue.length - 2);
+          compiledValue = '0x' + lineCompile(finalInput).hex;
+        } else {
+          compiledValue = '0x' + lineCompile(currentLineValue).hex;
+        }
+      } catch (error: any) {
+        compiledValue = `Unknown identifier '${currentLineValue}'.`;
+      }
+
+      if (failedLineNumber && failedLineNumber < position.lineNumber) {
+        return { range, contents: [{ value: '' }] };
       }
 
       return {

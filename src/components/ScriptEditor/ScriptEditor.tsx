@@ -20,6 +20,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
   const [lastStackDataList, setLastStackDataList] = useState<Array<WizData>>(initialLastStackDataList);
+  const [failedLineNumber, setFailedLineNumber] = useState<number>();
 
   const [compileModalData, setCompileModalData] = useState<{
     show: boolean;
@@ -43,7 +44,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const compile = (lines: string[]) => {
     scriptWiz.clearStackDataList();
     let hasError: boolean = false;
-
     const newLineStackDataListArray: Array<Array<WizData>> = [];
     let newLastStackDataList: Array<WizData> = [];
 
@@ -66,6 +66,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           if (scriptWizErrorMessage) {
             hasError = true;
             setErrorMessage(scriptWizErrorMessage);
+            setFailedLineNumber(i + 1);
           }
         }
       } else {
@@ -124,6 +125,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 setLastStackDataList(initialLastStackDataList);
                 compile(lines);
               }}
+              failedLineNumber={failedLineNumber}
             />
           </div>
           <div className="script-editor-sub-item scroll">
