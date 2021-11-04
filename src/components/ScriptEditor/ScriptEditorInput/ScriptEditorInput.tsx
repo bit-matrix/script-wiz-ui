@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -12,19 +12,21 @@ import { initialBitcoinEditorValue, initialLiquidEditorValue } from './initialEd
 import { convertEditorLines } from '../../../helper';
 import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
-
 import './ScriptEditorInput.scss';
 
 type Props = {
   scriptWiz: ScriptWiz;
   onChangeScriptEditorInput: (lines: string[]) => void;
   failedLineNumber?: number;
+  disabledLineNumbers?: Array<number>;
 };
 
-const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput, failedLineNumber = undefined }) => {
+const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput, failedLineNumber = undefined, disabledLineNumbers = [] }) => {
   const monaco = useMonaco();
 
   const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
+
+  const [editor, setEditor] = useState<Monaco.editor.IStandaloneCodeEditor>();
 
   useEffect(() => {
     let disposeLanguageConfiguration = () => {};
@@ -83,6 +85,25 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
     if (value) {
       let lines = convertEditorLines(value);
 
+      if (disabledLineNumbers && disabledLineNumbers?.length > 0 && lines.length > 0) {
+        const newDisabledLineNumbers = [...disabledLineNumbers];
+        newDisabledLineNumbers.shift();
+
+        const range = newDisabledLineNumbers.map((disabledLineNumber) => {
+          return {
+            range: {
+              startColumn: 1,
+              endColumn: lines[disabledLineNumber - 1].length,
+              startLineNumber: disabledLineNumber,
+              endLineNumber: disabledLineNumber,
+            },
+            options: { inlineClassName: 'unexecuted-sample' },
+          };
+        });
+
+        editor?.deltaDecorations([], range);
+      }
+
       onChangeScriptEditorInput(lines);
     } else {
       onChangeScriptEditorInput([]);
@@ -93,8 +114,9 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
     return (
       <Editor
         className="script-wiz-monaco-editor"
-        onMount={() => {
+        onMount={(e) => {
           console.log('loading state');
+          setEditor(e);
         }}
         value={scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue}
         options={editorOptions}
