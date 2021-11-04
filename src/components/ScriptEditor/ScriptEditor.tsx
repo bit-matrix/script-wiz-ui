@@ -21,6 +21,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
   const [lastStackDataList, setLastStackDataList] = useState<Array<WizData>>(initialLastStackDataList);
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
+  const [disabledLineNumbers, setDisabledLineNumbers] = useState<Array<number>>();
 
   const [compileModalData, setCompileModalData] = useState<{
     show: boolean;
@@ -46,7 +47,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     let hasError: boolean = false;
     const newLineStackDataListArray: Array<Array<WizData>> = [];
     let newLastStackDataList: Array<WizData> = [];
-
+    let disabledLineNumbersArray: Array<number> = [];
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       // console.log(i, line);
@@ -63,6 +64,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           newLastStackDataList = parsed;
           newLineStackDataListArray.push(newLastStackDataList);
 
+          if (scriptWiz.stackDataList.flow[scriptWiz.stackDataList.flow.length - 1] === false) {
+            disabledLineNumbersArray.push(i + 1);
+          } else {
+            disabledLineNumbersArray = [];
+          }
+
           if (scriptWizErrorMessage) {
             hasError = true;
             setErrorMessage(scriptWizErrorMessage);
@@ -73,6 +80,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         if (!hasError) newLineStackDataListArray.push([]);
       }
     }
+
+    setDisabledLineNumbers(disabledLineNumbersArray);
 
     setLineStackDataListArray(newLineStackDataListArray);
     setLastStackDataList(newLastStackDataList);
@@ -126,6 +135,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 compile(lines);
               }}
               failedLineNumber={failedLineNumber}
+              disabledLineNumbers={disabledLineNumbers}
             />
           </div>
           <div className="script-editor-sub-item scroll">
