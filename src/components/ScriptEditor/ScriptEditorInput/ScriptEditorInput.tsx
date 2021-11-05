@@ -85,19 +85,32 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
     if (value) {
       let lines = convertEditorLines(value);
 
-      if (disabledLineNumbers && disabledLineNumbers?.length > 0 && lines.length > 0) {
+      if (disabledLineNumbers && disabledLineNumbers?.length > 0) {
         const newDisabledLineNumbers = [...disabledLineNumbers];
-        newDisabledLineNumbers.shift();
+        newDisabledLineNumbers.splice(0, 1);
 
         const range = newDisabledLineNumbers.map((disabledLineNumber) => {
+          const disabledLine = lines[disabledLineNumber - 1];
+
+          if (disabledLine.startsWith('<') && disabledLine.endsWith('>')) {
+            return {
+              range: {
+                startColumn: 2,
+                endColumn: lines[disabledLineNumber - 1].length,
+                startLineNumber: disabledLineNumber,
+                endLineNumber: disabledLineNumber,
+              },
+              options: { inlineClassName: 'unexecuted-sample' },
+            };
+          }
           return {
             range: {
-              startColumn: 1,
-              endColumn: lines[disabledLineNumber - 1].length,
-              startLineNumber: disabledLineNumber,
-              endLineNumber: disabledLineNumber,
+              startColumn: 0,
+              endColumn: 0,
+              startLineNumber: 0,
+              endLineNumber: 0,
             },
-            options: { inlineClassName: 'unexecuted-sample' },
+            options: {},
           };
         });
 
