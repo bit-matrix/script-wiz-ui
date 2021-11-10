@@ -18,6 +18,8 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
   const title = useMemo(() => {
     if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
       return 'Liquid (SegWit/Legacy)';
+    } else if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) {
+      return 'Liquid (Tapscript)';
     } else if (vm.network === VM_NETWORK.BTC && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
       return 'Bitcoin (SegWit/Legacy)';
     } else if (vm.network === VM_NETWORK.BTC && vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) {
@@ -95,7 +97,10 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
               </div>
             }
           </Dropdown.Item>
-          <Dropdown.Item disabled eventKey={`${VM_NETWORK.LIQUID} - ${VM_NETWORK_VERSION.TAPSCRIPT}`}>
+          <Dropdown.Item eventKey={`${VM_NETWORK.LIQUID} - ${VM_NETWORK_VERSION.TAPSCRIPT}`} 
+            onSelect={() => {
+              onSelectVm({ network: VM_NETWORK.LIQUID, ver: VM_NETWORK_VERSION.TAPSCRIPT });
+            }}>
             {
               <div className="dropdown-item">
                 <span>Liquid (Tapscript)</span>
