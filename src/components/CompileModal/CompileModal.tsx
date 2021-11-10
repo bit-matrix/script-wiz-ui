@@ -70,7 +70,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       <Modal.Body className="compile-modal-body scroll">
         <h5 className="compile-modal-item">Compile Result</h5>
         <p className="compile-data-p">{compileModalData.data}</p>
-        {scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT && (
+        {((scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) || (scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT)) && (
           <Form fluid>
             <h5 className="compile-modal-item">Taproot Output</h5>
             <div>
