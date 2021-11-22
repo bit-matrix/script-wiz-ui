@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
@@ -26,6 +26,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     show: boolean;
     data?: string;
   }>({ show: false });
+
+  const timerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     let lines = convertEditorLines(scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue);
@@ -75,7 +77,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        // console.log(i, line);
 
         if (line !== '') {
           parseInput(line);
@@ -102,8 +103,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
       setLineStackDataListArray(newLineStackDataListArray);
       setLastStackDataList(newLastStackDataList);
-
-      console.log(newLineStackDataListArray);
     },
     [parseInput, scriptWiz],
   );
@@ -126,7 +125,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 setErrorMessage(undefined);
                 // setLineStackDataListArray(initialLineStackDataListArray);
                 // setLastStackDataList(initialLastStackDataList);
-                compile(lines);
+
+                if (timerRef.current) window.clearTimeout(timerRef.current);
+
+                timerRef.current = window.setTimeout(() => {
+                  compile(lines);
+                }, 250);
               }}
               failedLineNumber={failedLineNumber}
             />
