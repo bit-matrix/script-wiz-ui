@@ -102,8 +102,10 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       } else {
         console.error('UI: Invalid input value!!!');
       }
-    } else {
+    } else if (inputText.startsWith('OP_')) {
       scriptWiz.parseOpcode(inputText);
+    } else {
+      console.error('UI: Invalid input value!!!');
     }
   };
 
