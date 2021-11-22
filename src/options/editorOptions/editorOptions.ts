@@ -11,7 +11,6 @@ const editorOptions: Monaco.editor.IEditorConstructionOptions = {
   folding: false,
   wrappingIndent: 'same',
   minimap: { enabled: false },
-  automaticLayout: true,
   scrollbar: {
     verticalScrollbarSize: 6,
     horizontalScrollbarSize: 6,
