@@ -76,6 +76,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
     setLineStackDataListArray(newLineStackDataListArray);
     setLastStackDataList(newLastStackDataList);
+
+    console.log(newLineStackDataListArray);
   };
 
   const parseInput = (inputText: string) => {
@@ -121,8 +123,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               scriptWiz={scriptWiz}
               onChangeScriptEditorInput={(lines: string[]) => {
                 setErrorMessage(undefined);
-                setLineStackDataListArray(initialLineStackDataListArray);
-                setLastStackDataList(initialLastStackDataList);
+                // setLineStackDataListArray(initialLineStackDataListArray);
+                // setLastStackDataList(initialLastStackDataList);
                 compile(lines);
               }}
               failedLineNumber={failedLineNumber}
