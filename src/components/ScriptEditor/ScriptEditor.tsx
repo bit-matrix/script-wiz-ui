@@ -28,16 +28,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   }>({ show: false });
 
   useEffect(() => {
-    let unmounted = false;
+    let lines = convertEditorLines(scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue);
+    compile(lines);
 
-    if (!unmounted) {
-      let lines = convertEditorLines(scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue);
-      compile(lines);
-    }
-
-    return () => {
-      unmounted = true;
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
 
