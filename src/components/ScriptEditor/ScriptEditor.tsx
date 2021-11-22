@@ -81,13 +81,10 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         if (line !== '') {
           parseInput(line);
 
-          const parsed = scriptWiz.stackDataList.main;
-
-          // @To-do scriptWiz error message
           const scriptWizErrorMessage = scriptWiz.stackDataList.errorMessage;
 
           if (!hasError) {
-            newLastStackDataList = parsed;
+            newLastStackDataList = scriptWiz.stackDataList.main;
             newLineStackDataListArray.push(newLastStackDataList);
 
             if (scriptWizErrorMessage) {
