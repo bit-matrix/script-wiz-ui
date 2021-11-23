@@ -1,47 +1,47 @@
 .script-editor-output-main {
-    display: flex;
-    font-family: "Fira Mono", monospace;
-    font-weight: normal;
-    font-size: 14px;
-    font-feature-settings: "liga" 0, "calt" 0;
-    line-height: 18px;
-    letter-spacing: 0px;
-    height: 18px;
+  display: flex;
+  font-family: 'Fira Mono', monospace;
+  font-weight: normal;
+  font-size: 14px;
+  font-feature-settings: 'liga' 0, 'calt' 0;
+  line-height: 18px;
+  letter-spacing: 0px;
+  height: 18px;
 
-    .error-message {
-        color: #d62915;
+  .error-message {
+    color: #d62915;
 
-        .error-message-ban-icon {
-            margin-right: 0.5rem;
-        }
+    .error-message-ban-icon {
+      margin-right: 0.5rem;
     }
+  }
 }
 
 .editor-output-text {
-    margin-right: 0.75rem;
+  margin-right: 0.75rem;
 }
 
 .number {
-    color: #b5cea8;
+  color: #b5cea8;
 }
 
 .string {
-    color: #d68d72;
+  color: #d68d72;
 }
 
 .hex {
-    white-space: nowrap;
-    width: 8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #5bb498;
+  white-space: nowrap;
+  width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #5bb498;
 }
 
 .editor-output-text-page-number {
-    color: #858585;
-    text-align: end;
-    margin-right: 0.75rem;
-    min-width: 1rem;
+  color: #858585;
+  text-align: end;
+  margin-right: 1.25rem;
+  min-width: 1rem;
 }
 
 // .whisper-tooltip {
@@ -54,30 +54,30 @@
 // }
 
 .tooltip {
-    position: relative;
-    display: inline-block;
-    color: #cbcccc !important;
-    border-radius: unset !important;
+  position: relative;
+  display: inline-block;
+  color: #cbcccc !important;
+  border-radius: unset !important;
 
+  .tooltiptext {
+    visibility: hidden;
+    background-color: #252526 !important;
+    color: #cbcccc;
+    padding: 0.25rem 0.375rem;
+    border: 1px solid #44474b;
+    position: absolute;
+    font-size: 1rem;
+    z-index: 1;
+    top: -5px;
+    left: 100%;
+    word-wrap: break-word;
+    max-width: 15rem;
+  }
+
+  &:hover {
     .tooltiptext {
-        visibility: hidden;
-        background-color: #252526 !important;
-        color: #cbcccc;
-        padding: 0.25rem 0.375rem;
-        border: 1px solid #44474b;
-        position: absolute;
-        font-size: 1rem;
-        z-index: 1;
-        top: -5px;
-        left: 100%;
-        word-wrap: break-word;
-        max-width: 15rem;
+      visibility: visible;
+      transition-delay: 0.5s;
     }
-
-    &:hover {
-        .tooltiptext {
-            visibility: visible;
-            transition-delay: 0.5s;
-        }
-    }
+  }
 }
