@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
@@ -27,83 +27,82 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     data?: string;
   }>({ show: false });
 
+  const timerRef = useRef<number | undefined>(undefined);
+
   useEffect(() => {
-    let unmounted = false;
+    let lines = convertEditorLines(scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue);
+    compile(lines);
 
-    if (!unmounted) {
-      let lines = convertEditorLines(scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue);
-      compile(lines);
-    }
-
-    return () => {
-      unmounted = true;
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
 
-  const compile = (lines: string[]) => {
-    scriptWiz.clearStackDataList();
-    let hasError: boolean = false;
-    const newLineStackDataListArray: Array<Array<WizData>> = [];
-    let newLastStackDataList: Array<WizData> = [];
+  const parseInput = useCallback(
+    (inputText: string) => {
+      if (inputText.startsWith('<') && inputText.endsWith('>')) {
+        const inputTextValue = inputText.substring(1, inputText.length - 1);
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      // console.log(i, line);
-
-      if (line !== '') {
-        parseInput(line);
-
-        const parsed = scriptWiz.stackDataList.main;
-
-        // @To-do scriptWiz error message
-        const scriptWizErrorMessage = scriptWiz.stackDataList.errorMessage;
-
-        if (!hasError) {
-          newLastStackDataList = parsed;
-          newLineStackDataListArray.push(newLastStackDataList);
-
-          if (scriptWizErrorMessage) {
-            hasError = true;
-            setErrorMessage(scriptWizErrorMessage);
-            setFailedLineNumber(i + 1);
-          }
+        if (inputTextValue.startsWith('0x')) {
+          scriptWiz.parseHex(inputTextValue.substring(2));
+        } else if (inputTextValue.startsWith('0b')) {
+          scriptWiz.parseBin(inputTextValue.substring(2));
+        } else if (
+          (inputTextValue.startsWith('"') && inputTextValue.endsWith('"')) ||
+          (inputTextValue.startsWith("'") && inputTextValue.endsWith("'"))
+        ) {
+          const inputTextValueString = inputTextValue.substring(1, inputTextValue.length - 1);
+          scriptWiz.parseText(inputTextValueString);
+        } else if (!isNaN(Number(inputTextValue))) {
+          scriptWiz.parseNumber(Number(inputTextValue));
+        } else if (inputTextValue.startsWith('OP_')) {
+          const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
+          scriptWiz.parseHex(opwordToOphex.substring(2));
+        } else {
+          console.error('UI: Invalid input value!!!');
         }
-      } else {
-        if (!hasError) newLineStackDataListArray.push([]);
-      }
-    }
-
-    setLineStackDataListArray(newLineStackDataListArray);
-    setLastStackDataList(newLastStackDataList);
-  };
-
-  const parseInput = (inputText: string) => {
-    if (inputText.startsWith('<') && inputText.endsWith('>')) {
-      const inputTextValue = inputText.substring(1, inputText.length - 1);
-
-      if (inputTextValue.startsWith('0x')) {
-        scriptWiz.parseHex(inputTextValue.substring(2));
-      } else if (inputTextValue.startsWith('0b')) {
-        scriptWiz.parseBin(inputTextValue.substring(2));
-      } else if (
-        (inputTextValue.startsWith('"') && inputTextValue.endsWith('"')) ||
-        (inputTextValue.startsWith("'") && inputTextValue.endsWith("'"))
-      ) {
-        const inputTextValueString = inputTextValue.substring(1, inputTextValue.length - 1);
-        scriptWiz.parseText(inputTextValueString);
-      } else if (!isNaN(Number(inputTextValue))) {
-        scriptWiz.parseNumber(Number(inputTextValue));
-      } else if (inputTextValue.startsWith('OP_')) {
-        const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
-        scriptWiz.parseHex(opwordToOphex.substring(2));
+      } else if (inputText.startsWith('OP_')) {
+        scriptWiz.parseOpcode(inputText);
       } else {
         console.error('UI: Invalid input value!!!');
       }
-    } else {
-      scriptWiz.parseOpcode(inputText);
-    }
-  };
+    },
+    [scriptWiz],
+  );
+
+  const compile = useCallback(
+    (lines: string[]) => {
+      scriptWiz.clearStackDataList();
+      let hasError: boolean = false;
+      const newLineStackDataListArray: Array<Array<WizData>> = [];
+      let newLastStackDataList: Array<WizData> = [];
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        if (line !== '') {
+          parseInput(line);
+
+          const scriptWizErrorMessage = scriptWiz.stackDataList.errorMessage;
+
+          if (!hasError) {
+            newLastStackDataList = scriptWiz.stackDataList.main;
+            newLineStackDataListArray.push(newLastStackDataList);
+
+            if (scriptWizErrorMessage) {
+              hasError = true;
+              setErrorMessage(scriptWizErrorMessage);
+              setFailedLineNumber(i + 1);
+            }
+          }
+        } else {
+          if (!hasError) newLineStackDataListArray.push([]);
+        }
+      }
+
+      setLineStackDataListArray(newLineStackDataListArray);
+      setLastStackDataList(newLastStackDataList);
+    },
+    [parseInput, scriptWiz],
+  );
 
   const compileScripts = () => {
     const compileScript = scriptWiz.compile();
@@ -121,9 +120,14 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               scriptWiz={scriptWiz}
               onChangeScriptEditorInput={(lines: string[]) => {
                 setErrorMessage(undefined);
-                setLineStackDataListArray(initialLineStackDataListArray);
-                setLastStackDataList(initialLastStackDataList);
-                compile(lines);
+                // setLineStackDataListArray(initialLineStackDataListArray);
+                // setLastStackDataList(initialLastStackDataList);
+
+                if (timerRef.current) window.clearTimeout(timerRef.current);
+
+                timerRef.current = window.setTimeout(() => {
+                  compile(lines);
+                }, 250);
               }}
               failedLineNumber={failedLineNumber}
             />
