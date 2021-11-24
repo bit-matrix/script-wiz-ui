@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Modal } from 'rsuite';
+import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import './TransactionTemplateModal.scss';
@@ -28,26 +28,24 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   const [txInputs, setTxInputs] = useState<TxInput[]>([]);
   const [txOutputs, setTxOutputs] = useState<TxOutput[]>([]);
   return (
-    <Modal size="lg" show={showModal} backdrop={false} onHide={() => showModalCallBack(false)}>
-      <Modal.Header />
+    <Modal className="tx-template-modal" size="lg" show={showModal} backdrop={false} onHide={() => showModalCallBack(false)}>
+      <Modal.Header className="tx-template-modal-header" />
       <Modal.Body>
         <div>
-          <div className="transaction-template-header">
+          <div className="tx-template-header">
             <p>Inputs</p>
             <p>Outputs</p>
           </div>
-          <div className="transaction-template-main">
-            <div className="transaction-inputs">
+          <div className="tx-template-main">
+            <div className="tx-inputs">
               <TransactionInput />
-
               <Button className="tx-template-button" onClick={() => {}}>
                 + Add New Input
               </Button>
             </div>
             <div className="vertical-line"></div>
-            <div className="transaction-outputs">
+            <div className="tx-outputs">
               <TransactionOutput />
-
               <Button className="tx-template-button" onClick={() => {}}>
                 + Add New Output
               </Button>
@@ -55,10 +53,15 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
           </div>
         </div>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={() => showModalCallBack(false)} appearance="primary">
-          Done
-        </Button>
+      <Modal.Footer className="tx-template-modal-footer">
+        <div className="tx-item">
+          <div className="tx-modal-label">Tx Version:</div>
+          <Input placeholder="4-bytes" onChange={(value: string) => {}} />
+        </div>
+        <div className="tx-item">
+          <div className="tx-modal-label">Tx Timelock:</div>
+          <Input placeholder="4-bytes" onChange={(value: string) => {}} />
+        </div>
       </Modal.Footer>
     </Modal>
   );
