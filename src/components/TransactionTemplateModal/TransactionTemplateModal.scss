@@ -1,0 +1,36 @@
+.transaction-template-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.vertical-line {
+  width: 0.125rem;
+  background-color: #ccc;
+  display: block;
+  height: 60vh;
+}
+
+.transaction-inputs {
+  display: block;
+  align-self: start;
+  width: 100%;
+  height: 100%;
+  background-color: darkgray;
+}
+
+.transaction-outputs {
+  display: block;
+  align-self: start;
+
+  width: 100%;
+  height: 100%;
+  background-color: darkgray;
+}
+
+.transaction-template-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
