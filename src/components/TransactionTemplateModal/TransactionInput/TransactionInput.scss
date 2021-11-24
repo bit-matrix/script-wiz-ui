@@ -1,0 +1,25 @@
+.tx-input-main {
+  background-color: #ccc;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.tx-input-item {
+  margin: 0.5rem 0;
+}
+
+.tx-input-item-double {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tx-input-label {
+  width: 49%;
+}
+
+.tx-input-button {
+  width: 100% !important;
+  margin: 1rem 0;
+}
