@@ -5,8 +5,9 @@ import './TransactionInput.scss';
 const TransactionInput = () => {
   return (
     <div className="tx-input-main">
+      <p className="tx-input-index">Index #0</p>
       <div className="tx-input-modal-item">
-        <div className="compile-modal-label">Previous TX ID:</div>
+        <div className="tx-modal-label">Previous TX ID:</div>
         <Input placeholder="32-bytes" onChange={(value: string) => {}} />
       </div>
       <div className="tx-input-item-double">
@@ -20,15 +21,15 @@ const TransactionInput = () => {
         </div>
       </div>
       <div className="tx-input-item">
-        <div className="compile-modal-label">scriptPubkey:</div>
+        <div className="tx-modal-label">scriptPubkey:</div>
         <Input onChange={(value: string) => {}} />
       </div>
       <div className="tx-input-item">
-        <div className="compile-modal-label">Amount:</div>
+        <div className="tx-modal-label">Amount:</div>
         <Input placeholder="8-bytes" onChange={(value: string) => {}} />
       </div>
       <div className="tx-input-item">
-        <div className="compile-modal-label">Asset ID:</div>
+        <div className="tx-modal-label">Asset ID:</div>
         <Input placeholder="32-bytes" onChange={(value: string) => {}} />
       </div>
     </div>
