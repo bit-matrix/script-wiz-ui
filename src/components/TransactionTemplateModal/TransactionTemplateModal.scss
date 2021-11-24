@@ -3,13 +3,17 @@
   align-items: center;
   justify-content: space-around;
   width: 100%;
+  color: #000;
+  font-size: 0.875rem;
 }
 
 .vertical-line {
   width: 0.125rem;
   background-color: #ccc;
-  display: block;
-  height: 60vh;
+  display: flex;
+  height: 44vmin;
+  align-self: start;
+  margin-top: 0.5rem;
 }
 
 .transaction-inputs {
@@ -17,20 +21,39 @@
   align-self: start;
   width: 100%;
   height: 100%;
-  background-color: darkgray;
+  margin-right: 1rem;
 }
 
 .transaction-outputs {
   display: block;
   align-self: start;
-
   width: 100%;
   height: 100%;
-  background-color: darkgray;
+  margin-left: 1rem;
 }
 
 .transaction-template-header {
   display: flex;
   align-items: center;
   justify-content: space-around;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.transaction-template-main .rs-input {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.tx-template-button {
+  width: 100% !important;
+  margin: 1rem 0;
+  background-color: #ccc !important;
+  color: #000 !important;
+
+  &:hover {
+    color: #e9ebf0 !important;
+    background-color: #3c3f43 !important;
+  }
 }

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'rsuite';
+import TransactionInput from './TransactionInput/TransactionInput';
+import TransactionOutput from './TransactionOutput/TransactionOutput';
 import './TransactionTemplateModal.scss';
 
 type TxInput = {
@@ -35,9 +37,21 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
             <p>Outputs</p>
           </div>
           <div className="transaction-template-main">
-            <div className="transaction-inputs">a</div>
+            <div className="transaction-inputs">
+              <TransactionInput />
+
+              <Button className="tx-template-button" onClick={() => {}}>
+                + Add New Input
+              </Button>
+            </div>
             <div className="vertical-line"></div>
-            <div className="transaction-outputs">b</div>
+            <div className="transaction-outputs">
+              <TransactionOutput />
+
+              <Button className="tx-template-button" onClick={() => {}}>
+                + Add New Output
+              </Button>
+            </div>
           </div>
         </div>
       </Modal.Body>
