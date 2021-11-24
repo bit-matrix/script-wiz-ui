@@ -28,10 +28,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     data?: string;
   }>({ show: false });
 
-  const [templateModalData, setTemplateModalData] = useState<{
-    show: boolean;
-    data?: string;
-  }>({ show: false });
+  const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
 
   const timerRef = useRef<number | undefined>(undefined);
 
@@ -115,15 +112,11 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setCompileModalData({ show: true, data: compileScript });
   };
 
-  const importTemplate = () => {
-    setTemplateModalData({ show: true, data: '' });
-  };
-
   return (
     <>
-      <TransactionTemplateModal modalData={templateModalData} showModal={(show) => setTemplateModalData({ show })} />
+      <TransactionTemplateModal showModal={showTemplateModal} showModalCallBack={(show) => setShowTemplateModal(show)} />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
-      <ScriptEditorHeader compileButtonClick={compileScripts} importTemplateClick={importTemplate} />
+      <ScriptEditorHeader compileButtonClick={compileScripts} importTemplateClick={() => setShowTemplateModal(true)} />
       <div className="script-editor-main-div scroll">
         <div className="script-editor-container">
           <div className="script-editor-sub-item">
