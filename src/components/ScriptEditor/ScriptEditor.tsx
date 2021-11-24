@@ -8,6 +8,7 @@ import WizData from '@script-wiz/wiz-data';
 import { initialBitcoinEditorValue, initialLiquidEditorValue } from './ScriptEditorInput/initialEditorValue';
 import CompileModal from '../CompileModal/CompileModal';
 import './ScriptEditor.scss';
+import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
 
 type Props = {
   scriptWiz: ScriptWiz;
@@ -23,6 +24,11 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
 
   const [compileModalData, setCompileModalData] = useState<{
+    show: boolean;
+    data?: string;
+  }>({ show: false });
+
+  const [templateModalData, setTemplateModalData] = useState<{
     show: boolean;
     data?: string;
   }>({ show: false });
@@ -109,10 +115,15 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setCompileModalData({ show: true, data: compileScript });
   };
 
+  const importTemplate = () => {
+    setTemplateModalData({ show: true, data: '' });
+  };
+
   return (
     <>
+      <TransactionTemplateModal modalData={templateModalData} showModal={(show) => setTemplateModalData({ show })} />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
-      <ScriptEditorHeader compileButtonClick={compileScripts} />
+      <ScriptEditorHeader compileButtonClick={compileScripts} importTemplateClick={importTemplate} />
       <div className="script-editor-main-div scroll">
         <div className="script-editor-container">
           <div className="script-editor-sub-item">
