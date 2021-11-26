@@ -35,11 +35,17 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       assetId: '',
     },
   ]);
-  const [txOutputs, setTxOutputs] = useState<TxOutput[]>([]);
+  const [txOutputs, setTxOutputs] = useState<TxOutput[]>([
+    {
+      scriptPubKey: '',
+      amount: '',
+      assetId: '',
+    },
+  ]);
 
   const txInputOnChange = (input: TxInput, index: number) => {
     const newTxInputs = [...txInputs];
-    const relatedInput = txInputs.findIndex((input, i) => i === index);
+    const relatedInputIndex = txInputs.findIndex((input, i) => i === index);
     const newInput = {
       previousTxId: input.previousTxId,
       vout: input.vout,
@@ -48,8 +54,20 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       amount: input.amount,
       assetId: input.assetId,
     };
-    newTxInputs[relatedInput] = newInput;
+    newTxInputs[relatedInputIndex] = newInput;
     setTxInputs(newTxInputs);
+  };
+
+  const txOutputOnChange = (output: TxOutput, index: number) => {
+    const newTxOutputs = [...txOutputs];
+    const relatedOutputIndex = txOutputs.findIndex((output, i) => i === index);
+    const newOutput = {
+      scriptPubKey: output.scriptPubKey,
+      amount: output.amount,
+      assetId: output.assetId,
+    };
+    newTxOutputs[relatedOutputIndex] = newOutput;
+    setTxOutputs(newTxOutputs);
   };
 
   return (
@@ -98,8 +116,33 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
             </div>
             <div className="vertical-line"></div>
             <div className="tx-outputs">
-              <TransactionOutput />
-              <Button className="tx-template-button" onClick={() => {}}>
+              {txOutputs.map((output: TxOutput, index: number) => {
+                const txOutput = { output, index };
+                return (
+                  <TransactionOutput
+                    txOutput={txOutput}
+                    txOutputOnChange={txOutputOnChange}
+                    removeOutput={(index: number) => {
+                      const newTxOutputs = [...txOutputs];
+                      newTxOutputs.splice(index, 1);
+                      setTxOutputs(newTxOutputs);
+                    }}
+                  />
+                );
+              })}
+              <Button
+                className="tx-template-button"
+                onClick={() => {
+                  const newTxOutput = {
+                    scriptPubKey: '',
+                    amount: '',
+                    assetId: '',
+                  };
+                  const newTxOutputs = [...txOutputs];
+                  newTxOutputs.push(newTxOutput);
+                  setTxOutputs(newTxOutputs);
+                }}
+              >
                 + Add New Output
               </Button>
             </div>
