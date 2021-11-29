@@ -34,7 +34,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
   const [tweakedResult, setTweakedResult] = useState<Taproot>({ tweak: '', scriptPubkey: '', bech32: '' });
 
   const pubkeyDefaultValue: string = '1dae61a4a8f841952be3a511502d4f56e889ffa0685aa0098773ea2d4309f624';
-  const tapleafDefaultValue: string = '0xc0';
+  const tapleafDefaultValue: string = scriptWiz.vm.network === VM_NETWORK.LIQUID ? '0xc4' : '0xc0';
 
   useEffect(() => {
     const script = compileModalData.data?.substr(2) || scriptWiz.compile().substr(2);
@@ -70,7 +70,8 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       <Modal.Body className="compile-modal-body scroll">
         <h5 className="compile-modal-item">Compile Result</h5>
         <p className="compile-data-p">{compileModalData.data}</p>
-        {((scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) || (scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT)) && (
+        {((scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) ||
+          (scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT)) && (
           <Form fluid>
             <h5 className="compile-modal-item">Taproot Output</h5>
             <div>
