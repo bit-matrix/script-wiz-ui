@@ -86,6 +86,18 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
             }
           </Dropdown.Item>
           <Dropdown.Item
+            eventKey={`${VM_NETWORK.LIQUID} - ${VM_NETWORK_VERSION.TAPSCRIPT}`}
+            onSelect={() => {
+              onSelectVm({ network: VM_NETWORK.LIQUID, ver: VM_NETWORK_VERSION.TAPSCRIPT });
+            }}
+          >
+            {
+              <div className="dropdown-item">
+                <span>Liquid (Tapscript)</span>
+              </div>
+            }
+          </Dropdown.Item>
+          <Dropdown.Item
             eventKey={`${VM_NETWORK.BTC} - ${VM_NETWORK_VERSION.TAPSCRIPT}`}
             onSelect={() => {
               onSelectVm({ network: VM_NETWORK.BTC, ver: VM_NETWORK_VERSION.TAPSCRIPT });
@@ -94,16 +106,6 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
             {
               <div className="dropdown-item">
                 <span>Bitcoin (Tapscript)</span>
-              </div>
-            }
-          </Dropdown.Item>
-          <Dropdown.Item eventKey={`${VM_NETWORK.LIQUID} - ${VM_NETWORK_VERSION.TAPSCRIPT}`} 
-            onSelect={() => {
-              onSelectVm({ network: VM_NETWORK.LIQUID, ver: VM_NETWORK_VERSION.TAPSCRIPT });
-            }}>
-            {
-              <div className="dropdown-item">
-                <span>Liquid (Tapscript)</span>
               </div>
             }
           </Dropdown.Item>
