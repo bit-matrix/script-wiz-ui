@@ -1,47 +1,36 @@
 import React, { useState } from 'react';
+import { TxData, TxInput, TxOutput } from '@script-wiz/lib';
 import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import './TransactionTemplateModal.scss';
 
-type TxInput = {
-  previousTxId: string;
-  vout: string;
-  sequence: string;
-  scriptPubKey: string;
-  amount: string;
-  assetId?: string;
-};
-
-type TxOutput = {
-  scriptPubKey: string;
-  amount: string;
-  assetId?: string;
-};
-
 type Props = {
   showModal: boolean;
   showModalCallBack: (show: boolean) => void;
+  txDataCallBack: (txData: TxData) => void;
 };
 
-const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack }) => {
-  const [txInputs, setTxInputs] = useState<TxInput[]>([
-    {
-      previousTxId: '',
-      vout: '',
-      sequence: '',
-      scriptPubKey: '',
-      amount: '',
-      assetId: '',
-    },
-  ]);
-  const [txOutputs, setTxOutputs] = useState<TxOutput[]>([
-    {
-      scriptPubKey: '',
-      amount: '',
-      assetId: '',
-    },
-  ]);
+const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack }) => {
+  const txInputInitial = {
+    previousTxId: '',
+    vout: '',
+    sequence: '',
+    scriptPubKey: '',
+    amount: '',
+    assetId: '',
+  };
+
+  const txOutputInitial = {
+    scriptPubKey: '',
+    amount: '',
+    assetId: '',
+  };
+
+  const [txInputs, setTxInputs] = useState<TxInput[]>([txInputInitial]);
+  const [txOutputs, setTxOutputs] = useState<TxOutput[]>([txOutputInitial]);
+  const [version, setVersion] = useState<string>('');
+  const [timelock, setTimeLock] = useState<string>('');
 
   const txInputOnChange = (input: TxInput, index: number) => {
     const newTxInputs = [...txInputs];
@@ -71,7 +60,19 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   };
 
   return (
-    <Modal className="tx-template-modal" size="lg" show={showModal} backdrop={false} onHide={() => showModalCallBack(false)}>
+    <Modal
+      className="tx-template-modal"
+      size="lg"
+      show={showModal}
+      backdrop={false}
+      onHide={() => {
+        setTxInputs([txInputInitial]);
+        setTxOutputs([txOutputInitial]);
+        setVersion('');
+        setTimeLock('');
+        showModalCallBack(false);
+      }}
+    >
       <Modal.Header className="tx-template-modal-header" />
       <Modal.Body>
         <div>
@@ -89,8 +90,10 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                     txInputOnChange={txInputOnChange}
                     removeInput={(index: number) => {
                       const newTxInputs = [...txInputs];
-                      newTxInputs.splice(index, 1);
-                      setTxInputs(newTxInputs);
+                      if (txInputs.length > 1) {
+                        newTxInputs.splice(index, 1);
+                        setTxInputs(newTxInputs);
+                      }
                     }}
                   />
                 );
@@ -98,14 +101,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
               <Button
                 className="tx-template-button"
                 onClick={() => {
-                  const newTxInput = {
-                    previousTxId: '',
-                    vout: '',
-                    sequence: '',
-                    scriptPubKey: '',
-                    amount: '',
-                    assetId: '',
-                  };
+                  const newTxInput = txInputInitial;
                   const newTxInputs = [...txInputs];
                   newTxInputs.push(newTxInput);
                   setTxInputs(newTxInputs);
@@ -124,8 +120,10 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                     txOutputOnChange={txOutputOnChange}
                     removeOutput={(index: number) => {
                       const newTxOutputs = [...txOutputs];
-                      newTxOutputs.splice(index, 1);
-                      setTxOutputs(newTxOutputs);
+                      if (txOutputs.length > 1) {
+                        newTxOutputs.splice(index, 1);
+                        setTxOutputs(newTxOutputs);
+                      }
                     }}
                   />
                 );
@@ -133,11 +131,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
               <Button
                 className="tx-template-button"
                 onClick={() => {
-                  const newTxOutput = {
-                    scriptPubKey: '',
-                    amount: '',
-                    assetId: '',
-                  };
+                  const newTxOutput = txOutputInitial;
                   const newTxOutputs = [...txOutputs];
                   newTxOutputs.push(newTxOutput);
                   setTxOutputs(newTxOutputs);
@@ -149,15 +143,37 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
           </div>
         </div>
       </Modal.Body>
-      <Modal.Footer className="tx-template-modal-footer">
-        <div className="tx-item">
-          <div className="tx-modal-label">Tx Version:</div>
-          <Input placeholder="4-bytes" onChange={(value: string) => {}} />
+      <Modal.Footer>
+        <div className="tx-template-modal-footer">
+          <div className="tx-item">
+            <div className="tx-modal-label">Tx Version:</div>
+            <Input value={version} placeholder="4-bytes" onChange={(value: string) => setVersion(value)} />
+          </div>
+          <div className="tx-item">
+            <div className="tx-modal-label">Tx Timelock:</div>
+            <Input
+              value={timelock}
+              placeholder="4-bytes"
+              onChange={(value: string) => {
+                setTimeLock(value);
+              }}
+            />
+          </div>
         </div>
-        <div className="tx-item">
-          <div className="tx-modal-label">Tx Timelock:</div>
-          <Input placeholder="4-bytes" onChange={(value: string) => {}} />
-        </div>
+        <Button
+          onClick={() => {
+            const txData: TxData = {
+              inputs: txInputs,
+              outputs: txOutputs,
+              version: version,
+              timelock: timelock,
+            };
+            txDataCallBack(txData);
+            showModalCallBack(false);
+          }}
+        >
+          Save
+        </Button>
       </Modal.Footer>
     </Modal>
   );
