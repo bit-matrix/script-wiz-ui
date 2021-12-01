@@ -1,11 +1,11 @@
 import React from 'react';
 import { TxInput } from '@script-wiz/lib';
-import { Icon, IconButton, Input } from 'rsuite';
+import { Icon, IconButton, Input, Radio } from 'rsuite';
 import './TransactionInput.scss';
 
 type Props = {
-  txInputOnChange: (input: TxInput, index: number) => void;
-  txInput: { input: TxInput; index: number };
+  txInputOnChange: (input: TxInput, index: number, checked: boolean) => void;
+  txInput: { input: TxInput; index: number; checked: boolean };
   removeInput: (index: number) => void;
 };
 
@@ -13,7 +13,16 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
   return (
     <div className="tx-input-main">
       <div className="tx-input-header">
-        <p className="tx-input-index">Index #{txInput.index}</p>
+        <div className="tx-input-index">Index #{txInput.index}</div>
+        <Radio
+          onChange={(value: any, checked: boolean) => {
+            txInputOnChange(txInput.input, txInput.index, checked);
+          }}
+          value={txInput.index}
+          checked={txInput.checked}
+        >
+          Current Input Index
+        </Radio>
         <IconButton className="tx-input-close-icon" icon={<Icon icon="close" />} size="sm" onClick={() => removeInput(txInput.index)} />
       </div>
       <div className="tx-input-modal-item">
@@ -32,6 +41,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
                 assetId: txInput.input.assetId,
               },
               txInput.index,
+              txInput.checked,
             );
           }}
         />
@@ -53,6 +63,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
                   assetId: txInput.input.assetId,
                 },
                 txInput.index,
+                txInput.checked,
               );
             }}
           />
@@ -73,6 +84,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
                   assetId: txInput.input.assetId,
                 },
                 txInput.index,
+                txInput.checked,
               );
             }}
           />
@@ -93,6 +105,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
                 assetId: txInput.input.assetId,
               },
               txInput.index,
+              txInput.checked,
             );
           }}
         />
@@ -113,6 +126,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
                 assetId: txInput.input.assetId,
               },
               txInput.index,
+              txInput.checked,
             );
           }}
         />
@@ -133,6 +147,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
                 assetId: value,
               },
               txInput.index,
+              txInput.checked,
             );
           }}
         />
