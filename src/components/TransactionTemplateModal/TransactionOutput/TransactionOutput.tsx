@@ -1,12 +1,7 @@
 import React from 'react';
+import { TxOutput } from '@script-wiz/lib';
 import { Icon, IconButton, Input } from 'rsuite';
 import './TransactionOutput.scss';
-
-type TxOutput = {
-  scriptPubKey: string;
-  amount: string;
-  assetId?: string;
-};
 
 type Props = {
   txOutputOnChange: (output: TxOutput, index: number) => void;
@@ -24,6 +19,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, remove
       <div className="tx-output-item">
         <div className="tx-modal-label">scriptPubkey:</div>
         <Input
+          value={txOutput.output.scriptPubKey}
           onChange={(value: string) => {
             txOutputOnChange(
               {
@@ -39,6 +35,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, remove
       <div className="tx-output-item">
         <div className="tx-modal-label">Amount:</div>
         <Input
+          value={txOutput.output.amount}
           placeholder="8-bytes"
           onChange={(value: string) => {
             txOutputOnChange(
@@ -55,6 +52,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, remove
       <div className="tx-output-item">
         <div className="tx-modal-label">Asset ID:</div>
         <Input
+          value={txOutput.output.assetId}
           placeholder="32-bytes"
           onChange={(value: string) => {
             txOutputOnChange(
