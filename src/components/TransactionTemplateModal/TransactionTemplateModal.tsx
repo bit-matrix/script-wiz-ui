@@ -31,8 +31,9 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   const [txOutputs, setTxOutputs] = useState<TxOutput[]>([txOutputInitial]);
   const [version, setVersion] = useState<string>('');
   const [timelock, setTimeLock] = useState<string>('');
+  const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
 
-  const txInputOnChange = (input: TxInput, index: number) => {
+  const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
     const relatedInputIndex = txInputs.findIndex((input, i) => i === index);
     const newInput = {
@@ -44,6 +45,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       assetId: input.assetId,
     };
     newTxInputs[relatedInputIndex] = newInput;
+    if (checked) setCurrentInputIndex(index);
     setTxInputs(newTxInputs);
   };
 
@@ -83,7 +85,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
           <div className="tx-template-main">
             <div className="tx-inputs">
               {txInputs.map((input: TxInput, index: number) => {
-                const txInput = { input, index };
+                const txInput = { input, index, checked: currentInputIndex === index };
                 return (
                   <TransactionInput
                     txInput={txInput}
@@ -167,6 +169,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
               outputs: txOutputs,
               version: version,
               timelock: timelock,
+              currentInputIndex,
             };
             txDataCallBack(txData);
             showModalCallBack(false);
