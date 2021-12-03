@@ -88,6 +88,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                 const txInput = { input, index, checked: currentInputIndex === index };
                 return (
                   <TransactionInput
+                    key={index}
                     txInput={txInput}
                     txInputOnChange={txInputOnChange}
                     removeInput={(index: number) => {
@@ -118,6 +119,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                 const txOutput = { output, index };
                 return (
                   <TransactionOutput
+                    key={index}
                     txOutput={txOutput}
                     txOutputOnChange={txOutputOnChange}
                     removeOutput={(index: number) => {
