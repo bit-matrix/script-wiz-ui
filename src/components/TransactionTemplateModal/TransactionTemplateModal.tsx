@@ -3,6 +3,7 @@ import { TxData, TxInput, TxOutput } from '@script-wiz/lib';
 import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
+import { validHex } from '../../utils/helper';
 import './TransactionTemplateModal.scss';
 
 type Props = {
@@ -10,6 +11,17 @@ type Props = {
   showModalCallBack: (show: boolean) => void;
   txDataCallBack: (txData: TxData) => void;
 };
+
+export enum ERROR_MESSAGE {
+  PREVIOUS_TX_ID_ERROR = 'Invalid previous tx id!',
+  VOUT_ERROR = 'Invalid vout!',
+  SEQUENCE_ERROR = 'Invalid sequence!',
+  SCRIPT_PUB_KEY_ERROR = 'Invalid script pub key!',
+  AMOUNT_ERROR = 'Invalid amount!',
+  ASSET_ID_ERROR = 'Invalid asset id!',
+  VERSION_ERROR = 'Invalid version!',
+  TIMELOCK_ERROR = 'Invalid timelock!',
+}
 
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack }) => {
   const txInputInitial = {
@@ -36,6 +48,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
     const relatedInputIndex = txInputs.findIndex((input, i) => i === index);
+
     const newInput = {
       previousTxId: input.previousTxId,
       vout: input.vout,
@@ -61,6 +74,40 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
     setTxOutputs(newTxOutputs);
   };
 
+  const inputValidation = (input: TxInput) => {
+    if (input.previousTxId.length !== 64 && !validHex(input.previousTxId)) {
+      return false;
+    }
+    if (input.amount.length !== 16 || !validHex(input.amount)) {
+      return false;
+    }
+    if (input.assetId?.length !== 64 || !validHex(input.assetId)) {
+      return false;
+    }
+    if (input.sequence.length !== 8 || !validHex(input.sequence)) {
+      return false;
+    }
+    if (input.vout.length !== 8 || !validHex(input.vout)) {
+      return false;
+    }
+    return true;
+  };
+
+  const outputValidation = (output: TxOutput) => {
+    if (output.amount.length !== 16 || !validHex(output.amount)) {
+      return false;
+    }
+    if (output.assetId?.length !== 64 || !validHex(output.assetId)) {
+      return false;
+    }
+    return true;
+  };
+
+  const isValidVersion = version.length !== 8 && version.length !== 0 ? ERROR_MESSAGE.VERSION_ERROR : '';
+  const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? ERROR_MESSAGE.TIMELOCK_ERROR : '';
+
+  const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
+
   return (
     <Modal
       className="tx-template-modal"
@@ -82,6 +129,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
             <p>Inputs</p>
             <p>Outputs</p>
           </div>
+
           <div className="tx-template-main">
             <div className="tx-inputs">
               {txInputs.map((input: TxInput, index: number) => {
@@ -152,6 +200,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
           <div className="tx-item">
             <div className="tx-modal-label">Tx Version:</div>
             <Input value={version} placeholder="4-bytes" onChange={(value: string) => setVersion(value)} />
+            <div className="tx-error-line">{isValidVersion}</div>
           </div>
           <div className="tx-item">
             <div className="tx-modal-label">Tx Timelock:</div>
@@ -162,6 +211,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                 setTimeLock(value);
               }}
             />
+            <div className="tx-error-line">{isValidTimelock}</div>
           </div>
         </div>
         <Button
@@ -173,9 +223,12 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
               timelock: timelock,
               currentInputIndex,
             };
-            txDataCallBack(txData);
-            showModalCallBack(false);
+            if (isValidTemplate) {
+              txDataCallBack(txData);
+              showModalCallBack(false);
+            }
           }}
+          disabled={!isValidTemplate}
         >
           Save
         </Button>

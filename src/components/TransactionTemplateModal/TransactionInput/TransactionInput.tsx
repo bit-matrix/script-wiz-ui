@@ -1,6 +1,8 @@
 import React from 'react';
 import { TxInput } from '@script-wiz/lib';
 import { Icon, IconButton, Input, Radio } from 'rsuite';
+import { ERROR_MESSAGE } from '../TransactionTemplateModal';
+import { validHex } from '../../../utils/helper';
 import './TransactionInput.scss';
 
 type Props = {
@@ -10,6 +12,26 @@ type Props = {
 };
 
 const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInput }) => {
+  const isValidPreviousTxId =
+    (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
+      ? ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
+      : '';
+
+  const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? ERROR_MESSAGE.VOUT_ERROR : '';
+
+  const isValidSequence =
+    (txInput.input.sequence.length !== 8 && txInput.input.sequence.length !== 0) || !validHex(txInput.input.sequence)
+      ? ERROR_MESSAGE.SEQUENCE_ERROR
+      : '';
+
+  const isValidAmount =
+    (txInput.input.amount.length !== 16 && txInput.input.amount.length !== 0) || !validHex(txInput.input.amount) ? ERROR_MESSAGE.AMOUNT_ERROR : '';
+
+  const isValidAssetId =
+    (txInput.input.assetId?.length !== 64 && txInput.input.assetId?.length !== 0) || !validHex(txInput.input.assetId)
+      ? ERROR_MESSAGE.ASSET_ID_ERROR
+      : '';
+
   return (
     <div className="tx-input-main">
       <div className="tx-input-header">
@@ -45,6 +67,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
             );
           }}
         />
+        <div className="tx-error-line">{isValidPreviousTxId}</div>
       </div>
       <div className="tx-input-item-double">
         <div className="tx-input-label">
@@ -67,6 +90,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
               );
             }}
           />
+          <div className="tx-error-line">{isValidVout}</div>
         </div>
         <div className="tx-input-label">
           <div className="tx-input-item">Sequence:</div>
@@ -88,6 +112,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
               );
             }}
           />
+          <div className="tx-error-line">{isValidSequence}</div>
         </div>
       </div>
       <div className="tx-input-item">
@@ -130,6 +155,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
             );
           }}
         />
+        <div className="tx-error-line">{isValidAmount}</div>
       </div>
       <div className="tx-input-item">
         <div className="tx-modal-label">Asset ID:</div>
@@ -151,6 +177,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
             );
           }}
         />
+        <div className="tx-error-line">{isValidAssetId}</div>
       </div>
     </div>
   );
