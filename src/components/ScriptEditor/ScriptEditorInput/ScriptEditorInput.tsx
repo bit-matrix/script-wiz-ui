@@ -17,11 +17,12 @@ import './ScriptEditorInput.scss';
 
 type Props = {
   scriptWiz: ScriptWiz;
+  initialEditorValue: string;
   onChangeScriptEditorInput: (lines: string[]) => void;
   failedLineNumber?: number;
 };
 
-const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInput, failedLineNumber = undefined }) => {
+const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onChangeScriptEditorInput, failedLineNumber = undefined }) => {
   const monaco = useMonaco();
 
   const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
@@ -96,7 +97,7 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, onChangeScriptEditorInp
         onMount={() => {
           console.log('loading state');
         }}
-        value={scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue}
+        value={initialEditorValue}
         options={editorOptions}
         language={scriptWizEditor.LANGUAGE}
         theme={scriptWizEditor.THEME}

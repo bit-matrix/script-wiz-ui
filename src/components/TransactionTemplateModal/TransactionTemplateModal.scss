@@ -1,0 +1,123 @@
+.tx-template-modal {
+  .rs-modal-content {
+    background-color: #eee !important;
+  }
+
+  .tx-template-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    color: #000;
+    font-size: 0.875rem;
+  }
+
+  .vertical-line {
+    width: 0.25rem;
+    background-color: #d6d6d6;
+    display: flex;
+    height: 100%;
+    align-self: start;
+    top: 2.85rem;
+    position: absolute;
+  }
+
+  .tx-inputs {
+    display: block;
+    align-self: start;
+    width: 100%;
+    height: 100%;
+    margin-right: 1rem;
+  }
+
+  .tx-outputs {
+    display: block;
+    align-self: start;
+    width: 100%;
+    height: 100%;
+    margin-left: 1rem;
+  }
+
+  .tx-template-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #292d33 !important;
+  }
+
+  .tx-template-main .rs-input {
+    background-color: #fff !important;
+    color: #292d33 !important;
+    border: 1px solid #ccc;
+  }
+
+  .tx-template-button {
+    width: 100% !important;
+    margin: 1rem 0;
+    background-color: #ccc !important;
+    color: #292d33 !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+
+    &:hover {
+      color: #e9ebf0 !important;
+      background-color: #3c3f43 !important;
+    }
+  }
+
+  .tx-template-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 0.25rem#d6d6d6 solid !important;
+    padding-top: 1rem;
+  }
+
+  .tx-item {
+    margin: 0 0.5rem;
+    width: 25%;
+    .rs-input {
+      background-color: #fff !important;
+      color: #292d33 !important;
+      border: 1px solid #ccc;
+    }
+  }
+
+  .tx-modal-label {
+    margin-bottom: 0.25rem;
+    color: #292d33;
+    text-align: start;
+  }
+
+  .tx-template-modal-header .rs-modal-header-close {
+    color: #292d33 !important;
+    font-size: 1rem !important;
+    font-weight: 600;
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: 6px;
+    background-color: #f5f5f5;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    background-color: #f5f5f5;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #d6d6d6;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+  }
+
+  .tx-error-line {
+    color: red;
+  }
+}

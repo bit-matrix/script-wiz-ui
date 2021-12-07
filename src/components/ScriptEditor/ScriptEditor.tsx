@@ -3,10 +3,11 @@ import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
 import { convertEditorLines } from '../../helper';
-import { ScriptWiz, VM_NETWORK } from '@script-wiz/lib';
+import { ScriptWiz, VM_NETWORK, TxData, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import WizData from '@script-wiz/wiz-data';
-import { initialBitcoinEditorValue, initialLiquidEditorValue } from './ScriptEditorInput/initialEditorValue';
+import { initialBitcoinEditorValue, initialLiquidEditorValue, initialLiquidTaprootEditorValue } from './ScriptEditorInput/initialEditorValue';
 import CompileModal from '../CompileModal/CompileModal';
+import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
 import './ScriptEditor.scss';
 
 type Props = {
@@ -21,19 +22,30 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
   const [lastStackDataList, setLastStackDataList] = useState<Array<WizData>>(initialLastStackDataList);
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
+  const [txData, setTxData] = useState<TxData>();
+  const [lines, setLines] = useState<string[]>();
+  const [initialEditorValue, setInitialEditorValue] = useState<string>('');
 
   const [compileModalData, setCompileModalData] = useState<{
     show: boolean;
     data?: string;
   }>({ show: false });
 
+  const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
+
   const timerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    let lines = convertEditorLines(scriptWiz.vm.network === VM_NETWORK.BTC ? initialBitcoinEditorValue : initialLiquidEditorValue);
-    compile(lines);
+    let editorLines = '';
+    if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+      editorLines = initialBitcoinEditorValue;
+    } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+      editorLines = scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT ? initialLiquidTaprootEditorValue : initialLiquidEditorValue;
+    }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    let lines = convertEditorLines(editorLines);
+    setLines(lines);
+    setInitialEditorValue(editorLines);
   }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
 
   const parseInput = useCallback(
@@ -68,13 +80,21 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     [scriptWiz],
   );
 
-  const compile = useCallback(
-    (lines: string[]) => {
-      scriptWiz.clearStackDataList();
-      let hasError: boolean = false;
-      const newLineStackDataListArray: Array<Array<WizData>> = [];
-      let newLastStackDataList: Array<WizData> = [];
+  const addTxTemplate = useCallback(() => {
+    if (txData) {
+      scriptWiz.parseTxData(txData);
+    }
+  }, [scriptWiz, txData]);
 
+  useEffect(() => {
+    scriptWiz.clearStackDataList();
+    let hasError: boolean = false;
+    const newLineStackDataListArray: Array<Array<WizData>> = [];
+    let newLastStackDataList: Array<WizData> = [];
+
+    addTxTemplate();
+
+    if (lines) {
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
 
@@ -94,15 +114,17 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             }
           }
         } else {
-          if (!hasError) newLineStackDataListArray.push([]);
+          if (!hasError) {
+            newLineStackDataListArray.push([]);
+            setErrorMessage(undefined);
+          }
         }
       }
+    }
 
-      setLineStackDataListArray(newLineStackDataListArray);
-      setLastStackDataList(newLastStackDataList);
-    },
-    [parseInput, scriptWiz],
-  );
+    setLineStackDataListArray(newLineStackDataListArray);
+    setLastStackDataList(newLastStackDataList);
+  }, [addTxTemplate, lines, parseInput, scriptWiz]);
 
   const compileScripts = () => {
     const compileScript = scriptWiz.compile();
@@ -111,13 +133,19 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   return (
     <>
+      <TransactionTemplateModal
+        showModal={showTemplateModal}
+        showModalCallBack={(show) => setShowTemplateModal(show)}
+        txDataCallBack={(txData: TxData) => setTxData(txData)}
+      />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
-      <ScriptEditorHeader compileButtonClick={compileScripts} />
+      <ScriptEditorHeader compileButtonClick={compileScripts} txTemplateClick={() => setShowTemplateModal(true)} scriptWiz={scriptWiz} />
       <div className="script-editor-main-div scroll">
         <div className="script-editor-container">
           <div className="script-editor-sub-item">
             <ScriptEditorInput
               scriptWiz={scriptWiz}
+              initialEditorValue={initialEditorValue}
               onChangeScriptEditorInput={(lines: string[]) => {
                 setErrorMessage(undefined);
                 // setLineStackDataListArray(initialLineStackDataListArray);
@@ -126,7 +154,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 if (timerRef.current) window.clearTimeout(timerRef.current);
 
                 timerRef.current = window.setTimeout(() => {
-                  compile(lines);
+                  setLines(lines);
                 }, 250);
               }}
               failedLineNumber={failedLineNumber}

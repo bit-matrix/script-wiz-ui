@@ -1,28 +1,32 @@
 .script-editor-headers-main {
+  display: flex;
+
+  .script-editor-header-sub-item {
+    height: 1.5rem;
+    background: #4d4e4f;
+
     display: flex;
+    align-items: center;
+    padding-left: 1rem;
+  }
 
-    .script-editor-header-sub-item {
-        height: 1.5rem;
-        background: #4d4e4f;
+  .editor {
+    width: calc(50% - 8px);
+    border-right: 1px solid #44474b;
+    position: relative;
+  }
 
-        display: flex;
-        align-items: center;
-        padding-left: 1rem;
+  .stack {
+    width: calc(50% + 8px);
+  }
+
+  .compile-button {
+    position: absolute !important;
+    right: 1rem !important;
+    z-index: 100;
+
+    .tx-template-icon {
+      margin-right: 0.5rem;
     }
-
-    .editor {
-        width: calc(50% - 8px);
-        border-right: 1px solid #44474b;
-        position: relative;
-    }
-
-    .stack {
-        width: calc(50% + 8px);
-    }
-
-    .compile-button {
-        position: absolute !important;
-        right: 1rem !important;
-        z-index: 100;
-    }
+  }
 }
