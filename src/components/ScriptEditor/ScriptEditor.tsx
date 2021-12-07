@@ -139,7 +139,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         txDataCallBack={(txData: TxData) => setTxData(txData)}
       />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
-      <ScriptEditorHeader compileButtonClick={compileScripts} txTemplateClick={() => setShowTemplateModal(true)} />
+      <ScriptEditorHeader compileButtonClick={compileScripts} txTemplateClick={() => setShowTemplateModal(true)} scriptWiz={scriptWiz} />
       <div className="script-editor-main-div scroll">
         <div className="script-editor-container">
           <div className="script-editor-sub-item">
