@@ -59,3 +59,37 @@ export const initialBitcoinEditorValue =
   '<3>' +
   '\n' +
   'OP_EQUAL';
+
+export const initialLiquidTaprootEditorValue =
+  '//' +
+  '\n' +
+  '// Script Wizard makes it easy to design and compile' +
+  '\n' +
+  '// custom Liquid scripts.' +
+  '\n' +
+  '//' +
+  '\n' +
+  '// Simply write your script and put witness elements' +
+  '\n' +
+  '// at the very top. You can see stack execution line by line.' +
+  '\n' +
+  '//' +
+  '\n' +
+  '// Feel free to create issues on GitHub if you encounter bugs.' +
+  '\n' +
+  '//' +
+  '\n' +
+  '\n' +
+  '<0x22b284224b4e1d4a943d5a911a259b00cc737c19e371eff98dd045e385a8e8d4c24137188c07add25ccf0f930f36360e2ecf06b4ffeee3a1bd4e2f37911d7c6d>' +
+  '\n' +
+  "<'hello'>" +
+  '\n' +
+  "<'🌎'>" +
+  '\n' +
+  'OP_CAT' +
+  '\n' +
+  'OP_SHA256' +
+  '\n' +
+  '<0x25d1dff95105f5253c4022f628a996ad3a0d95fbf21d468a1b33f8c160d8f517>' +
+  '\n' +
+  'OP_CHECKSIGFROMSTACK';
