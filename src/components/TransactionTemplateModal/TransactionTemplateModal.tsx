@@ -75,34 +75,34 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
     setTxOutputs(newTxOutputs);
   };
 
-  const inputValidation = (input: TxInput) => {
-    if (input.previousTxId.length !== 64 && !validHex(input.previousTxId)) {
-      return false;
-    }
-    if (input.amount.length !== 16 || !validHex(input.amount)) {
-      return false;
-    }
-    if (input.assetId?.length !== 64 || !validHex(input.assetId)) {
-      return false;
-    }
-    if (input.sequence.length !== 8 || !validHex(input.sequence)) {
-      return false;
-    }
-    if (input.vout.length !== 8 || !validHex(input.vout)) {
-      return false;
-    }
-    return true;
-  };
+  // const inputValidation = (input: TxInput) => {
+  //   if (input.previousTxId.length !== 64 && !validHex(input.previousTxId)) {
+  //     return false;
+  //   }
+  //   if (input.amount.length !== 16 || !validHex(input.amount)) {
+  //     return false;
+  //   }
+  //   if (input.assetId?.length !== 64 || !validHex(input.assetId)) {
+  //     return false;
+  //   }
+  //   if (input.sequence.length !== 8 || !validHex(input.sequence)) {
+  //     return false;
+  //   }
+  //   if (input.vout.length !== 8 || !validHex(input.vout)) {
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
-  const outputValidation = (output: TxOutput) => {
-    if (output.amount.length !== 16 || !validHex(output.amount)) {
-      return false;
-    }
-    if (output.assetId?.length !== 64 || !validHex(output.assetId)) {
-      return false;
-    }
-    return true;
-  };
+  // const outputValidation = (output: TxOutput) => {
+  //   if (output.amount.length !== 16 || !validHex(output.amount)) {
+  //     return false;
+  //   }
+  //   if (output.assetId?.length !== 64 || !validHex(output.assetId)) {
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const isValidVersion = version.length !== 8 && version.length !== 0 ? ERROR_MESSAGE.VERSION_ERROR : '';
   const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? ERROR_MESSAGE.TIMELOCK_ERROR : '';
