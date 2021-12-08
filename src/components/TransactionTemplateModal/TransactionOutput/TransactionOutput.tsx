@@ -45,7 +45,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, remove
         />
       </div>
       <div className="tx-output-item">
-        <div className="tx-modal-label">Amount:</div>
+        <div className="tx-modal-label">Amount (LE64):</div>
         <Input
           value={txOutput.output.amount}
           placeholder="8-bytes"

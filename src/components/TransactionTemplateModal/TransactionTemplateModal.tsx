@@ -10,6 +10,7 @@ type Props = {
   showModal: boolean;
   showModalCallBack: (show: boolean) => void;
   txDataCallBack: (txData: TxData) => void;
+  clearCallBack: () => void;
 };
 
 export enum ERROR_MESSAGE {
@@ -23,7 +24,7 @@ export enum ERROR_MESSAGE {
   TIMELOCK_ERROR = 'Invalid timelock!',
 }
 
-const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack }) => {
+const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack, clearCallBack }) => {
   const txInputInitial = {
     previousTxId: '',
     vout: '',
@@ -74,39 +75,47 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
     setTxOutputs(newTxOutputs);
   };
 
-  const inputValidation = (input: TxInput) => {
-    if (input.previousTxId.length !== 64 && !validHex(input.previousTxId)) {
-      return false;
-    }
-    if (input.amount.length !== 16 || !validHex(input.amount)) {
-      return false;
-    }
-    if (input.assetId?.length !== 64 || !validHex(input.assetId)) {
-      return false;
-    }
-    if (input.sequence.length !== 8 || !validHex(input.sequence)) {
-      return false;
-    }
-    if (input.vout.length !== 8 || !validHex(input.vout)) {
-      return false;
-    }
-    return true;
-  };
+  // const inputValidation = (input: TxInput) => {
+  //   if (input.previousTxId.length !== 64 && !validHex(input.previousTxId)) {
+  //     return false;
+  //   }
+  //   if (input.amount.length !== 16 || !validHex(input.amount)) {
+  //     return false;
+  //   }
+  //   if (input.assetId?.length !== 64 || !validHex(input.assetId)) {
+  //     return false;
+  //   }
+  //   if (input.sequence.length !== 8 || !validHex(input.sequence)) {
+  //     return false;
+  //   }
+  //   if (input.vout.length !== 8 || !validHex(input.vout)) {
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
-  const outputValidation = (output: TxOutput) => {
-    if (output.amount.length !== 16 || !validHex(output.amount)) {
-      return false;
-    }
-    if (output.assetId?.length !== 64 || !validHex(output.assetId)) {
-      return false;
-    }
-    return true;
-  };
+  // const outputValidation = (output: TxOutput) => {
+  //   if (output.amount.length !== 16 || !validHex(output.amount)) {
+  //     return false;
+  //   }
+  //   if (output.assetId?.length !== 64 || !validHex(output.assetId)) {
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const isValidVersion = version.length !== 8 && version.length !== 0 ? ERROR_MESSAGE.VERSION_ERROR : '';
   const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? ERROR_MESSAGE.TIMELOCK_ERROR : '';
 
   // const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
+
+  const txData: TxData = {
+    inputs: txInputs,
+    outputs: txOutputs,
+    version: version,
+    timelock: timelock,
+    currentInputIndex,
+  };
 
   return (
     <Modal
@@ -115,10 +124,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       show={showModal}
       backdrop={false}
       onHide={() => {
-        setTxInputs([txInputInitial]);
-        setTxOutputs([txOutputInitial]);
-        setVersion('');
-        setTimeLock('');
+        txDataCallBack(txData);
         showModalCallBack(false);
       }}
     >
@@ -216,13 +222,19 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
         </div>
         <Button
           onClick={() => {
-            const txData: TxData = {
-              inputs: txInputs,
-              outputs: txOutputs,
-              version: version,
-              timelock: timelock,
-              currentInputIndex,
-            };
+            setTxInputs([txInputInitial]);
+            setTxOutputs([txOutputInitial]);
+            setVersion('');
+            setTimeLock('');
+            clearCallBack();
+          }}
+        >
+          Clear
+        </Button>
+        <Button
+          className="tx-modal-save-button"
+          appearance="subtle"
+          onClick={() => {
             txDataCallBack(txData);
             showModalCallBack(false);
             // if (isValidTemplate) {

@@ -136,7 +136,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
         />
       </div>
       <div className="tx-input-item">
-        <div className="tx-modal-label">Amount:</div>
+        <div className="tx-modal-label">Amount (LE64):</div>
         <Input
           value={txInput.input.amount}
           placeholder="8-bytes"
