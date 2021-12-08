@@ -108,6 +108,14 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
 
   // const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
 
+  const txData: TxData = {
+    inputs: txInputs,
+    outputs: txOutputs,
+    version: version,
+    timelock: timelock,
+    currentInputIndex,
+  };
+
   return (
     <Modal
       className="tx-template-modal"
@@ -115,10 +123,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       show={showModal}
       backdrop={false}
       onHide={() => {
-        setTxInputs([txInputInitial]);
-        setTxOutputs([txOutputInitial]);
-        setVersion('');
-        setTimeLock('');
+        txDataCallBack(txData);
         showModalCallBack(false);
       }}
     >
@@ -216,13 +221,19 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
         </div>
         <Button
           onClick={() => {
-            const txData: TxData = {
-              inputs: txInputs,
-              outputs: txOutputs,
-              version: version,
-              timelock: timelock,
-              currentInputIndex,
-            };
+            setTxInputs([txInputInitial]);
+            setTxOutputs([txOutputInitial]);
+            setVersion('');
+            setTimeLock('');
+            showModalCallBack(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          className="tx-modal-save-button"
+          appearance="subtle"
+          onClick={() => {
             txDataCallBack(txData);
             showModalCallBack(false);
             // if (isValidTemplate) {
