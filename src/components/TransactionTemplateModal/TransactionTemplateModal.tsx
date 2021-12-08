@@ -10,6 +10,7 @@ type Props = {
   showModal: boolean;
   showModalCallBack: (show: boolean) => void;
   txDataCallBack: (txData: TxData) => void;
+  clearCallBack: () => void;
 };
 
 export enum ERROR_MESSAGE {
@@ -23,7 +24,7 @@ export enum ERROR_MESSAGE {
   TIMELOCK_ERROR = 'Invalid timelock!',
 }
 
-const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack }) => {
+const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack, clearCallBack }) => {
   const txInputInitial = {
     previousTxId: '',
     vout: '',
@@ -226,9 +227,10 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
             setVersion('');
             setTimeLock('');
             showModalCallBack(false);
+            clearCallBack();
           }}
         >
-          Cancel
+          Clear
         </Button>
         <Button
           className="tx-modal-save-button"

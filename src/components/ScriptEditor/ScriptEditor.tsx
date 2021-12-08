@@ -136,7 +136,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       <TransactionTemplateModal
         showModal={showTemplateModal}
         showModalCallBack={(show) => setShowTemplateModal(show)}
-        txDataCallBack={(txData: TxData) => setTxData(txData)}
+        txDataCallBack={(txData: TxData) => {
+          setTxData(txData);
+        }}
+        clearCallBack={() => {
+          setTxData(undefined);
+        }}
       />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
       <ScriptEditorHeader compileButtonClick={compileScripts} txTemplateClick={() => setShowTemplateModal(true)} scriptWiz={scriptWiz} />
