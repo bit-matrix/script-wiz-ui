@@ -226,7 +226,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
             setTxOutputs([txOutputInitial]);
             setVersion('');
             setTimeLock('');
-            showModalCallBack(false);
             clearCallBack();
           }}
         >
