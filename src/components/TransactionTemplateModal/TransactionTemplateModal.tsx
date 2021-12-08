@@ -106,7 +106,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   const isValidVersion = version.length !== 8 && version.length !== 0 ? ERROR_MESSAGE.VERSION_ERROR : '';
   const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? ERROR_MESSAGE.TIMELOCK_ERROR : '';
 
-  const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
+  // const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
 
   return (
     <Modal
@@ -223,12 +223,14 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
               timelock: timelock,
               currentInputIndex,
             };
-            if (isValidTemplate) {
-              txDataCallBack(txData);
-              showModalCallBack(false);
-            }
+            txDataCallBack(txData);
+            showModalCallBack(false);
+            // if (isValidTemplate) {
+            //   txDataCallBack(txData);
+            //   showModalCallBack(false);
+            // }
           }}
-          disabled={!isValidTemplate}
+          // disabled={!isValidTemplate}
         >
           Save
         </Button>
