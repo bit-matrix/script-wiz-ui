@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib';
 import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
-import { validHex } from '../../utils/helper';
+import { useLocalStorageData } from '../../hooks/useLocalStorage';
+// import { validHex } from '../../utils/helper';
 import './TransactionTemplateModal.scss';
 
 type Props = {
@@ -45,6 +46,19 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   const [version, setVersion] = useState<string>('');
   const [timelock, setTimeLock] = useState<string>('');
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
+
+  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxData>('txData');
+
+  useEffect(() => {
+    const txData = getTxLocalData();
+    if (txData) {
+      setTxInputs(txData.inputs);
+      setTxOutputs(txData.outputs);
+      setVersion(txData.version);
+      setTimeLock(txData.timelock);
+      setCurrentInputIndex(txData.currentInputIndex);
+    }
+  }, [getTxLocalData]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
@@ -227,6 +241,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
             setVersion('');
             setTimeLock('');
             clearCallBack();
+            clearTxLocalData();
           }}
         >
           Clear
@@ -237,6 +252,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
           onClick={() => {
             txDataCallBack(txData);
             showModalCallBack(false);
+            setTxLocalData(txData);
             // if (isValidTemplate) {
             //   txDataCallBack(txData);
             //   showModalCallBack(false);
