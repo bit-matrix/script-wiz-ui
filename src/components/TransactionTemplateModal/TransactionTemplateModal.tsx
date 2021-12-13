@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib';
 import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
@@ -26,20 +26,39 @@ export enum ERROR_MESSAGE {
 }
 
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack, clearCallBack }) => {
-  const txInputInitial = {
-    previousTxId: '',
-    vout: '',
-    sequence: '',
-    scriptPubKey: '',
-    amount: '',
-    assetId: '',
-  };
+  // const txInputInitial = {
+  //   previousTxId: '',
+  //   vout: '',
+  //   sequence: '',
+  //   scriptPubKey: '',
+  //   amount: '',
+  //   assetId: '',
+  // };
 
-  const txOutputInitial = {
-    scriptPubKey: '',
-    amount: '',
-    assetId: '',
-  };
+  // const txOutputInitial = {
+  //   scriptPubKey: '',
+  //   amount: '',
+  //   assetId: '',
+  // };
+
+  const txOutputInitial = useMemo(() => {
+    return {
+      scriptPubKey: '',
+      amount: '',
+      assetId: '',
+    };
+  }, []);
+
+  const txInputInitial = useMemo(() => {
+    return {
+      previousTxId: '',
+      vout: '',
+      sequence: '',
+      scriptPubKey: '',
+      amount: '',
+      assetId: '',
+    };
+  }, []);
 
   const [txInputs, setTxInputs] = useState<TxInput[]>([txInputInitial]);
   const [txOutputs, setTxOutputs] = useState<TxOutput[]>([txOutputInitial]);
@@ -50,15 +69,31 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxData>('txData');
 
   useEffect(() => {
-    const txData = getTxLocalData();
-    if (txData) {
-      setTxInputs(txData.inputs);
-      setTxOutputs(txData.outputs);
-      setVersion(txData.version);
-      setTimeLock(txData.timelock);
-      setCurrentInputIndex(txData.currentInputIndex);
+    // TO DO
+    if (
+      txInputs[0].amount === txInputInitial.amount &&
+      txInputs[0].assetId === txInputInitial.assetId &&
+      txInputs[0].previousTxId === txInputInitial.previousTxId &&
+      txInputs[0].scriptPubKey === txInputInitial.scriptPubKey &&
+      txInputs[0].sequence === txInputInitial.sequence &&
+      txInputs[0].vout === txInputInitial.vout &&
+      txOutputs[0].amount === txOutputInitial.amount &&
+      txOutputs[0].assetId === txOutputInitial.assetId &&
+      txOutputs[0].scriptPubKey === txOutputInitial.scriptPubKey &&
+      timelock === '' &&
+      version === '' &&
+      currentInputIndex === 0
+    ) {
+      const txData = getTxLocalData();
+      if (txData) {
+        setTxInputs(txData.inputs);
+        setTxOutputs(txData.outputs);
+        setVersion(txData.version);
+        setTimeLock(txData.timelock);
+        setCurrentInputIndex(txData.currentInputIndex);
+      }
     }
-  }, [getTxLocalData]);
+  }, [currentInputIndex, getTxLocalData, timelock, txInputInitial, txInputs, txOutputInitial, txOutputs, version]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
@@ -138,7 +173,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       show={showModal}
       backdrop={false}
       onHide={() => {
-        txDataCallBack(txData);
+        // txDataCallBack(txData);
         showModalCallBack(false);
       }}
     >
