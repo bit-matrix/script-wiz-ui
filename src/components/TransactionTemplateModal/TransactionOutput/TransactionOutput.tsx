@@ -1,7 +1,7 @@
 import React from 'react';
 import { TxOutput } from '@script-wiz/lib';
 import { Icon, IconButton, Input } from 'rsuite';
-import { ERROR_MESSAGE } from '../TransactionTemplateModal';
+import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import './TransactionOutput.scss';
 
@@ -14,12 +14,12 @@ type Props = {
 const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, removeOutput }) => {
   const isValidAmount =
     (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
-      ? ERROR_MESSAGE.AMOUNT_ERROR
+      ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
       : '';
 
   const isValidAssetId =
     (txOutput.output.assetId?.length !== 64 && txOutput.output.assetId?.length !== 0) || !validHex(txOutput.output.assetId)
-      ? ERROR_MESSAGE.ASSET_ID_ERROR
+      ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR
       : '';
 
   return (
