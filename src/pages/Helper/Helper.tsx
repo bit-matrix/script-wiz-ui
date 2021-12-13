@@ -3,7 +3,7 @@ import WizData from '@script-wiz/wiz-data';
 import { Checkbox, Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { hash160v2, sha256v2 } from '@script-wiz/lib';
 import { CONVERT_TYPE } from '../../utils/enum/CONVERT_TYPE';
-import { ERROR_MESSAGE } from '../../utils/enum/ERROR_MESSAGE';
+import { HELPER_ERROR_MESSAGE } from '../../utils/enum/HELPER_ERROR_MESSAGE';
 import { convertBase64, reverseHex, validBin, validBytes, validHex, validNumber } from '../../utils/helper';
 import './Helper.scss';
 
@@ -39,7 +39,7 @@ export const Helper = () => {
   const [input, setInput] = useState<string>('');
   const [convertedWizData, setConvertedWizData] = useState<Result>(initialState);
   const [convertType, setConvertType] = useState<CONVERT_TYPE>(CONVERT_TYPE.FROM_HEX);
-  const [errorMessage, setErrorMessage] = useState<ERROR_MESSAGE | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<HELPER_ERROR_MESSAGE | undefined>(undefined);
   const [checkedLe, setCheckedLe] = useState<boolean>();
 
   useEffect(() => {
@@ -148,7 +148,7 @@ export const Helper = () => {
       if (convertType === CONVERT_TYPE.FROM_BIN) {
         if (!validBin(input)) {
           setConvertedWizData(initialState);
-          errorMessageText = ERROR_MESSAGE.BIN_ERROR;
+          errorMessageText = HELPER_ERROR_MESSAGE.BIN_ERROR;
         } else {
           wizData = WizData.fromBin(input);
           getResults(wizData);
@@ -158,7 +158,7 @@ export const Helper = () => {
       if (convertType === CONVERT_TYPE.FROM_HEX) {
         if (!validHex(input)) {
           setConvertedWizData(initialState);
-          errorMessageText = ERROR_MESSAGE.HEX_ERROR;
+          errorMessageText = HELPER_ERROR_MESSAGE.HEX_ERROR;
         } else {
           wizData = WizData.fromHex(input);
           getResults(wizData);
@@ -168,7 +168,7 @@ export const Helper = () => {
       if (convertType === CONVERT_TYPE.FROM_NUMBER) {
         if (!validNumber(Number(input))) {
           setConvertedWizData(initialState);
-          errorMessageText = ERROR_MESSAGE.NUMBER_ERROR;
+          errorMessageText = HELPER_ERROR_MESSAGE.NUMBER_ERROR;
         } else {
           wizData = WizData.fromNumber(parseInt(input));
           getResults(wizData);
@@ -185,7 +185,7 @@ export const Helper = () => {
         const convertNumberArray = stringToArray.map((str) => Number(str));
         if (!validBytes(convertNumberArray)) {
           setConvertedWizData(initialState);
-          errorMessageText = ERROR_MESSAGE.BYTE_ERROR;
+          errorMessageText = HELPER_ERROR_MESSAGE.BYTE_ERROR;
         } else {
           const uint8Array = new Uint8Array(convertNumberArray);
           wizData = WizData.fromBytes(uint8Array);
