@@ -4,6 +4,7 @@ import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
+import { TX_TEMPLATE_ERROR_MESSAGE } from '../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 // import { validHex } from '../../utils/helper';
 import './TransactionTemplateModal.scss';
 
@@ -14,46 +15,20 @@ type Props = {
   clearCallBack: () => void;
 };
 
-export enum ERROR_MESSAGE {
-  PREVIOUS_TX_ID_ERROR = 'Invalid previous tx id!',
-  VOUT_ERROR = 'Invalid vout!',
-  SEQUENCE_ERROR = 'Invalid sequence!',
-  SCRIPT_PUB_KEY_ERROR = 'Invalid script pub key!',
-  AMOUNT_ERROR = 'Invalid amount!',
-  ASSET_ID_ERROR = 'Invalid asset id!',
-  VERSION_ERROR = 'Invalid version!',
-  TIMELOCK_ERROR = 'Invalid timelock!',
-}
-
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack, clearCallBack }) => {
-  // const txInputInitial = {
-  //   previousTxId: '',
-  //   vout: '',
-  //   sequence: '',
-  //   scriptPubKey: '',
-  //   amount: '',
-  //   assetId: '',
-  // };
-
-  // const txOutputInitial = {
-  //   scriptPubKey: '',
-  //   amount: '',
-  //   assetId: '',
-  // };
-
-  const txOutputInitial = useMemo(() => {
+  const txInputInitial = useMemo(() => {
     return {
+      previousTxId: '',
+      vout: '',
+      sequence: '',
       scriptPubKey: '',
       amount: '',
       assetId: '',
     };
   }, []);
 
-  const txInputInitial = useMemo(() => {
+  const txOutputInitial = useMemo(() => {
     return {
-      previousTxId: '',
-      vout: '',
-      sequence: '',
       scriptPubKey: '',
       amount: '',
       assetId: '',
@@ -69,17 +44,9 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxData>('txData');
 
   useEffect(() => {
-    // TO DO
     if (
-      txInputs[0].amount === txInputInitial.amount &&
-      txInputs[0].assetId === txInputInitial.assetId &&
-      txInputs[0].previousTxId === txInputInitial.previousTxId &&
-      txInputs[0].scriptPubKey === txInputInitial.scriptPubKey &&
-      txInputs[0].sequence === txInputInitial.sequence &&
-      txInputs[0].vout === txInputInitial.vout &&
-      txOutputs[0].amount === txOutputInitial.amount &&
-      txOutputs[0].assetId === txOutputInitial.assetId &&
-      txOutputs[0].scriptPubKey === txOutputInitial.scriptPubKey &&
+      JSON.stringify(txInputs) === JSON.stringify([txInputInitial]) &&
+      JSON.stringify(txOutputs) === JSON.stringify([txOutputInitial]) &&
       timelock === '' &&
       version === '' &&
       currentInputIndex === 0
@@ -153,8 +120,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   //   return true;
   // };
 
-  const isValidVersion = version.length !== 8 && version.length !== 0 ? ERROR_MESSAGE.VERSION_ERROR : '';
-  const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? ERROR_MESSAGE.TIMELOCK_ERROR : '';
+  const isValidVersion = version.length !== 8 && version.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VERSION_ERROR : '';
+  const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.TIMELOCK_ERROR : '';
 
   // const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
 
