@@ -149,6 +149,24 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       <div className="script-editor-main-div scroll">
         <div className="script-editor-container">
           <div className="script-editor-sub-item">
+            <h3 className="script-editor-input-header">Stack Elements</h3>
+            <ScriptEditorInput
+              scriptWiz={scriptWiz}
+              initialEditorValue={initialEditorValue}
+              onChangeScriptEditorInput={(lines: string[]) => {
+                setErrorMessage(undefined);
+                // setLineStackDataListArray(initialLineStackDataListArray);
+                // setLastStackDataList(initialLastStackDataList);
+
+                if (timerRef.current) window.clearTimeout(timerRef.current);
+
+                timerRef.current = window.setTimeout(() => {
+                  setLines(lines);
+                }, 250);
+              }}
+              failedLineNumber={failedLineNumber}
+            />
+            <h3 className="script-editor-input-header">Witness Script</h3>
             <ScriptEditorInput
               scriptWiz={scriptWiz}
               initialEditorValue={initialEditorValue}
@@ -167,6 +185,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             />
           </div>
           <div className="script-editor-sub-item scroll">
+            <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
             <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
           </div>
         </div>
