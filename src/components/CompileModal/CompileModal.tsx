@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ScriptWiz, tapRoot, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
+import { ScriptWiz, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
+import { taproot, TAPROOT_VERSION } from '@script-wiz/lib-core';
 import { Button, Form, FormGroup, Icon, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import WizData from '@script-wiz/wiz-data';
 import './CompileModal.scss';
@@ -50,7 +51,11 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       (tapleafVersion === TapleafVersion.CUSTOM && version !== undefined && version?.length >= 2)
     ) {
       try {
-        const result = tapRoot(WizData.fromHex(pubkey), [WizData.fromHex(script)], scriptWiz.vm);
+        const result = taproot.tapRoot(
+          WizData.fromHex(pubkey),
+          [WizData.fromHex(script)],
+          scriptWiz.vm.network === VM_NETWORK.LIQUID ? TAPROOT_VERSION.LIQUID : TAPROOT_VERSION.BITCOIN,
+        );
         setTweakedResult({ tweak: result.tweak.hex, scriptPubkey: result.scriptPubKey.hex, bech32: result.bech32 });
       } catch {
         setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result', bech32: 'Invalid result' });

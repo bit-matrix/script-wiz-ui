@@ -1,5 +1,5 @@
 import React from 'react';
-import { TxOutput } from '@script-wiz/lib';
+import { TxOutput } from '@script-wiz/lib-core';
 import { Icon, IconButton, Input } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';

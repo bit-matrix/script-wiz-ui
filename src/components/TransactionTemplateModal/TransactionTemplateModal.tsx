@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TxData, TxInput, TxOutput } from '@script-wiz/lib';
+import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
 import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import WizData from '@script-wiz/wiz-data';
 import { Checkbox, Form, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
-import { hash160v2, sha256v2 } from '@script-wiz/lib';
+import { crypto } from '@script-wiz/lib-core';
 import { CONVERT_TYPE } from '../../utils/enum/CONVERT_TYPE';
 import { HELPER_ERROR_MESSAGE } from '../../utils/enum/HELPER_ERROR_MESSAGE';
 import { convertBase64, reverseHex, validBin, validBytes, validHex, validNumber } from '../../utils/helper';
@@ -69,8 +69,8 @@ export const Helper = () => {
         bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdataReverse.number?.toString() || '';
         base64Result = convertBase64(wizdata.hex);
-        sha256Result = sha256v2(wizdata);
-        hash160Result = hash160v2(wizdata);
+        sha256Result = crypto.sha256v2(wizdata);
+        hash160Result = crypto.hash160v2(wizdata);
       }
 
       if (convertType === CONVERT_TYPE.FROM_NUMBER) {
@@ -82,8 +82,8 @@ export const Helper = () => {
         bytesLeResult = wizdata.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
         base64Result = convertBase64(wizdataReverse.hex);
-        sha256Result = sha256v2(wizdataReverse);
-        hash160Result = hash160v2(wizdataReverse);
+        sha256Result = crypto.sha256v2(wizdataReverse);
+        hash160Result = crypto.hash160v2(wizdataReverse);
       }
 
       if (convertType === CONVERT_TYPE.FROM_BYTES) {
@@ -95,8 +95,8 @@ export const Helper = () => {
         bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
         base64Result = convertBase64(wizdata.hex);
-        sha256Result = sha256v2(wizdata);
-        hash160Result = hash160v2(wizdata);
+        sha256Result = crypto.sha256v2(wizdata);
+        hash160Result = crypto.hash160v2(wizdata);
       }
 
       if (convertType === CONVERT_TYPE.FROM_BIN) {
@@ -108,8 +108,8 @@ export const Helper = () => {
         bytesLeResult = wizdata.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
         base64Result = convertBase64(wizdataReverse.hex);
-        sha256Result = sha256v2(wizdataReverse);
-        hash160Result = hash160v2(wizdataReverse);
+        sha256Result = crypto.sha256v2(wizdataReverse);
+        hash160Result = crypto.hash160v2(wizdataReverse);
       }
 
       if (convertType === CONVERT_TYPE.FROM_TEXT) {
@@ -121,7 +121,7 @@ export const Helper = () => {
         bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdataReverse.number?.toString() || '';
         base64Result = convertBase64(wizdata.hex);
-        sha256Result = sha256v2(wizdata);
+        sha256Result = crypto.sha256v2(wizdata);
       }
 
       const textResult = wizdata.text || '';
