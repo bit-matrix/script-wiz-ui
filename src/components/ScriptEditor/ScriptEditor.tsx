@@ -21,12 +21,12 @@ const initialLastStackDataList: Array<WizData> = [];
 const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
-  const [lastStackDataList, setLastStackDataList] = useState<Array<WizData>>(initialLastStackDataList);
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
   const [txData, setTxData] = useState<TxData>();
   const [lines, setLines] = useState<string[]>();
   const [lines2, setLines2] = useState<string[]>();
   const [initialEditorValue, setInitialEditorValue] = useState<string>('');
+  const [firstEditorLastData, setFirstEditorLastData] = useState<Array<WizData>>(initialLastStackDataList);
 
   const [compileModalData, setCompileModalData] = useState<{
     show: boolean;
@@ -51,7 +51,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
 
   const parseInput = useCallback(
-    (inputText: string) => {
+    (inputText: string, isWitnessElement: boolean = true) => {
       if (inputText.startsWith('<') && inputText.endsWith('>')) {
         const inputTextValue = inputText.substring(1, inputText.length - 1);
 
@@ -68,13 +68,21 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         } else if (!isNaN(Number(inputTextValue))) {
           scriptWiz.parseNumber(Number(inputTextValue));
         } else if (inputTextValue.startsWith('OP_')) {
-          const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
-          scriptWiz.parseHex(opwordToOphex.substring(2));
+          if (isWitnessElement) {
+            const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
+            scriptWiz.parseHex(opwordToOphex.substring(2));
+          } else {
+            setErrorMessage('Abow');
+          }
         } else {
           console.error('UI: Invalid input value!!!');
         }
       } else if (inputText.startsWith('OP_')) {
-        scriptWiz.parseOpcode(inputText);
+        if (isWitnessElement) {
+          scriptWiz.parseOpcode(inputText);
+        } else {
+          setErrorMessage('aboww');
+        }
       } else {
         console.error('UI: Invalid input value!!!');
       }
@@ -90,9 +98,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const stackElementsOnChange = (lines: string[]) => {
     setErrorMessage(undefined);
-    // setLineStackDataListArray(initialLineStackDataListArray);
-    // setLastStackDataList(initialLastStackDataList);
-
     if (timerRef.current) window.clearTimeout(timerRef.current);
 
     timerRef.current = window.setTimeout(() => {
@@ -116,18 +121,30 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
     addTxTemplate();
 
-    if (lines) {
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
+    const addedLines = [...(lines || []), ...(lines2 || [])];
+
+    const firstEditorLineCount = lines?.length || 0;
+
+    if (addedLines) {
+      for (let i = 0; i < addedLines.length; i++) {
+        const line = addedLines[i];
 
         if (line !== '') {
-          parseInput(line);
+          if (i < firstEditorLineCount) {
+            parseInput(line, false);
+          } else {
+            parseInput(line);
+          }
 
           const scriptWizErrorMessage = scriptWiz.stackDataList.errorMessage;
 
           if (!hasError) {
             newLastStackDataList = scriptWiz.stackDataList.main;
             newLineStackDataListArray.push(newLastStackDataList);
+
+            if (i === firstEditorLineCount - 1) {
+              setFirstEditorLastData(newLastStackDataList);
+            }
 
             if (scriptWizErrorMessage) {
               hasError = true;
@@ -145,13 +162,49 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     }
 
     setLineStackDataListArray(newLineStackDataListArray);
-    setLastStackDataList(newLastStackDataList);
-  }, [addTxTemplate, lines, parseInput, scriptWiz]);
+  }, [addTxTemplate, lines, lines2, parseInput, scriptWiz]);
 
   const compileScripts = () => {
     const compileScript = scriptWiz.compile();
     setCompileModalData({ show: true, data: compileScript });
   };
+
+  const getOutputValueType = (value: string): string => {
+    if (value.startsWith('0x')) {
+      return 'hex';
+    }
+
+    if (!isNaN(Number(value))) {
+      return 'number';
+    }
+
+    return 'string';
+  };
+
+  const getWhisper = useCallback(
+    (key: string, tooltip: string, display: string) => (
+      <div className="tooltip" key={key}>
+        <div className={`editor-output-text ${getOutputValueType(display)} `}>{display}</div>
+        <span className="tooltiptext">{'0x' + tooltip}</span>
+      </div>
+    ),
+    [],
+  );
+
+  const getWhispers = useCallback(
+    (stackDataArray: WizData[]) =>
+      stackDataArray.map((stackData: WizData, index: number) => {
+        const key = `whisper-${index.toString()}-text`;
+
+        let displayValue = '0x' + stackData.hex;
+
+        if (stackData.number !== undefined) displayValue = stackData.number.toString();
+        else if (stackData.text !== undefined) displayValue = stackData.text;
+
+        return getWhisper(key, stackData.hex, displayValue);
+      }),
+    [getWhisper],
+  );
 
   return (
     <>
@@ -192,16 +245,19 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           <div className="script-editor-sub-item">
             <div className="script-editor-output-1 scroll">
               <div className="script-editor-output-header-bar" />
-              <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+              <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} errorMessage={errorMessage} />
             </div>
             <div className="script-editor-output-2 scroll">
               <div className="script-editor-output-header-bar">
                 <div className="script-editor-output-header-bar-content-fade"></div>
                 <div className="script-editor-output-header-bar-content">
-                  <div className="state"></div>
+                  <div className="state">{getWhispers(firstEditorLastData)}</div>
                 </div>
               </div>
-              <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+              <ScriptEditorOutput
+                lineStackDataListArray={lineStackDataListArray.slice(lines?.length, lineStackDataListArray.length)}
+                errorMessage={errorMessage}
+              />
             </div>
           </div>
         </div>

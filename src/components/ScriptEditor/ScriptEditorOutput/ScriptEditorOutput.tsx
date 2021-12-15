@@ -4,12 +4,11 @@ import { Icon } from 'rsuite';
 import WizData from '@script-wiz/wiz-data';
 
 type Props = {
-  lastStackDataList: Array<WizData>;
   lineStackDataListArray: Array<Array<WizData>>;
   errorMessage: string | undefined;
 };
 
-const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataListArray, errorMessage }) => {
+const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage }) => {
   const getOutputValueType = (value: string): string => {
     if (value.startsWith('0x')) {
       return 'hex';
