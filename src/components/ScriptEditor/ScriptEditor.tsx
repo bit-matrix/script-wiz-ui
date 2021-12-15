@@ -25,6 +25,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
   const [txData, setTxData] = useState<TxData>();
   const [lines, setLines] = useState<string[]>();
+  const [lines2, setLines2] = useState<string[]>();
   const [initialEditorValue, setInitialEditorValue] = useState<string>('');
 
   const [compileModalData, setCompileModalData] = useState<{
@@ -87,6 +88,26 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     }
   }, [scriptWiz, txData]);
 
+  const stackElementsOnChange = (lines: string[]) => {
+    setErrorMessage(undefined);
+    // setLineStackDataListArray(initialLineStackDataListArray);
+    // setLastStackDataList(initialLastStackDataList);
+
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+
+    timerRef.current = window.setTimeout(() => {
+      setLines(lines);
+    }, 250);
+  };
+
+  const witnessScriptOnChange = (lines2: string[]) => {
+    setErrorMessage(undefined);
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setLines2(lines2);
+    }, 250);
+  };
+
   useEffect(() => {
     scriptWiz.clearStackDataList();
     let hasError: boolean = false;
@@ -146,47 +167,42 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
       <ScriptEditorHeader compileButtonClick={compileScripts} txTemplateClick={() => setShowTemplateModal(true)} scriptWiz={scriptWiz} />
-      <div className="script-editor-main-div scroll">
+      <div className="script-editor-main-div">
         <div className="script-editor-container">
           <div className="script-editor-sub-item">
-            <h3 className="script-editor-input-header">Stack Elements</h3>
-            <ScriptEditorInput
-              scriptWiz={scriptWiz}
-              initialEditorValue={initialEditorValue}
-              onChangeScriptEditorInput={(lines: string[]) => {
-                setErrorMessage(undefined);
-                // setLineStackDataListArray(initialLineStackDataListArray);
-                // setLastStackDataList(initialLastStackDataList);
-
-                if (timerRef.current) window.clearTimeout(timerRef.current);
-
-                timerRef.current = window.setTimeout(() => {
-                  setLines(lines);
-                }, 250);
-              }}
-              failedLineNumber={failedLineNumber}
-            />
-            <h3 className="script-editor-input-header">Witness Script</h3>
-            <ScriptEditorInput
-              scriptWiz={scriptWiz}
-              initialEditorValue={initialEditorValue}
-              onChangeScriptEditorInput={(lines: string[]) => {
-                setErrorMessage(undefined);
-                // setLineStackDataListArray(initialLineStackDataListArray);
-                // setLastStackDataList(initialLastStackDataList);
-
-                if (timerRef.current) window.clearTimeout(timerRef.current);
-
-                timerRef.current = window.setTimeout(() => {
-                  setLines(lines);
-                }, 250);
-              }}
-              failedLineNumber={failedLineNumber}
-            />
+            <div className="script-editor-input-1 scroll">
+              <h3 className="script-editor-input-header">Stack Elements</h3>
+              <ScriptEditorInput
+                scriptWiz={scriptWiz}
+                initialEditorValue={initialEditorValue}
+                onChangeScriptEditorInput={stackElementsOnChange}
+                failedLineNumber={failedLineNumber}
+              />
+            </div>
+            <div className="script-editor-input-2 scroll">
+              <h3 className="script-editor-input-header">Witness Script</h3>
+              <ScriptEditorInput
+                scriptWiz={scriptWiz}
+                initialEditorValue={initialEditorValue}
+                onChangeScriptEditorInput={witnessScriptOnChange}
+                failedLineNumber={failedLineNumber}
+              />
+            </div>
           </div>
-          <div className="script-editor-sub-item scroll">
-            <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
-            <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+          <div className="script-editor-sub-item">
+            <div className="script-editor-output-1 scroll">
+              <div className="script-editor-output-header-bar" />
+              <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+            </div>
+            <div className="script-editor-output-2 scroll">
+              <div className="script-editor-output-header-bar">
+                <div className="script-editor-output-header-bar-content-fade"></div>
+                <div className="script-editor-output-header-bar-content">
+                  <div className="state"></div>
+                </div>
+              </div>
+              <ScriptEditorOutput lastStackDataList={lastStackDataList} lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+            </div>
           </div>
         </div>
       </div>
