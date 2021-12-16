@@ -87,7 +87,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
             scriptWiz.parseHex(opwordToOphex.substring(2));
           } else {
-            setErrorMessage('Abow');
+            setErrorMessage('Unlocking bytecode may contain only push operations.');
           }
         } else {
           console.error('UI: Invalid input value!!!');
@@ -96,7 +96,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         if (isWitnessElement) {
           scriptWiz.parseOpcode(inputText);
         } else {
-          setErrorMessage('aboww');
+          setErrorMessage('Unlocking bytecode may contain only push operations.');
         }
       } else {
         console.error('UI: Invalid input value!!!');

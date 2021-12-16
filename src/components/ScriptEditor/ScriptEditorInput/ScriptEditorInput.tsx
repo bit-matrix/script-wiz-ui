@@ -8,9 +8,8 @@ import Editor, { useMonaco } from '@monaco-editor/react';
 import editorOptions from '../../../options/editorOptions/editorOptions';
 
 import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
-import { initialBitcoinEditorValue, initialLiquidEditorValue } from './initialEditorValue';
 import { convertEditorLines } from '../../../helper';
-import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
+import { ScriptWiz } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
 
 import './ScriptEditorInput.scss';
