@@ -18,8 +18,9 @@ export const initialLiquidEditorValue =
   '//' +
   '\n' +
   '\n' +
-  '<0x3044022002748547ba97e986d26b48dc2093c21f04334aea4694470328d605c15971a8f302207501b30f114d1c27e5d8fa903635d9485dca60c705dbdf2a12daf795239d5e5e>' +
-  '\n' +
+  '<0x3044022002748547ba97e986d26b48dc2093c21f04334aea4694470328d605c15971a8f302207501b30f114d1c27e5d8fa903635d9485dca60c705dbdf2a12daf795239d5e5e>';
+
+export const initialLiquidEditorValue2 =
   "<'hello'>" +
   '\n' +
   "<'🌎'>" +
@@ -52,13 +53,10 @@ export const initialBitcoinEditorValue =
   '\n' +
   '<1>' +
   '\n' +
-  '<2>' +
-  '\n' +
-  'OP_ADD' +
-  '\n' +
-  '<3>' +
-  '\n' +
-  'OP_EQUAL';
+  '<2>';
+
+// eslint-disable-next-line no-useless-concat
+export const initialBitcoinEditorValue2 = 'OP_ADD' + '\n' + '<3>' + '\n' + 'OP_EQUAL';
 
 export const initialLiquidTaprootEditorValue =
   '//' +
@@ -80,8 +78,9 @@ export const initialLiquidTaprootEditorValue =
   '//' +
   '\n' +
   '\n' +
-  '<0x22b284224b4e1d4a943d5a911a259b00cc737c19e371eff98dd045e385a8e8d4c24137188c07add25ccf0f930f36360e2ecf06b4ffeee3a1bd4e2f37911d7c6d>' +
-  '\n' +
+  '<0x22b284224b4e1d4a943d5a911a259b00cc737c19e371eff98dd045e385a8e8d4c24137188c07add25ccf0f930f36360e2ecf06b4ffeee3a1bd4e2f37911d7c6d>';
+
+export const initialLiquidTaprootEditorValue2 =
   "<'hello'>" +
   '\n' +
   "<'🌎'>" +

@@ -6,7 +6,14 @@ import { convertEditorLines } from '../../helper';
 import { ScriptWiz, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import { TxData } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
-import { initialBitcoinEditorValue, initialLiquidEditorValue, initialLiquidTaprootEditorValue } from './ScriptEditorInput/initialEditorValue';
+import {
+  initialBitcoinEditorValue,
+  initialBitcoinEditorValue2,
+  initialLiquidEditorValue,
+  initialLiquidEditorValue2,
+  initialLiquidTaprootEditorValue,
+  initialLiquidTaprootEditorValue2,
+} from './ScriptEditorInput/initialEditorValue';
 import CompileModal from '../CompileModal/CompileModal';
 import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
 import './ScriptEditor.scss';
@@ -25,7 +32,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [txData, setTxData] = useState<TxData>();
   const [lines, setLines] = useState<string[]>();
   const [lines2, setLines2] = useState<string[]>();
-  const [initialEditorValue, setInitialEditorValue] = useState<string>('');
+  const [initialEditorValue, setInitialEditorValue] = useState<string[]>([]);
   const [firstEditorLastData, setFirstEditorLastData] = useState<Array<WizData>>(initialLastStackDataList);
 
   const [compileModalData, setCompileModalData] = useState<{
@@ -38,15 +45,23 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const timerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    let editorLines = '';
+    let editorLines: string[] = [];
+
     if (scriptWiz.vm.network === VM_NETWORK.BTC) {
-      editorLines = initialBitcoinEditorValue;
+      editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
     } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
-      editorLines = scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT ? initialLiquidTaprootEditorValue : initialLiquidEditorValue;
+      editorLines =
+        scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+          ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
+          : [initialLiquidEditorValue, initialLiquidEditorValue2];
     }
 
-    let lines = convertEditorLines(editorLines);
+    let lines = convertEditorLines(editorLines[0]);
+    let lines2 = convertEditorLines(editorLines[1]);
+
     setLines(lines);
+    setLines2(lines2);
+
     setInitialEditorValue(editorLines);
   }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
 
@@ -227,7 +242,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               <h3 className="script-editor-input-header">Stack Elements</h3>
               <ScriptEditorInput
                 scriptWiz={scriptWiz}
-                initialEditorValue={initialEditorValue}
+                initialEditorValue={initialEditorValue[0]}
                 onChangeScriptEditorInput={stackElementsOnChange}
                 failedLineNumber={failedLineNumber}
               />
@@ -236,7 +251,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               <h3 className="script-editor-input-header">Witness Script</h3>
               <ScriptEditorInput
                 scriptWiz={scriptWiz}
-                initialEditorValue={initialEditorValue}
+                initialEditorValue={initialEditorValue[1]}
                 onChangeScriptEditorInput={witnessScriptOnChange}
                 failedLineNumber={failedLineNumber}
               />
