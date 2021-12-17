@@ -6,6 +6,8 @@ import logo from '../../images/transparent_white.png';
 import { SponsorModal } from './SponsorModal/SponsorModal';
 import './ScriptNavbar.scss';
 import { VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
+import { useHistory } from 'react-router-dom';
+import { ROUTE_PATH } from '../../router/ROUTE_PATH';
 
 type Props = {
   vm: VM;
@@ -14,6 +16,7 @@ type Props = {
 
 const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
   const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
+  const history = useHistory();
 
   const title = useMemo(() => {
     if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
@@ -56,8 +59,32 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
         </a>
       </div>
       <div className="script-editor-header-right-section">
+        <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Signature Tools</Tooltip>}>
+          <IconButton
+            icon={<i className="fas fa-tools"></i>}
+            circle
+            size="sm"
+            className="sponsor-button"
+            onClick={() => history.push(ROUTE_PATH.SIGNATURE_TOOLS)}
+          />
+        </Whisper>
+        <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Wiz Data Tools</Tooltip>}>
+          <IconButton
+            icon={<i className="fa fa-magic"></i>}
+            circle
+            size="sm"
+            className="sponsor-button"
+            onClick={() => history.push(ROUTE_PATH.HELPER)}
+          />
+        </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Become a sponsor</Tooltip>}>
-          <IconButton icon={<Icon icon="heart" />} circle size="sm" className="sponsor-button" onClick={() => setShowSponsorModal(true)} />
+          <IconButton
+            icon={<Icon style={{ color: 'hotpink' }} icon="heart" />}
+            circle
+            size="sm"
+            className="sponsor-button"
+            onClick={() => setShowSponsorModal(true)}
+          />
         </Whisper>
 
         <Dropdown className="script-editor-header-right-section-dropdown" title={<span>{title}</span>} activeKey={`${vm.network} - ${vm.ver}`}>
