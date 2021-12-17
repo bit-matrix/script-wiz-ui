@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import WizData from '@script-wiz/wiz-data';
-import { Icon, Whisper } from 'rsuite';
+import { Icon } from 'rsuite';
 import './ScriptEditorOutput.scss';
+import CustomWhisper from '../CustomWhisper';
 
 type Props = {
   lineStackDataListArray: Array<Array<WizData>>;
@@ -18,7 +19,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
 
         if (stackData.number !== undefined) displayValue = stackData.number.toString();
         else if (stackData.text !== undefined) displayValue = stackData.text;
-        return <Whisper key={key} tooltip={stackData.hex} display={displayValue} />;
+        return <CustomWhisper key={key} tooltip={stackData.hex} display={displayValue} />;
       }),
     [],
   );

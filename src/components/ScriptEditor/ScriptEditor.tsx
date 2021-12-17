@@ -16,8 +16,8 @@ import {
 } from './ScriptEditorInput/initialEditorValue';
 import CompileModal from '../CompileModal/CompileModal';
 import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
-import { Whisper } from 'rsuite';
 import './ScriptEditor.scss';
+import CustomWhisper from './CustomWhisper';
 
 type Props = {
   scriptWiz: ScriptWiz;
@@ -195,7 +195,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         if (stackData.number !== undefined) displayValue = stackData.number.toString();
         else if (stackData.text !== undefined) displayValue = stackData.text;
 
-        return <Whisper key={key} tooltip={stackData.hex} display={displayValue} />;
+        return <CustomWhisper key={key} tooltip={stackData.hex} display={displayValue} />;
       }),
     [],
   );
