@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -22,6 +22,7 @@ type Props = {
 };
 
 const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onChangeScriptEditorInput, failedLineNumber = undefined }) => {
+  const [lng] = useState(scriptWizEditor.LANGUAGE + (Math.random() * 1000).toFixed(2));
   const monaco = useMonaco();
 
   const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
@@ -34,31 +35,28 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
 
     // language define
     if (monaco !== null) {
-      monaco.languages.register({ id: scriptWizEditor.LANGUAGE });
+      monaco.languages.register({ id: lng });
 
       // Define a new theme that contains only rules that match this language
       monaco.editor.defineTheme(scriptWizEditor.THEME, themeOptions);
 
       const { dispose: disposeSetLanguageConfiguration } = monaco.languages.setLanguageConfiguration(
-        scriptWizEditor.LANGUAGE,
+        lng,
         languageOptions.languageConfigurations(monaco.languages),
       );
       disposeLanguageConfiguration = disposeSetLanguageConfiguration;
 
       // Register a tokens provider for the language
-      const { dispose: disposeSetMonarchTokensProvider } = monaco.languages.setMonarchTokensProvider(
-        scriptWizEditor.LANGUAGE,
-        languageOptions.tokenProviders,
-      );
+      const { dispose: disposeSetMonarchTokensProvider } = monaco.languages.setMonarchTokensProvider(lng, languageOptions.tokenProviders);
       disposeMonarchTokensProvider = disposeSetMonarchTokensProvider;
 
       const { dispose: disposeRegisterHoverProvider } = monaco.languages.registerHoverProvider(
-        scriptWizEditor.LANGUAGE,
+        lng,
         languageOptions.hoverProvider(opcodesDatas, failedLineNumber),
       );
       disposeHoverProvider = disposeRegisterHoverProvider;
 
-      const { dispose: disposeRegisterCompletionItemProvider } = monaco.languages.registerCompletionItemProvider(scriptWizEditor.LANGUAGE, {
+      const { dispose: disposeRegisterCompletionItemProvider } = monaco.languages.registerCompletionItemProvider(lng, {
         provideCompletionItems: (model: any, position: any) => {
           const suggestions = languageOptions.languageSuggestions(monaco.languages, model, position, opcodesDatas);
           return { suggestions: suggestions };
@@ -77,7 +75,7 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
         disposeCompletionItemProvider();
       }
     };
-  }, [monaco, opcodesDatas, failedLineNumber]);
+  }, [monaco, opcodesDatas, failedLineNumber, lng]);
 
   const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
     if (value) {
@@ -98,7 +96,7 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
         }}
         value={initialEditorValue}
         options={editorOptions}
-        language={scriptWizEditor.LANGUAGE}
+        language={lng}
         theme={scriptWizEditor.THEME}
         onChange={onChangeEditor}
       />
