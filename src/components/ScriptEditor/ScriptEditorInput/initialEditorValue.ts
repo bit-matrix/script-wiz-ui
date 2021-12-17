@@ -3,13 +3,7 @@ export const initialLiquidEditorValue =
   '\n' +
   '// Script Wizard makes it easy to design and compile' +
   '\n' +
-  '// custom Liquid scripts.' +
-  '\n' +
-  '//' +
-  '\n' +
-  '// Simply write your script and put witness elements' +
-  '\n' +
-  '// at the very top. You can see stack execution line by line.' +
+  '// custom Liquid scripts. You can see stack execution line by line.' +
   '\n' +
   '//' +
   '\n' +
@@ -63,13 +57,7 @@ export const initialLiquidTaprootEditorValue =
   '\n' +
   '// Script Wizard makes it easy to design and compile' +
   '\n' +
-  '// custom Liquid scripts.' +
-  '\n' +
-  '//' +
-  '\n' +
-  '// Simply write your script and put witness elements' +
-  '\n' +
-  '// at the very top. You can see stack execution line by line.' +
+  '// custom Liquid scripts. You can see stack execution line by line.' +
   '\n' +
   '//' +
   '\n' +
