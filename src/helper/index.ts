@@ -18,8 +18,20 @@ const convertEditorLines = (formattedLines: string): string[] => {
   return lines;
 };
 
+const getOutputValueType = (value: string): string => {
+  if (value.startsWith('0x')) {
+    return 'hex';
+  }
+
+  if (!isNaN(Number(value))) {
+    return 'number';
+  }
+
+  return 'string';
+};
+
 const deepCopy = <T>(oldObject: T): T => {
   return JSON.parse(JSON.stringify(oldObject)) as T;
 };
 
-export { convertEditorLines, deepCopy };
+export { convertEditorLines, getOutputValueType, deepCopy };
