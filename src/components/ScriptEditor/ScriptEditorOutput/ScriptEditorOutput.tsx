@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
-import './ScriptEditorOutput.scss';
-import { Icon } from 'rsuite';
 import WizData from '@script-wiz/wiz-data';
+import { Icon, Whisper } from 'rsuite';
+import './ScriptEditorOutput.scss';
 
 type Props = {
   lineStackDataListArray: Array<Array<WizData>>;
@@ -9,28 +9,6 @@ type Props = {
 };
 
 const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage }) => {
-  const getOutputValueType = (value: string): string => {
-    if (value.startsWith('0x')) {
-      return 'hex';
-    }
-
-    if (!isNaN(Number(value))) {
-      return 'number';
-    }
-
-    return 'string';
-  };
-
-  const getWhisper = useCallback(
-    (key: string, tooltip: string, display: string) => (
-      <div className="tooltip" key={key}>
-        <div className={`editor-output-text ${getOutputValueType(display)} `}>{display}</div>
-        <span className="tooltiptext">{'0x' + tooltip}</span>
-      </div>
-    ),
-    [],
-  );
-
   const getWhispers = useCallback(
     (stackDataArray: WizData[], lineNumber: number) =>
       stackDataArray.map((stackData: WizData, index: number) => {
@@ -40,10 +18,9 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
 
         if (stackData.number !== undefined) displayValue = stackData.number.toString();
         else if (stackData.text !== undefined) displayValue = stackData.text;
-
-        return getWhisper(key, stackData.hex, displayValue);
+        return <Whisper key={key} tooltip={stackData.hex} display={displayValue} />;
       }),
-    [getWhisper],
+    [],
   );
 
   return (
