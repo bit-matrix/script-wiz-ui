@@ -16,6 +16,7 @@ import {
 } from './ScriptEditorInput/initialEditorValue';
 import CompileModal from '../CompileModal/CompileModal';
 import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
+import { Whisper } from 'rsuite';
 import './ScriptEditor.scss';
 
 type Props = {
@@ -184,28 +185,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setCompileModalData({ show: true, data: compileScript });
   };
 
-  const getOutputValueType = (value: string): string => {
-    if (value.startsWith('0x')) {
-      return 'hex';
-    }
-
-    if (!isNaN(Number(value))) {
-      return 'number';
-    }
-
-    return 'string';
-  };
-
-  const getWhisper = useCallback(
-    (key: string, tooltip: string, display: string) => (
-      <div className="tooltip" key={key}>
-        <div className={`editor-output-text ${getOutputValueType(display)} `}>{display}</div>
-        <span className="tooltiptext">{'0x' + tooltip}</span>
-      </div>
-    ),
-    [],
-  );
-
   const getWhispers = useCallback(
     (stackDataArray: WizData[]) =>
       stackDataArray.map((stackData: WizData, index: number) => {
@@ -216,9 +195,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         if (stackData.number !== undefined) displayValue = stackData.number.toString();
         else if (stackData.text !== undefined) displayValue = stackData.text;
 
-        return getWhisper(key, stackData.hex, displayValue);
+        return <Whisper key={key} tooltip={stackData.hex} display={displayValue} />;
       }),
-    [getWhisper],
+    [],
   );
 
   return (
