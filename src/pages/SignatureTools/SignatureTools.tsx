@@ -54,7 +54,7 @@ export const SignatureTools = () => {
         const signResult = crypto.schnorrSign(WizData.fromHex(message), privateKey);
 
         setSignature(signResult.sign);
-        setDerEncodedSignature(signResult.derEncodedSign);
+        // setDerEncodedSignature(signResult.derEncodedSign);
       } catch (err) {
         setSignErrorMessage(err as string);
       }
@@ -221,19 +221,22 @@ export const SignatureTools = () => {
                   </InputGroup>
                 </div>
               </div>
-              <div className="helper-result-item">
-                <h6 className="helper-tab-header">Der Encoded Signature</h6>
-                <div>
-                  <InputGroup className="compile-modal-input-group">
-                    <Input value={derEncodedSignature?.hex || ''} disabled />
-                    <Whisper placement="top" trigger="click" speaker={<Tooltip>Der Encoded Signature has been copied to clipboard!</Tooltip>}>
-                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(derEncodedSignature?.hex || '')}>
-                        <Icon icon="copy" />
-                      </InputGroup.Button>
-                    </Whisper>
-                  </InputGroup>
+              {signAlgorithm === 'ECDSA' && (
+                <div className="helper-result-item">
+                  <h6 className="helper-tab-header">Der Encoded Signature</h6>
+                  <div>
+                    <InputGroup className="compile-modal-input-group">
+                      <Input value={derEncodedSignature?.hex || ''} disabled />
+                      <Whisper placement="top" trigger="click" speaker={<Tooltip>Der Encoded Signature has been copied to clipboard!</Tooltip>}>
+                        <InputGroup.Button onClick={() => navigator.clipboard.writeText(derEncodedSignature?.hex || '')}>
+                          <Icon icon="copy" />
+                        </InputGroup.Button>
+                      </Whisper>
+                    </InputGroup>
+                  </div>
                 </div>
-              </div>
+              )}
+
               <Button className="signature-tools-button" appearance="primary" size="md" onClick={signMessage} disabled={!privateKey}>
                 Sign
               </Button>
