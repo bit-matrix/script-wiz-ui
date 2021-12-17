@@ -5,7 +5,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@monaco-editor/react": "^4.3.1",
-    "@script-wiz/lib": "^0.1.47",
+    "@script-wiz/lib": "^0.1.52",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
