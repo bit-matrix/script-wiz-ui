@@ -6,7 +6,6 @@ import logo from '../../images/transparent_white.png';
 import { SponsorModal } from './SponsorModal/SponsorModal';
 import './ScriptNavbar.scss';
 import { VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
-import { useHistory } from 'react-router-dom';
 import { ROUTE_PATH } from '../../router/ROUTE_PATH';
 
 type Props = {
@@ -16,7 +15,6 @@ type Props = {
 
 const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
   const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
-  const history = useHistory();
 
   const title = useMemo(() => {
     if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
@@ -65,7 +63,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
             circle
             size="sm"
             className="sponsor-button"
-            onClick={() => history.push(ROUTE_PATH.SIGNATURE_TOOLS)}
+            onClick={() => window.open(ROUTE_PATH.SIGNATURE_TOOLS, '_blank')}
           />
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Wiz Data Tools</Tooltip>}>
@@ -74,7 +72,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
             circle
             size="sm"
             className="sponsor-button"
-            onClick={() => history.push(ROUTE_PATH.HELPER)}
+            onClick={() => window.open(ROUTE_PATH.HELPER, '_blank')}
           />
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Become a sponsor</Tooltip>}>
