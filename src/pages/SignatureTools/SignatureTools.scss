@@ -1,8 +1,89 @@
 .signature-tools-button {
-  margin: 0.5rem 0;
+  margin: 0.5rem 0 !important;
   min-width: 10rem;
+}
+
+.signature-tools-page-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signature-tools-page-main {
+  padding: 1rem;
+}
+
+.signature-tools-tab-item {
+  display: block;
+  // align-items: center;
+  margin-top: 1rem;
+  color: #ccc;
+}
+
+.signature-tools-result-text {
+  width: 100%;
+  padding: 0;
+}
+
+.signature-tools-result-item {
+  margin: 0.75rem 0;
+}
+
+.signature-tools-tab-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+}
+
+.signature-tools-tab-header {
+  margin-bottom: 0.25rem;
+}
+
+.signature-tools-import-checkbox {
+  padding-bottom: 0 !important;
+  min-height: unset !important;
+
+  label {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+.signature-tools-error-message {
+  color: red;
 }
 
 .error-div {
   margin-top: 0.5rem;
+}
+
+.signature-tools-main-input {
+  margin-bottom: 0.5rem;
+}
+
+.signature-tools-import-checkbox .rs-checkbox-checker {
+  padding-bottom: 0 !important;
+  min-height: unset !important;
+
+  label {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .signature-tools-content {
+    height: unset;
+    overflow-y: hidden;
+    padding-right: 0;
+  }
+
+  .signature-tools-tab-item {
+    display: flex;
+  }
+
+  .signature-tools-result-text {
+    padding: 0 2rem;
+  }
 }
