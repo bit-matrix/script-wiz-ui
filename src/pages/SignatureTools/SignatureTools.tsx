@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Button, Checkbox, Divider, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { crypto } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
-import './SignatureTools.scss';
 import { validHex } from '../../utils/helper';
+import './SignatureTools.scss';
 
 export const SignatureTools = () => {
   const [privateKey, setPrivateKey] = useState<WizData>();
@@ -114,8 +114,8 @@ export const SignatureTools = () => {
   };
 
   return (
-    <div className="helper-page-main">
-      <div className="helper-page-tabs">
+    <div className="signature-tools-page-main">
+      <div className="signature-tools-page-tabs">
         <RadioGroup
           name="radioList"
           inline
@@ -131,15 +131,15 @@ export const SignatureTools = () => {
         </RadioGroup>
       </div>
 
-      <div className="helper-page-item">
+      <div className="signature-tools-page-item">
         <div>
-          <div className="helper-tab-item">
-            <div className="helper-result-text">
-              <div className="helper-result-item">
-                <div className="helper-tab-header-container">
-                  <h6 className="helper-tab-header">Private Key</h6>
+          <div className="signature-tools-tab-item">
+            <div className="signature-tools-result-text">
+              <div className="signature-tools-result-item">
+                <div className="signature-tools-tab-header-container">
+                  <h6 className="signature-tools-tab-header">Private Key</h6>
                   <Checkbox
-                    className="helper-le-checkbox"
+                    className="signature-tools-import-checkbox"
                     value="Import"
                     onChange={(value, checked) => {
                       setImportPrivateKey(checked);
@@ -151,7 +151,7 @@ export const SignatureTools = () => {
                 </div>
                 <div>
                   {!importPrivateKey ? (
-                    <InputGroup className="compile-modal-input-group">
+                    <InputGroup className="signature-tools-compile-modal-input-group">
                       <Input value={privateKey?.hex || ''} disabled />
                       <Whisper placement="top" trigger="click" speaker={<Tooltip>Private Key has been copied to clipboard!</Tooltip>}>
                         <InputGroup.Button onClick={() => navigator.clipboard.writeText(privateKey?.hex || '')}>
@@ -164,12 +164,12 @@ export const SignatureTools = () => {
                   )}
                 </div>
 
-                {keysErrorMessage ? <div className="helper-error-message error-div">{keysErrorMessage}</div> : null}
+                {keysErrorMessage ? <div className="signature-tools-error-message error-div">{keysErrorMessage}</div> : null}
               </div>
-              <div className="helper-result-item">
-                <h6 className="helper-tab-header">Public Key</h6>
+              <div className="signature-tools-result-item">
+                <h6 className="signature-tools-tab-header">Public Key</h6>
                 <div>
-                  <InputGroup className="compile-modal-input-group">
+                  <InputGroup className="signature-tools-compile-modal-input-group">
                     <Input value={publicKey?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Public Key has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(publicKey?.hex || '')}>
@@ -179,10 +179,10 @@ export const SignatureTools = () => {
                   </InputGroup>
                 </div>
               </div>
-              <div className="helper-result-item">
-                <h6 className="helper-tab-header">Uncompressed Public Key</h6>
+              <div className="signature-tools-result-item">
+                <h6 className="signature-tools-tab-header">Uncompressed Public Key</h6>
                 <div>
-                  <InputGroup className="compile-modal-input-group">
+                  <InputGroup className="signature-tools-compile-modal-input-group">
                     <Input value={uncompressedPublicKey?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Uncompressed Public Key has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(uncompressedPublicKey?.hex || '')}>
@@ -202,16 +202,21 @@ export const SignatureTools = () => {
                 Generate Key
               </Button>
               <Divider />
-              <div className="helper-result-item">
-                <h6 className="helper-tab-header">Message (Hex)</h6>
-                <Input className="helper-main-input" type="text" value={message} onChange={(value: string) => setMessage(value.replace(/\s/g, ''))} />
+              <div className="signature-tools-result-item">
+                <h6 className="signature-tools-tab-header">Message (Hex)</h6>
+                <Input
+                  className="signature-tools-main-input"
+                  type="text"
+                  value={message}
+                  onChange={(value: string) => setMessage(value.replace(/\s/g, ''))}
+                />
 
-                {signErrorMessage ? <div className="helper-error-message error-div">{signErrorMessage}</div> : null}
+                {signErrorMessage ? <div className="signature-tools-error-message error-div">{signErrorMessage}</div> : null}
               </div>
-              <div className="helper-result-item">
-                <h6 className="helper-tab-header">Signature</h6>
+              <div className="signature-tools-result-item">
+                <h6 className="signature-tools-tab-header">Signature</h6>
                 <div>
-                  <InputGroup className="compile-modal-input-group">
+                  <InputGroup className="signature-tools-compile-modal-input-group">
                     <Input value={signature?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Signature has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(signature?.hex || '')}>
@@ -222,10 +227,10 @@ export const SignatureTools = () => {
                 </div>
               </div>
               {signAlgorithm === 'ECDSA' && (
-                <div className="helper-result-item">
-                  <h6 className="helper-tab-header">Der Encoded Signature</h6>
+                <div className="signature-tools-result-item">
+                  <h6 className="signature-tools-tab-header">Der Encoded Signature</h6>
                   <div>
-                    <InputGroup className="compile-modal-input-group">
+                    <InputGroup className="signature-tools-compile-modal-input-group">
                       <Input value={derEncodedSignature?.hex || ''} disabled />
                       <Whisper placement="top" trigger="click" speaker={<Tooltip>Der Encoded Signature has been copied to clipboard!</Tooltip>}>
                         <InputGroup.Button onClick={() => navigator.clipboard.writeText(derEncodedSignature?.hex || '')}>
