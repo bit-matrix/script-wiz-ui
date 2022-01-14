@@ -6,36 +6,29 @@ import { Home } from '../pages/Home/Home';
 import { SignatureTools } from '../pages/SignatureTools/SignatureTools';
 import FourZeroFour from '../components/FourZeroFour';
 import { Helmet } from 'react-helmet';
+import logo192 from '../images/logo192.png';
 
 export const AppRouter = (): JSX.Element => {
-  const description = 'Online Bitcoin Script Editor. Script Wizard makes it easy to design and compile custom Liquid scripts';
-
+  const descriptionHome = 'Online Bitcoin Script Editor. Script Wizard makes it easy to design and compile custom Liquid scripts';
   return (
     <Router>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <link rel="icon" href={logo192} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="description" content={descriptionHome} />
+        <meta name="author" content="https://www.linkedin.com/company/bitmatrix/" />
+        <meta name="robots" content="nofollow, noindex" />
+        <link rel="apple-touch-icon" href={logo192} />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XH7VQK0DKJ"></script>
+        <link rel="manifest" crossOrigin="use-credentials" href="/manifest.json" />
+        <title>Script Wiz</title>
+      </Helmet>
       <Switch>
-        <Helmet>
-          <meta charSet="utf-8" />
-          <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="theme-color" content="#000000" />
-          <meta name="description" content={description} />
-          <meta name="author" content="https://www.linkedin.com/company/bitmatrix/" />
-          <meta name="robots" content="nofollow, noindex" />
-          <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-          <script async src="https://www.googletagmanager.com/gtag/js?id=G-XH7VQK0DKJ"></script>
-          <link rel="manifest" crossOrigin="use-credentials" href="%PUBLIC_URL%/manifest.json" />
-          <title>Script Wiz</title>
-          <Route exact path={ROUTE_PATH.HOME} component={Home} />
-        </Helmet>
-        <Helmet>
-          <Route exact path={ROUTE_PATH.HELPER} component={Helper} />
-        </Helmet>
-        <Helmet>
-          <Route exact path={ROUTE_PATH.SIGNATURE_TOOLS} component={SignatureTools} />
-        </Helmet>
-        <Helmet>
-          <Route exact path="*" component={FourZeroFour} />
-        </Helmet>
+        <Route exact path={ROUTE_PATH.HOME} component={Home} />
+        <Route exact path={ROUTE_PATH.HELPER} component={Helper} />
+        <Route exact path="*" component={FourZeroFour} />
       </Switch>
     </Router>
   );
