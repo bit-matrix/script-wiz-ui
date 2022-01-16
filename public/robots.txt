@@ -3,4 +3,4 @@ User-agent: *
 Allow: /    #all bots can scan all site
 Disallow:
 
-#Sitemap: 
+Sitemap: https://google-seo.d2x3f0fid379b7.amplifyapp.com/sitemap.xml
