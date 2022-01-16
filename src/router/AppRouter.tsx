@@ -28,6 +28,7 @@ export const AppRouter = (): JSX.Element => {
       <Switch>
         <Route exact path={ROUTE_PATH.HOME} component={Home} />
         <Route exact path={ROUTE_PATH.HELPER} component={Helper} />
+        <Route exact path={ROUTE_PATH.SIGNATURE_TOOLS} component={SignatureTools} />
         <Route exact path="*" component={FourZeroFour} />
       </Switch>
     </Router>
