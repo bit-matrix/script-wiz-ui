@@ -38,10 +38,17 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   useEffect(() => {
     let editorLines = '';
-    if (scriptWiz.vm.network === VM_NETWORK.BTC) {
-      editorLines = initialBitcoinEditorValue;
-    } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
-      editorLines = scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT ? initialLiquidTaprootEditorValue : initialLiquidEditorValue;
+
+    const localStorageValue = localStorage.getItem('scriptWizEditor');
+
+    if (localStorageValue !== null && localStorageValue.length > 1) {
+      editorLines = localStorageValue;
+    } else {
+      if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+        editorLines = initialBitcoinEditorValue;
+      } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+        editorLines = scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT ? initialLiquidTaprootEditorValue : initialLiquidEditorValue;
+      }
     }
 
     let lines = convertEditorLines(editorLines);

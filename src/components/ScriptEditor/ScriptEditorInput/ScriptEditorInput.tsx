@@ -82,11 +82,14 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
 
   const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
     if (value) {
+      localStorage.setItem('scriptWizEditor', value);
+
       let lines = convertEditorLines(value);
 
       onChangeScriptEditorInput(lines);
     } else {
       onChangeScriptEditorInput([]);
+      localStorage.removeItem('scriptWizEditor');
     }
   };
 
