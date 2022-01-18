@@ -95,8 +95,12 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
 
   // Things to do before unloading/closing the tab
   const doSomethingBeforeUnload = useCallback(() => {
-    if (finalEditorValue) localStorage.setItem('scriptWizEditor', finalEditorValue);
-  }, [finalEditorValue]);
+    if (finalEditorValue) {
+      // @TODO convert to array
+      const localStorageValue = { editorLines: finalEditorValue, vm: scriptWiz.vm };
+      localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
+    }
+  }, [finalEditorValue, scriptWiz.vm]);
 
   // Setup the `beforeunload` event listener
   const setupBeforeUnloadListener = useCallback(() => {
