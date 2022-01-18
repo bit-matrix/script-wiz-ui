@@ -41,7 +41,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
     const localStorageValue = localStorage.getItem('scriptWizEditor');
 
-    if (localStorageValue !== null && localStorageValue.length > 1) {
+    if (localStorageValue !== null && !!localStorageValue.trim()) {
       editorLines = localStorageValue;
     } else {
       if (scriptWiz.vm.network === VM_NETWORK.BTC) {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -8,9 +8,8 @@ import Editor, { useMonaco } from '@monaco-editor/react';
 import editorOptions from '../../../options/editorOptions/editorOptions';
 
 import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
-import { initialBitcoinEditorValue, initialLiquidEditorValue } from './initialEditorValue';
 import { convertEditorLines } from '../../../helper';
-import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
+import { ScriptWiz } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
 
 import './ScriptEditorInput.scss';
@@ -23,6 +22,8 @@ type Props = {
 };
 
 const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onChangeScriptEditorInput, failedLineNumber = undefined }) => {
+  const [finalEditorValue, setFinalEditorValue] = useState<string>();
+
   const monaco = useMonaco();
 
   const opcodesDatas: Opcode[] = useMemo(() => scriptWiz.opCodes.data, [scriptWiz]);
@@ -82,16 +83,33 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
 
   const onChangeEditor = (value: string | undefined, ev: Monaco.editor.IModelContentChangedEvent) => {
     if (value) {
-      localStorage.setItem('scriptWizEditor', value);
-
       let lines = convertEditorLines(value);
 
       onChangeScriptEditorInput(lines);
+      setFinalEditorValue(value);
     } else {
       onChangeScriptEditorInput([]);
       localStorage.removeItem('scriptWizEditor');
     }
   };
+
+  // Things to do before unloading/closing the tab
+  const doSomethingBeforeUnload = useCallback(() => {
+    if (finalEditorValue) localStorage.setItem('scriptWizEditor', finalEditorValue);
+  }, [finalEditorValue]);
+
+  // Setup the `beforeunload` event listener
+  const setupBeforeUnloadListener = useCallback(() => {
+    window.addEventListener('beforeunload', (ev) => {
+      ev.preventDefault();
+      return doSomethingBeforeUnload();
+    });
+  }, [doSomethingBeforeUnload]);
+
+  useEffect(() => {
+    // Activate the event listener
+    setupBeforeUnloadListener();
+  }, [setupBeforeUnloadListener]);
 
   if (monaco != null) {
     return (
