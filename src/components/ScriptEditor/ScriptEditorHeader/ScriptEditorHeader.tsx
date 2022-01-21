@@ -1,6 +1,8 @@
 import { ScriptWiz, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import React from 'react';
-import { Icon, IconButton, Tooltip, Whisper } from 'rsuite';
+import { Tooltip, Whisper } from 'rsuite';
+import DownloadIcon from '../../../Svg/Icons/Download';
+import TerminalIcon from '../../../Svg/Icons/Terminal';
 import './ScriptEditorHeader.scss';
 
 type Props = {
@@ -17,12 +19,16 @@ const ScriptEditorHeader: React.FC<Props> = ({ scriptWiz, compileButtonClick, tx
         <div className="compile-button">
           {scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT && (
             <Whisper placement="top" trigger="hover" speaker={<Tooltip>Import your transaction template</Tooltip>}>
-              <IconButton className="tx-template-icon" icon={<Icon icon="download" />} circle size="sm" onClick={txTemplateClick} />
+              <div onClick={txTemplateClick} className="tx-template-icon">
+                <DownloadIcon />
+              </div>
             </Whisper>
           )}
 
           <Whisper placement="top" trigger="hover" speaker={<Tooltip>Compile your script</Tooltip>}>
-            <IconButton icon={<Icon icon="terminal" />} circle size="sm" onClick={compileButtonClick} />
+            <div onClick={compileButtonClick}>
+              <TerminalIcon />
+            </div>
           </Whisper>
         </div>
       </div>
