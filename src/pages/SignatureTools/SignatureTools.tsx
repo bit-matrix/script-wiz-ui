@@ -1,9 +1,10 @@
 /* eslint-disable no-throw-literal */
 import React, { useState } from 'react';
-import { Button, Checkbox, Divider, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
+import { Button, Checkbox, Divider, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { crypto } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
 import { validHex } from '../../utils/helper';
+import CopyIcon from '../../Svg/Icons/Copy';
 import './SignatureTools.scss';
 
 export const SignatureTools = () => {
@@ -121,10 +122,10 @@ export const SignatureTools = () => {
           inline
           appearance="picker"
           defaultValue={signAlgorithm}
-          onChange={(value) => {
-            setSignAlgorithm(value);
-            clearKeys();
-          }}
+          // onChange={(value) => {
+          //   setSignAlgorithm(value);
+          //   clearKeys();
+          // }}
         >
           <Radio value="ECDSA">ECDSA</Radio>
           <Radio value="SCHNORR">SCHNORR</Radio>
@@ -155,7 +156,7 @@ export const SignatureTools = () => {
                       <Input value={privateKey?.hex || ''} disabled />
                       <Whisper placement="top" trigger="click" speaker={<Tooltip>Private Key has been copied to clipboard!</Tooltip>}>
                         <InputGroup.Button onClick={() => navigator.clipboard.writeText(privateKey?.hex || '')}>
-                          <Icon icon="copy" />
+                          <CopyIcon />
                         </InputGroup.Button>
                       </Whisper>
                     </InputGroup>
@@ -173,7 +174,7 @@ export const SignatureTools = () => {
                     <Input value={publicKey?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Public Key has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(publicKey?.hex || '')}>
-                        <Icon icon="copy" />
+                        <CopyIcon />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -186,7 +187,7 @@ export const SignatureTools = () => {
                     <Input value={uncompressedPublicKey?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Uncompressed Public Key has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(uncompressedPublicKey?.hex || '')}>
-                        <Icon icon="copy" />
+                        <CopyIcon />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -220,7 +221,7 @@ export const SignatureTools = () => {
                     <Input value={signature?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Signature has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(signature?.hex || '')}>
-                        <Icon icon="copy" />
+                        <CopyIcon />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -234,7 +235,7 @@ export const SignatureTools = () => {
                       <Input value={derEncodedSignature?.hex || ''} disabled />
                       <Whisper placement="top" trigger="click" speaker={<Tooltip>Der Encoded Signature has been copied to clipboard!</Tooltip>}>
                         <InputGroup.Button onClick={() => navigator.clipboard.writeText(derEncodedSignature?.hex || '')}>
-                          <Icon icon="copy" />
+                          <CopyIcon />
                         </InputGroup.Button>
                       </Whisper>
                     </InputGroup>
