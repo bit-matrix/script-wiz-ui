@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
-import './ScriptEditorOutput.scss';
-import { Icon } from 'rsuite';
 import WizData from '@script-wiz/wiz-data';
+import BanIcon from '../../../Svg/Icons/Ban';
+import './ScriptEditorOutput.scss';
 
 type Props = {
   lastStackDataList: Array<WizData>;
@@ -62,7 +62,9 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
         <div className="script-editor-output-main" key={`script-editor-output-main-error`}>
           <span key={`editor-output-text-page-number-error`} className="editor-output-text-page-number"></span>
           <span className="error-message">
-            <Icon icon="ban" className="error-message-ban-icon" />
+            <div className="error-message-ban-icon">
+              <BanIcon />
+            </div>
             {errorMessage}
           </span>
         </div>
