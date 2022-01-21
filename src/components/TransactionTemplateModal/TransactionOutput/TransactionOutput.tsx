@@ -1,8 +1,9 @@
 import React from 'react';
 import { TxOutput } from '@script-wiz/lib-core';
-import { Icon, IconButton, Input } from 'rsuite';
+import { Input } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
+import CloseIcon from '../../../Svg/Icons/Close';
 import './TransactionOutput.scss';
 
 type Props = {
@@ -26,7 +27,9 @@ const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, remove
     <div className="tx-output-main">
       <div className="tx-output-header">
         <p className="tx-output-index">Index #{txOutput.index}</p>
-        <IconButton className="tx-output-close-icon" icon={<Icon icon="close" />} size="sm" onClick={() => removeOutput(txOutput.index)} />
+        <div className="tx-output-close-icon" onClick={() => removeOutput(txOutput.index)}>
+          <CloseIcon />
+        </div>
       </div>
       <div className="tx-output-item">
         <div className="tx-modal-label">scriptPubkey:</div>
