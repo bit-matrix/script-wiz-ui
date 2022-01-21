@@ -1,12 +1,20 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useMemo, useState } from 'react';
-import { Dropdown, Icon, IconButton, Tooltip, Whisper } from 'rsuite';
+import { Dropdown, Tooltip, Whisper } from 'rsuite';
 import logo from '../../images/transparent_white.png';
 import { SponsorModal } from './SponsorModal/SponsorModal';
-import './ScriptNavbar.scss';
 import { VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import { ROUTE_PATH } from '../../router/ROUTE_PATH';
+import GithubIcon from '../../Svg/Icons/Github';
+import TwitterIcon from '../../Svg/Icons/Twitter';
+import MediumIcon from '../../Svg/Icons/Medium';
+import TelegramIcon from '../../Svg/Icons/Telegram';
+import HeartIcon from '../../Svg/Icons/Heart';
+import NpmIcon from '../../Svg/Icons/Npm';
+import ToolsIcon from '../../Svg/Icons/Tools';
+import MagicIcon from '../../Svg/Icons/Magic';
+import './ScriptNavbar.scss';
 
 type Props = {
   vm: VM;
@@ -36,53 +44,41 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           <img className="script-wiz-logo" src={logo} />
         </div>
         <a href="https://github.com/bit-matrix/script-wiz-lib" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <Icon icon="github" />
+          <GithubIcon />
           <span className="script-editor-header-icon-item-text hidden-mobile">Github</span>
         </a>
         <a href="https://www.npmjs.com/package/@script-wiz/lib" target="_blank" className="script-editor-header-icon-item npm-div" rel="noreferrer">
-          <i className="fab fa-npm fa-2x"></i>
+          <NpmIcon />
           <span className="script-editor-header-icon-item-text  hidden-mobile">Npm</span>
         </a>
         <a href="https://twitter.com/script_wizard" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <Icon icon="twitter" />
+          <TwitterIcon />
           <span className="script-editor-header-icon-item-text  hidden-mobile">Twitter</span>
         </a>
         <a href="https://medium.com/script-wizard" className="script-editor-header-icon-item">
-          <Icon icon="medium" />
+          <MediumIcon />
           <span className="script-editor-header-icon-item-text  hidden-mobile">Medium</span>
         </a>
         <a href="https://t.me/scriptwizard" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <Icon icon="telegram" />
+          <TelegramIcon />
           <span className="script-editor-header-icon-item-text hidden-mobile">Telegram</span>
         </a>
       </div>
       <div className="script-editor-header-right-section">
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Signature Tools</Tooltip>}>
-          <IconButton
-            icon={<i className="fas fa-tools"></i>}
-            circle
-            size="sm"
-            className="sponsor-button"
-            onClick={() => window.open(ROUTE_PATH.SIGNATURE_TOOLS, '_blank')}
-          />
+          <div onClick={() => window.open(ROUTE_PATH.SIGNATURE_TOOLS, '_blank')} className="sponsor-button">
+            <ToolsIcon />
+          </div>
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Wiz Data Tools</Tooltip>}>
-          <IconButton
-            icon={<i className="fa fa-magic"></i>}
-            circle
-            size="sm"
-            className="sponsor-button"
-            onClick={() => window.open(ROUTE_PATH.HELPER, '_blank')}
-          />
+          <div className="sponsor-button" onClick={() => window.open(ROUTE_PATH.HELPER, '_blank')}>
+            <MagicIcon />
+          </div>
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Become a sponsor</Tooltip>}>
-          <IconButton
-            icon={<Icon style={{ color: 'hotpink' }} icon="heart" />}
-            circle
-            size="sm"
-            className="sponsor-button"
-            onClick={() => setShowSponsorModal(true)}
-          />
+          <div className="sponsor-button" onClick={() => setShowSponsorModal(true)}>
+            <HeartIcon />
+          </div>
         </Whisper>
 
         <Dropdown className="script-editor-header-right-section-dropdown" title={<span>{title}</span>} activeKey={`${vm.network} - ${vm.ver}`}>
