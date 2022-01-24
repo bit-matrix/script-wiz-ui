@@ -44,7 +44,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           <img className="script-wiz-logo" src={logo} />
         </div>
         <a href="https://github.com/bit-matrix/script-wiz-lib" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <GithubIcon />
+          <GithubIcon width="1rem" height="1rem" />
           <span className="script-editor-header-icon-item-text hidden-mobile">Github</span>
         </a>
         <a href="https://www.npmjs.com/package/@script-wiz/lib" target="_blank" className="script-editor-header-icon-item npm-div" rel="noreferrer">
@@ -52,32 +52,32 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           <span className="script-editor-header-icon-item-text  hidden-mobile">Npm</span>
         </a>
         <a href="https://twitter.com/script_wizard" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <TwitterIcon />
+          <TwitterIcon width="0.85rem" height="0.85rem" />
           <span className="script-editor-header-icon-item-text  hidden-mobile">Twitter</span>
         </a>
         <a href="https://medium.com/script-wizard" className="script-editor-header-icon-item">
-          <MediumIcon />
+          <MediumIcon width="0.85rem" height="0.85rem" />
           <span className="script-editor-header-icon-item-text  hidden-mobile">Medium</span>
         </a>
         <a href="https://t.me/scriptwizard" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <TelegramIcon />
+          <TelegramIcon width="0.85rem" height="0.85rem" />
           <span className="script-editor-header-icon-item-text hidden-mobile">Telegram</span>
         </a>
       </div>
       <div className="script-editor-header-right-section">
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Signature Tools</Tooltip>}>
-          <div onClick={() => window.open(ROUTE_PATH.SIGNATURE_TOOLS, '_blank')} className="sponsor-button">
-            <ToolsIcon />
+          <div onClick={() => window.open(ROUTE_PATH.SIGNATURE_TOOLS, '_blank')} className="route-button">
+            <ToolsIcon width="1.5rem" height="1.5rem" />
           </div>
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Wiz Data Tools</Tooltip>}>
-          <div className="sponsor-button" onClick={() => window.open(ROUTE_PATH.HELPER, '_blank')}>
-            <MagicIcon />
+          <div className="route-button" onClick={() => window.open(ROUTE_PATH.HELPER, '_blank')}>
+            <MagicIcon width="1.5rem" height="1.5rem" />
           </div>
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Become a sponsor</Tooltip>}>
           <div className="sponsor-button" onClick={() => setShowSponsorModal(true)}>
-            <HeartIcon />
+            <HeartIcon fill="#FF69B4" width="1.5rem" height="1.5rem" />
           </div>
         </Whisper>
 

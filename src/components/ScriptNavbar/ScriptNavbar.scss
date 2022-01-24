@@ -4,8 +4,24 @@
   height: 3rem;
   width: 100%;
 
-  .sponsor-button {
+  .route-button {
+    width: 2rem;
+    height: 2rem;
     margin-right: 1rem;
+    border-radius: 50% !important;
+    background: #292d33;
+    padding-left: 0.25rem;
+    padding-top: 0.3rem;
+  }
+
+  .sponsor-button {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 1rem;
+    border-radius: 50% !important;
+    background: #292d33;
+    padding-top: 0.4rem;
+    padding-left: 0.25rem;
   }
 
   .script-editor-header-left-section {
