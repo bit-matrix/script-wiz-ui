@@ -24,19 +24,30 @@
     position: absolute !important;
     right: 1rem !important;
     z-index: 100;
-    width: 2rem;
-    height: 2rem;
-    background: #292d33;
-    border-radius: 50%;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .tx-template-icon {
       margin-right: 0.5rem;
+      background: #292d33;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 2rem;
+      height: 2rem;
     }
 
-    svg {
-      padding-left: 0.4rem;
-      padding-top: 0.4rem;
+    .script-icon {
+      background: #292d33;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 2rem;
+      height: 2rem;
     }
   }
 }

@@ -20,14 +20,14 @@ const ScriptEditorHeader: React.FC<Props> = ({ scriptWiz, compileButtonClick, tx
           {scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT && (
             <Whisper placement="top" trigger="hover" speaker={<Tooltip>Import your transaction template</Tooltip>}>
               <div onClick={txTemplateClick} className="tx-template-icon">
-                <DownloadIcon />
+                <DownloadIcon width="1rem" height="1rem" />
               </div>
             </Whisper>
           )}
 
           <Whisper placement="top" trigger="hover" speaker={<Tooltip>Compile your script</Tooltip>}>
-            <div onClick={compileButtonClick}>
-              <TerminalIcon width="1.5rem" height="1.5rem" />
+            <div onClick={compileButtonClick} className="script-icon">
+              <TerminalIcon width="1rem" height="1rem" />
             </div>
           </Whisper>
         </div>
