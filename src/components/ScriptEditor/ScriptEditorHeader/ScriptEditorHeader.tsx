@@ -27,7 +27,7 @@ const ScriptEditorHeader: React.FC<Props> = ({ scriptWiz, compileButtonClick, tx
 
           <Whisper placement="top" trigger="hover" speaker={<Tooltip>Compile your script</Tooltip>}>
             <div onClick={compileButtonClick}>
-              <TerminalIcon />
+              <TerminalIcon width="1.5rem" height="1.5rem" />
             </div>
           </Whisper>
         </div>
