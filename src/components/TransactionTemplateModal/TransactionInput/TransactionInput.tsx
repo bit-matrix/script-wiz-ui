@@ -49,7 +49,7 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
           Current Input Index
         </Radio>
         <div className="tx-input-close-icon" onClick={() => removeInput(txInput.index)}>
-          <CloseIcon />
+          <CloseIcon width="1rem" height="1rem" />
         </div>
       </div>
       <div className="tx-input-modal-item">

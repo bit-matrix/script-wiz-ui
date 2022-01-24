@@ -140,7 +140,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                   <Input value={tweakedResult.tweak} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.tweak)}>
-                      <CopyIcon />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
@@ -151,7 +151,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                   <Input value={tweakedResult.scriptPubkey} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.scriptPubkey)}>
-                      <CopyIcon />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
@@ -162,7 +162,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                   <Input value={tweakedResult.bech32} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.bech32)}>
-                      <CopyIcon />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>

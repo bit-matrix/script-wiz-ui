@@ -46,7 +46,7 @@ export const SponsorModal: React.FC<SponsorModalProps> = ({ show, close }) => {
             />
             <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
               <InputGroup.Button onClick={copyToClipboard}>
-                <CopyIcon />
+                <CopyIcon width="1rem" height="1rem" />
               </InputGroup.Button>
             </Whisper>
           </InputGroup>

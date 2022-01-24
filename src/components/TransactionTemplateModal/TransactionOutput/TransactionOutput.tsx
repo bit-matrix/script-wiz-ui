@@ -28,7 +28,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, remove
       <div className="tx-output-header">
         <p className="tx-output-index">Index #{txOutput.index}</p>
         <div className="tx-output-close-icon" onClick={() => removeOutput(txOutput.index)}>
-          <CloseIcon />
+          <CloseIcon width="1rem" height="1rem" />
         </div>
       </div>
       <div className="tx-output-item">

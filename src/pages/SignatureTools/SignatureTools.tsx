@@ -157,7 +157,7 @@ export const SignatureTools = () => {
                       <Input value={privateKey?.hex || ''} disabled />
                       <Whisper placement="top" trigger="click" speaker={<Tooltip>Private Key has been copied to clipboard!</Tooltip>}>
                         <InputGroup.Button onClick={() => navigator.clipboard.writeText(privateKey?.hex || '')}>
-                          <CopyIcon />
+                          <CopyIcon width="1rem" height="1rem" />
                         </InputGroup.Button>
                       </Whisper>
                     </InputGroup>
@@ -175,7 +175,7 @@ export const SignatureTools = () => {
                     <Input value={publicKey?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Public Key has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(publicKey?.hex || '')}>
-                        <CopyIcon />
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -188,7 +188,7 @@ export const SignatureTools = () => {
                     <Input value={uncompressedPublicKey?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Uncompressed Public Key has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(uncompressedPublicKey?.hex || '')}>
-                        <CopyIcon />
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -222,7 +222,7 @@ export const SignatureTools = () => {
                     <Input value={signature?.hex || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>Signature has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(signature?.hex || '')}>
-                        <CopyIcon />
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -236,7 +236,7 @@ export const SignatureTools = () => {
                       <Input value={derEncodedSignature?.hex || ''} disabled />
                       <Whisper placement="top" trigger="click" speaker={<Tooltip>Der Encoded Signature has been copied to clipboard!</Tooltip>}>
                         <InputGroup.Button onClick={() => navigator.clipboard.writeText(derEncodedSignature?.hex || '')}>
-                          <CopyIcon />
+                          <CopyIcon width="1rem" height="1rem" />
                         </InputGroup.Button>
                       </Whisper>
                     </InputGroup>

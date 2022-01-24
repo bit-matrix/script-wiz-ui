@@ -260,7 +260,7 @@ export const Helper = () => {
                   setInput('');
                 }}
               >
-                <CloseIcon />
+                <CloseIcon width="1rem" height="1rem" />
               </InputGroup.Button>
             </InputGroup>
             <div className="helper-tab-info">
@@ -282,7 +282,7 @@ export const Helper = () => {
                     <Input value={convertedWizData.hexResult} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexResult)}>
-                        <CopyIcon />
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -300,7 +300,7 @@ export const Helper = () => {
                     <Input value={convertedWizData.bytesResult} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesResult)}>
-                        <CopyIcon />
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -317,7 +317,7 @@ export const Helper = () => {
                   <Input value={splittedBinResult} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binResult)}>
-                      <CopyIcon />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
@@ -331,7 +331,7 @@ export const Helper = () => {
                     <Input value={convertedWizData.hexLeResult} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LE has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexLeResult)}>
-                        <CopyIcon />
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -345,7 +345,7 @@ export const Helper = () => {
                     <Input value={convertedWizData.bytesLeResult} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>BYTES LE has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.bytesLeResult)}>
-                        <CopyIcon />
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -358,7 +358,7 @@ export const Helper = () => {
                   <Input value={splittedtBinLeReult} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>BIN LE has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.binLeResult)}>
-                      <CopyIcon />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
@@ -374,7 +374,7 @@ export const Helper = () => {
                   <InputGroup.Button
                     onClick={() => navigator.clipboard.writeText(convertedWizData.numberResult ? convertedWizData.numberResult : '')}
                   >
-                    <CopyIcon />
+                    <CopyIcon width="1rem" height="1rem" />
                   </InputGroup.Button>
                 </Whisper>
               </InputGroup>
@@ -386,7 +386,7 @@ export const Helper = () => {
                 <Input value={convertedWizData.sha256Result} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>SHA256 has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.sha256Result)}>
-                    <CopyIcon />
+                    <CopyIcon width="1rem" height="1rem" />
                   </InputGroup.Button>
                 </Whisper>
               </InputGroup>
@@ -398,7 +398,7 @@ export const Helper = () => {
                 <Input value={convertedWizData.hash160Result} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>HASH160 has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hash160Result)}>
-                    <CopyIcon />
+                    <CopyIcon width="1rem" height="1rem" />
                   </InputGroup.Button>
                 </Whisper>
               </InputGroup>
@@ -413,7 +413,7 @@ export const Helper = () => {
                     <Input value={convertedWizData.textResult || ''} disabled />
                     <Whisper placement="top" trigger="click" speaker={<Tooltip>TEXT has been copied to clipboard!</Tooltip>}>
                       <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.textResult || '')}>
-                        <CopyIcon />
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
@@ -428,7 +428,7 @@ export const Helper = () => {
                   <Input value={convertedWizData.base64Result} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>BASE 64 has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.base64Result)}>
-                      <CopyIcon />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
