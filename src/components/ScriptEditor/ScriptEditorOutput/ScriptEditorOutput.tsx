@@ -63,9 +63,10 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
           <span key={`editor-output-text-page-number-error`} className="editor-output-text-page-number"></span>
           <span className="error-message">
             <div className="error-message-ban-icon">
-              <BanIcon />
+              <BanIcon width="1rem" height="1rem" />
+              &nbsp;
+              {errorMessage}
             </div>
-            {errorMessage}
           </span>
         </div>
       ) : undefined}
