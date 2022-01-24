@@ -10,9 +10,10 @@
     margin-right: 1rem;
     border-radius: 50% !important;
     background: #292d33;
-    padding-left: 0.25rem;
-    padding-top: 0.3rem;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .sponsor-button {
@@ -21,9 +22,10 @@
     margin-right: 1rem;
     border-radius: 50% !important;
     background: #292d33;
-    padding-top: 0.4rem;
-    padding-left: 0.25rem;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .script-editor-header-left-section {
@@ -39,6 +41,8 @@
 
     .script-editor-header-icon-item {
       color: #fff !important;
+      display: flex;
+      align-items: center;
 
       .script-editor-header-icon-item-text {
         margin-left: 0.5rem;

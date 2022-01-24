@@ -67,17 +67,17 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
       <div className="script-editor-header-right-section">
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Signature Tools</Tooltip>}>
           <div onClick={() => window.open(ROUTE_PATH.SIGNATURE_TOOLS, '_blank')} className="route-button">
-            <ToolsIcon width="1.5rem" height="1.5rem" />
+            <ToolsIcon width="1rem" height="1rem" />
           </div>
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Wiz Data Tools</Tooltip>}>
           <div className="route-button" onClick={() => window.open(ROUTE_PATH.HELPER, '_blank')}>
-            <MagicIcon width="1.5rem" height="1.5rem" />
+            <MagicIcon width="1rem" height="1rem" />
           </div>
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Become a sponsor</Tooltip>}>
           <div className="sponsor-button" onClick={() => setShowSponsorModal(true)}>
-            <HeartIcon fill="#FF69B4" width="1.5rem" height="1.5rem" />
+            <HeartIcon fill="#FF69B4" width="1rem" height="1rem" />
           </div>
         </Whisper>
 
