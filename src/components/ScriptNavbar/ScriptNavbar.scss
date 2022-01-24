@@ -65,6 +65,14 @@
       .rs-btn-subtle:focus {
         background-color: transparent !important;
       }
+      .rs-btn {
+        background: #10141a;
+        color: #a4a9b3;
+
+        &:hover {
+          color: #e9ebf0;
+        }
+      }
     }
   }
 
