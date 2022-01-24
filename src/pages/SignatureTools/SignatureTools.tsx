@@ -6,6 +6,7 @@ import WizData from '@script-wiz/wiz-data';
 import { validHex } from '../../utils/helper';
 import CopyIcon from '../../Svg/Icons/Copy';
 import './SignatureTools.scss';
+import { ValueType } from 'rsuite/esm/Radio';
 
 export const SignatureTools = () => {
   const [privateKey, setPrivateKey] = useState<WizData>();
@@ -122,10 +123,10 @@ export const SignatureTools = () => {
           inline
           appearance="picker"
           defaultValue={signAlgorithm}
-          // onChange={(value) => {
-          //   setSignAlgorithm(value);
-          //   clearKeys();
-          // }}
+          onChange={(value: ValueType) => {
+            setSignAlgorithm(value.toString());
+            clearKeys();
+          }}
         >
           <Radio value="ECDSA">ECDSA</Radio>
           <Radio value="SCHNORR">SCHNORR</Radio>

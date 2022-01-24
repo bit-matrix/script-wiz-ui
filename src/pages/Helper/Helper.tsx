@@ -8,6 +8,7 @@ import { convertBase64, reverseHex, validBin, validBytes, validHex, validNumber 
 import CopyIcon from '../../Svg/Icons/Copy';
 import CloseIcon from '../../Svg/Icons/Close';
 import './Helper.scss';
+import { ValueType } from 'rsuite/esm/Checkbox';
 
 type Result = {
   hexResult: string;
@@ -226,9 +227,9 @@ export const Helper = () => {
           inline
           appearance="picker"
           defaultValue={convertType}
-          // onChange={(value: CONVERT_TYPE) => {
-          //   setConvertType(value);
-          // }}
+          onChange={(value: ValueType) => {
+            setConvertType(value as CONVERT_TYPE);
+          }}
         >
           <Radio value={CONVERT_TYPE.FROM_HEX}>{CONVERT_TYPE.FROM_HEX}</Radio>
           <Radio value={CONVERT_TYPE.FROM_BIN}>{CONVERT_TYPE.FROM_BIN}</Radio>

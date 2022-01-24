@@ -5,6 +5,7 @@ import { Button, Form, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whi
 import WizData from '@script-wiz/wiz-data';
 import CopyIcon from '../../Svg/Icons/Copy';
 import './CompileModal.scss';
+import { ValueType } from 'rsuite/esm/Radio';
 
 type Props = {
   scriptWiz: ScriptWiz;
@@ -86,9 +87,9 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                 className="compile-modal-radio-group"
                 inline
                 value={keyPath}
-                // onChange={(value: KeyPath) => {
-                //   setKeyPath(value);
-                // }}
+                onChange={(value: ValueType) => {
+                  setKeyPath(value as KeyPath);
+                }}
               >
                 <Radio value={KeyPath.UNKNOWN}>Unknown discrete logarithm</Radio>
                 <Radio value={KeyPath.CUSTOM}>Custom</Radio>
@@ -111,9 +112,9 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                 className="compile-modal-radio-group"
                 inline
                 value={tapleafVersion}
-                // onChange={(value: TapleafVersion) => {
-                //   setTapleafVersion(value);
-                // }}
+                onChange={(value: ValueType) => {
+                  setTapleafVersion(value as TapleafVersion);
+                }}
               >
                 <Radio value={TapleafVersion.DEFAULT}>Default</Radio>
                 <Radio value={TapleafVersion.CUSTOM}>Custom</Radio>
