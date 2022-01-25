@@ -6,6 +6,10 @@
   .rs-radio-group-picker .rs-radio-checked .rs-radio-checker {
     border-bottom: none !important;
   }
+
+  .rs-radio-group-picker {
+    display: block;
+  }
 }
 
 .helper-page-main {
