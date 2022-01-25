@@ -47,6 +47,12 @@
       .script-editor-header-icon-item-text {
         margin-left: 0.5rem;
       }
+
+      .script-editor-header-npm-text {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 

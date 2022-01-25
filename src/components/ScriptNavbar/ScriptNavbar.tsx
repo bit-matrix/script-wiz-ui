@@ -49,7 +49,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
         </a>
         <a href="https://www.npmjs.com/package/@script-wiz/lib" target="_blank" className="script-editor-header-icon-item npm-div" rel="noreferrer">
           <NpmIcon />
-          <span className="script-editor-header-icon-item-text  hidden-mobile">Npm</span>
+          <span className="script-editor-header-icon-item-text  hidden-mobile script-editor-header-npm-text">Npm</span>
         </a>
         <a href="https://twitter.com/script_wizard" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
           <TwitterIcon width="0.85rem" height="0.85rem" />
