@@ -7,6 +7,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  .rs-radio-group-picker .rs-radio-checked .rs-radio-checker {
+    border-bottom: none !important;
+  }
 }
 
 .signature-tools-page-main {
