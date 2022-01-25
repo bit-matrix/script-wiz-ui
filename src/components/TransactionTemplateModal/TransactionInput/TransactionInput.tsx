@@ -1,8 +1,9 @@
 import React from 'react';
 import { TxInput } from '@script-wiz/lib-core';
-import { Icon, IconButton, Input, Radio } from 'rsuite';
+import { Input, Radio } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
+import CloseIcon from '../../Svg/Icons/Close';
 import './TransactionInput.scss';
 
 type Props = {
@@ -47,7 +48,9 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
         >
           Current Input Index
         </Radio>
-        <IconButton className="tx-input-close-icon" icon={<Icon icon="close" />} size="sm" onClick={() => removeInput(txInput.index)} />
+        <div className="tx-input-close-icon" onClick={() => removeInput(txInput.index)}>
+          <CloseIcon width="1rem" height="1rem" />
+        </div>
       </div>
       <div className="tx-input-modal-item">
         <div className="tx-modal-label">Previous TX ID:</div>

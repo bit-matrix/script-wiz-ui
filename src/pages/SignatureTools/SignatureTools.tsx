@@ -1,9 +1,11 @@
 /* eslint-disable no-throw-literal */
 import React, { useState } from 'react';
-import { Button, Checkbox, Divider, Icon, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
+import { Button, Checkbox, Divider, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import { crypto } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
 import { validHex } from '../../utils/helper';
+import CopyIcon from '../../components/Svg/Icons/Copy';
+import { ValueType } from 'rsuite/esm/Radio';
 import './SignatureTools.scss';
 
 export const SignatureTools = () => {
@@ -121,8 +123,8 @@ export const SignatureTools = () => {
           inline
           appearance="picker"
           defaultValue={signAlgorithm}
-          onChange={(value) => {
-            setSignAlgorithm(value);
+          onChange={(value: ValueType) => {
+            setSignAlgorithm(value.toString());
             clearKeys();
           }}
         >
@@ -132,120 +134,118 @@ export const SignatureTools = () => {
       </div>
 
       <div className="signature-tools-page-item">
-        <div>
-          <div className="signature-tools-tab-item">
-            <div className="signature-tools-result-text">
-              <div className="signature-tools-result-item">
-                <div className="signature-tools-tab-header-container">
-                  <h6 className="signature-tools-tab-header">Private Key</h6>
-                  <Checkbox
-                    className="signature-tools-import-checkbox"
-                    value="Import"
-                    onChange={(value, checked) => {
-                      setImportPrivateKey(checked);
-                      clearKeys();
-                    }}
-                  >
-                    Import
-                  </Checkbox>
-                </div>
-                <div>
-                  {!importPrivateKey ? (
-                    <InputGroup className="signature-tools-compile-modal-input-group">
-                      <Input value={privateKey?.hex || ''} disabled />
-                      <Whisper placement="top" trigger="click" speaker={<Tooltip>Private Key has been copied to clipboard!</Tooltip>}>
-                        <InputGroup.Button onClick={() => navigator.clipboard.writeText(privateKey?.hex || '')}>
-                          <Icon icon="copy" />
-                        </InputGroup.Button>
-                      </Whisper>
-                    </InputGroup>
-                  ) : (
-                    <Input value={privateKeyInput} onChange={(value) => setPrivateKeyInput(value)} />
-                  )}
-                </div>
-
-                {keysErrorMessage ? <div className="signature-tools-error-message error-div">{keysErrorMessage}</div> : null}
+        <div className="signature-tools-tab-item">
+          <div className="signature-tools-result-text">
+            <div className="signature-tools-result-item">
+              <div className="signature-tools-tab-header-container">
+                <h6 className="signature-tools-tab-header">Private Key</h6>
+                <Checkbox
+                  className="signature-tools-import-checkbox"
+                  value="Import"
+                  onChange={(value, checked) => {
+                    setImportPrivateKey(checked);
+                    clearKeys();
+                  }}
+                >
+                  Import
+                </Checkbox>
               </div>
-              <div className="signature-tools-result-item">
-                <h6 className="signature-tools-tab-header">Public Key</h6>
-                <div>
+              <div>
+                {!importPrivateKey ? (
                   <InputGroup className="signature-tools-compile-modal-input-group">
-                    <Input value={publicKey?.hex || ''} disabled />
-                    <Whisper placement="top" trigger="click" speaker={<Tooltip>Public Key has been copied to clipboard!</Tooltip>}>
-                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(publicKey?.hex || '')}>
-                        <Icon icon="copy" />
+                    <Input value={privateKey?.hex || ''} disabled />
+                    <Whisper placement="top" trigger="click" speaker={<Tooltip>Private Key has been copied to clipboard!</Tooltip>}>
+                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(privateKey?.hex || '')}>
+                        <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
                   </InputGroup>
-                </div>
+                ) : (
+                  <Input value={privateKeyInput} onChange={(value) => setPrivateKeyInput(value)} />
+                )}
               </div>
-              <div className="signature-tools-result-item">
-                <h6 className="signature-tools-tab-header">Uncompressed Public Key</h6>
-                <div>
-                  <InputGroup className="signature-tools-compile-modal-input-group">
-                    <Input value={uncompressedPublicKey?.hex || ''} disabled />
-                    <Whisper placement="top" trigger="click" speaker={<Tooltip>Uncompressed Public Key has been copied to clipboard!</Tooltip>}>
-                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(uncompressedPublicKey?.hex || '')}>
-                        <Icon icon="copy" />
-                      </InputGroup.Button>
-                    </Whisper>
-                  </InputGroup>
-                </div>
-              </div>
-              <Button
-                className="signature-tools-button"
-                appearance="primary"
-                size="md"
-                onClick={generateButtonClick}
-                disabled={!generateButtonValidation()}
-              >
-                Generate Key
-              </Button>
-              <Divider />
-              <div className="signature-tools-result-item">
-                <h6 className="signature-tools-tab-header">Message (Hex)</h6>
-                <Input
-                  className="signature-tools-main-input"
-                  type="text"
-                  value={message}
-                  onChange={(value: string) => setMessage(value.replace(/\s/g, ''))}
-                />
 
-                {signErrorMessage ? <div className="signature-tools-error-message error-div">{signErrorMessage}</div> : null}
-              </div>
-              <div className="signature-tools-result-item">
-                <h6 className="signature-tools-tab-header">Signature</h6>
-                <div>
-                  <InputGroup className="signature-tools-compile-modal-input-group">
-                    <Input value={signature?.hex || ''} disabled />
-                    <Whisper placement="top" trigger="click" speaker={<Tooltip>Signature has been copied to clipboard!</Tooltip>}>
-                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(signature?.hex || '')}>
-                        <Icon icon="copy" />
-                      </InputGroup.Button>
-                    </Whisper>
-                  </InputGroup>
-                </div>
-              </div>
-              {signAlgorithm === 'ECDSA' && (
-                <div className="signature-tools-result-item">
-                  <h6 className="signature-tools-tab-header">Der Encoded Signature</h6>
-                  <div>
-                    <InputGroup className="signature-tools-compile-modal-input-group">
-                      <Input value={derEncodedSignature?.hex || ''} disabled />
-                      <Whisper placement="top" trigger="click" speaker={<Tooltip>Der Encoded Signature has been copied to clipboard!</Tooltip>}>
-                        <InputGroup.Button onClick={() => navigator.clipboard.writeText(derEncodedSignature?.hex || '')}>
-                          <Icon icon="copy" />
-                        </InputGroup.Button>
-                      </Whisper>
-                    </InputGroup>
-                  </div>
-                </div>
-              )}
-
-              <Button className="signature-tools-button" appearance="primary" size="md" onClick={signMessage} disabled={!privateKey}>
-                Sign
-              </Button>
+              {keysErrorMessage ? <div className="signature-tools-error-message error-div">{keysErrorMessage}</div> : null}
             </div>
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Public Key</h6>
+              <div>
+                <InputGroup className="signature-tools-compile-modal-input-group">
+                  <Input value={publicKey?.hex || ''} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Public Key has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(publicKey?.hex || '')}>
+                      <CopyIcon width="1rem" height="1rem" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
+            </div>
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Uncompressed Public Key</h6>
+              <div>
+                <InputGroup className="signature-tools-compile-modal-input-group">
+                  <Input value={uncompressedPublicKey?.hex || ''} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Uncompressed Public Key has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(uncompressedPublicKey?.hex || '')}>
+                      <CopyIcon width="1rem" height="1rem" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
+            </div>
+            <Button
+              className="signature-tools-button"
+              appearance="primary"
+              size="md"
+              onClick={generateButtonClick}
+              disabled={!generateButtonValidation()}
+            >
+              Generate Key
+            </Button>
+            <Divider />
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Message (Hex)</h6>
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                value={message}
+                onChange={(value: string) => setMessage(value.replace(/\s/g, ''))}
+              />
+
+              {signErrorMessage ? <div className="signature-tools-error-message error-div">{signErrorMessage}</div> : null}
+            </div>
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Signature</h6>
+              <div>
+                <InputGroup className="signature-tools-compile-modal-input-group">
+                  <Input value={signature?.hex || ''} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Signature has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(signature?.hex || '')}>
+                      <CopyIcon width="1rem" height="1rem" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
+            </div>
+            {signAlgorithm === 'ECDSA' && (
+              <div className="signature-tools-result-item">
+                <h6 className="signature-tools-tab-header">Der Encoded Signature</h6>
+                <div>
+                  <InputGroup className="signature-tools-compile-modal-input-group">
+                    <Input value={derEncodedSignature?.hex || ''} disabled />
+                    <Whisper placement="top" trigger="click" speaker={<Tooltip>Der Encoded Signature has been copied to clipboard!</Tooltip>}>
+                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(derEncodedSignature?.hex || '')}>
+                        <CopyIcon width="1rem" height="1rem" />
+                      </InputGroup.Button>
+                    </Whisper>
+                  </InputGroup>
+                </div>
+              </div>
+            )}
+
+            <Button className="signature-tools-button" appearance="primary" size="md" onClick={signMessage} disabled={!privateKey}>
+              Sign
+            </Button>
           </div>
         </div>
       </div>
