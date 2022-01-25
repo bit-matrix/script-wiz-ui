@@ -20,7 +20,6 @@
 .signature-tools-tab-item {
   display: block;
   // align-items: center;
-  margin-top: 1rem;
   color: #ccc;
 
   // .signature-tools-result-text {
@@ -40,7 +39,10 @@
 
 .signature-tools-result-text {
   width: 100%;
-  padding: 0;
+  padding: 0 0.75rem 0.75rem 0.75rem;
+  margin-top: 0.5rem;
+  height: 90vh;
+  overflow-y: auto;
 }
 
 .signature-tools-result-item {
@@ -107,5 +109,7 @@
 
   .signature-tools-result-text {
     padding: 0 2rem;
+    overflow: hidden;
+    height: 100%;
   }
 }
