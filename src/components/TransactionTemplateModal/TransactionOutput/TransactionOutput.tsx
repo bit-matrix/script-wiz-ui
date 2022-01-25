@@ -3,7 +3,7 @@ import { TxOutput } from '@script-wiz/lib-core';
 import { Input } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
-import CloseIcon from '../../../Svg/Icons/Close';
+import CloseIcon from '../../Svg/Icons/Close';
 import './TransactionOutput.scss';
 
 type Props = {

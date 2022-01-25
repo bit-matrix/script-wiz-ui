@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import WizData from '@script-wiz/wiz-data';
-import BanIcon from '../../../Svg/Icons/Ban';
+import BanIcon from '../../Svg/Icons/Ban';
 import './ScriptEditorOutput.scss';
 
 type Props = {

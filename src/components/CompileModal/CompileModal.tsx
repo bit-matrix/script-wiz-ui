@@ -3,9 +3,9 @@ import { ScriptWiz, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import { taproot, TAPROOT_VERSION } from '@script-wiz/lib-core';
 import { Button, Form, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import WizData from '@script-wiz/wiz-data';
-import CopyIcon from '../../Svg/Icons/Copy';
-import './CompileModal.scss';
 import { ValueType } from 'rsuite/esm/Radio';
+import CopyIcon from '../Svg/Icons/Copy';
+import './CompileModal.scss';
 
 type Props = {
   scriptWiz: ScriptWiz;
