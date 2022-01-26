@@ -96,9 +96,32 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
   // Things to do before unloading/closing the tab
   const doSomethingBeforeUnload = useCallback(() => {
     if (finalEditorValue) {
-      // @TODO convert to array
-      const localStorageValue = { editorLines: finalEditorValue, vm: scriptWiz.vm };
-      localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
+      const currentLocalStorage = localStorage.getItem('scriptWizEditor');
+
+      //check local storage
+      if (currentLocalStorage !== null) {
+        const currentLocalStorageArray = JSON.parse(currentLocalStorage);
+        const newLocalStorageArray = [...currentLocalStorageArray];
+
+        //current scriptWiz.vm index
+        const currentIndex = newLocalStorageArray.findIndex((nls) => {
+          return nls.vm.network === scriptWiz.vm.network && nls.vm.ver === scriptWiz.vm.ver;
+        });
+
+        //local storage has same version data
+        if (currentIndex > -1) {
+          newLocalStorageArray[currentIndex].editorLines = finalEditorValue;
+        } else {
+          newLocalStorageArray.push({ editorLines: finalEditorValue, vm: scriptWiz.vm });
+        }
+
+        localStorage.setItem('scriptWizEditor', JSON.stringify(newLocalStorageArray));
+      } else {
+        //if local storage is empty
+        const localStorageValue = [{ editorLines: finalEditorValue, vm: scriptWiz.vm }];
+
+        localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
+      }
     }
   }, [finalEditorValue, scriptWiz.vm]);
 
