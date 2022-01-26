@@ -42,9 +42,22 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     const localStorageValue = localStorage.getItem('scriptWizEditor');
 
     if (localStorageValue) {
-      const localStorageObject = JSON.parse(localStorageValue || '');
-      if (localStorageObject.editorLines !== null && !!localStorageObject.editorLines.trim()) {
-        editorLines = localStorageObject.editorLines;
+      const localStorageArray = JSON.parse(localStorageValue);
+
+      const localStorageObject = localStorageArray.find((lsa: { vm: { network: VM_NETWORK; ver: VM_NETWORK_VERSION } }) => {
+        return lsa.vm.network === scriptWiz.vm.network && lsa.vm.ver === scriptWiz.vm.ver;
+      });
+
+      if (localStorageObject) {
+        if (localStorageObject.editorLines !== null && !!localStorageObject.editorLines.trim()) {
+          editorLines = localStorageObject.editorLines;
+        }
+      } else {
+        if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+          editorLines = initialBitcoinEditorValue;
+        } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+          editorLines = scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT ? initialLiquidTaprootEditorValue : initialLiquidEditorValue;
+        }
       }
     } else {
       if (scriptWiz.vm.network === VM_NETWORK.BTC) {
