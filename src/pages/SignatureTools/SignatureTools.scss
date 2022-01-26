@@ -7,6 +7,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  .rs-radio-group-picker .rs-radio-checked .rs-radio-checker {
+    border-bottom: none !important;
+  }
 }
 
 .signature-tools-page-main {
@@ -16,13 +20,29 @@
 .signature-tools-tab-item {
   display: block;
   // align-items: center;
-  margin-top: 1rem;
   color: #ccc;
+
+  // .signature-tools-result-text {
+  //   .signature-tools-result-item {
+  //     .signature-tools-tab-header-container {
+  //       div {
+  //         .signature-tools-compile-modal-input-group {
+  //           rs-input-group-addon rs-input-group-btn rs-btn rs-btn-default {
+  //             background: #282d33 !important;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 .signature-tools-result-text {
   width: 100%;
-  padding: 0;
+  padding: 0 0.75rem 0.75rem 0.75rem;
+  margin-top: 0.5rem;
+  height: 90vh;
+  overflow-y: auto;
 }
 
 .signature-tools-result-item {
@@ -89,5 +109,7 @@
 
   .signature-tools-result-text {
     padding: 0 2rem;
+    overflow: hidden;
+    height: 100%;
   }
 }
