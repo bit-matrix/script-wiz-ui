@@ -45,32 +45,22 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const timerRef = useRef<number | undefined>(undefined);
 
-  const [pressed, setPressed] = useState(false);
-  const [position, setPosition] = useState({ x: 50, y: 0 });
+  const [pressed, setPressed] = useState({ x: false, y: false });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
-  const scroolRef = useRef<HTMLDivElement | null>(null);
-  const output1Ref = useRef<HTMLDivElement | null>(null);
-  const output2Ref = useRef<HTMLDivElement | null>(null);
-  const input1Ref = useRef<HTMLDivElement | null>(null);
-  const input2Ref = useRef<HTMLDivElement | null>(null);
+  const scroolRowRef = useRef<HTMLDivElement | null>(null);
+  const scroolColumnRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (scroolRef.current && input1Ref.current && output1Ref.current) {
-      scroolRef.current.style.inset = `0% 0% 0% ${position.x}%`;
-      input1Ref.current.style.inset = `0% ${-position.x}% 50% -2%`;
-      output1Ref.current.style.inset = `0% 0% 50% ${position.x}%`;
-      // ref.current.style.transform = `translate(${position.x}px, ${position.y}px)`;
-    }
-  }, [position]);
-
-  const onMouseMove = (event: any) => {
+  const onMouseMove = (event: { preventDefault: () => void; stopPropagation: () => void; movementY: number; movementX: number }) => {
     event.preventDefault();
     event.stopPropagation();
-    if (pressed) {
-      setPosition({ x: position.x + event.movementX, y: position.y + event.movementY });
+    if (pressed.x && scroolRowRef.current) {
+      setPosition({ x: position.x, y: position.y + event.movementY });
+    }
+    if (pressed.y && scroolColumnRef.current) {
+      setPosition({ x: position.x + event.movementX, y: position.y });
     }
   };
-  console.log('pressed', pressed);
 
   useEffect(() => {
     let editorLines: string[] = [];
@@ -244,7 +234,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       <div className="script-editor-main-div">
         <div className="script-editor-container">
           <div className="script-editor-sub-item">
-            <div ref={input1Ref} className="script-editor-input-1 scroll" style={{ inset: '0% 0% 50% -2%' }}>
+            <div className="script-editor-input-1 scroll" style={{ inset: `0% ${-position.x}% ${50 + position.y}% -2%` }}>
               <h3 className="script-editor-input-header">Stack Elements</h3>
               <ScriptEditorInput
                 scriptWiz={scriptWiz}
@@ -253,8 +243,15 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 failedLineNumber={failedLineNumber}
               />
             </div>
-            <div className="script-editor-sub-item-column" style={{ inset: '50% 0% 0% 0%' }} />
-            <div ref={input2Ref} className="script-editor-input-2 scroll" style={{ inset: '50% 0% 0% -2%' }}>
+            <div
+              ref={scroolColumnRef}
+              onMouseDown={() => setPressed({ x: true, y: pressed.y })}
+              onMouseUp={() => setPressed({ x: false, y: pressed.y })}
+              onMouseMove={onMouseMove}
+              className="script-editor-sub-item-column"
+              style={{ inset: `${50 + position.y}% 0% 0% 0%` }}
+            />
+            <div className="script-editor-input-2 scroll" style={{ inset: `${50 + position.y}% ${-position.x}% 0% -2%` }}>
               <h3 className="script-editor-input-header">Witness Script</h3>
               <ScriptEditorInput
                 scriptWiz={scriptWiz}
@@ -265,34 +262,28 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             </div>
           </div>
           <div
-            ref={scroolRef}
-            draggable
-            onDragStart={() => setPressed(true)}
-            onDragEnd={() => setPressed(false)}
+            ref={scroolRowRef}
+            onMouseDown={() => setPressed({ x: pressed.x, y: true })}
+            onMouseUp={() => setPressed({ x: pressed.x, y: false })}
             onMouseMove={onMouseMove}
-            // onMouseDown={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            //   event.preventDefault();
-            //   event.stopPropagation();
-            //   setPressed(true);
-            //   console.log('mouse down');
-            // }}
-            // onMouseUp={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            //   event.preventDefault();
-            //   event.stopPropagation();
-            //   setPressed(false);
-            //   console.log('mouse up');
-            // }}
             className="script-editor-sub-item-row"
-            style={{ inset: '0% 0% 0% 50%' }}
+            style={{ inset: `0% 0% 0% ${50 + position.x}%` }}
           />
 
           <div className="script-editor-sub-item">
-            <div ref={output1Ref} className="script-editor-output-1 scroll" style={{ inset: '0% 0% 50% 0%' }}>
+            <div className="script-editor-output-1 scroll" style={{ inset: `0% 0% ${50 + position.y}% ${position.x}%` }}>
               <div className="script-editor-output-header-bar" />
               <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} errorMessage={errorMessage} />
             </div>
-            <div className="script-editor-sub-item-column" style={{ inset: '50% 0% 0% 0%' }} />
-            <div ref={output2Ref} className="script-editor-output-2 scroll" style={{ inset: '50% 0% 0% 0%' }}>
+            <div
+              ref={scroolColumnRef}
+              onMouseDown={() => setPressed({ x: true, y: pressed.y })}
+              onMouseUp={() => setPressed({ x: false, y: pressed.y })}
+              onMouseMove={onMouseMove}
+              className="script-editor-sub-item-column"
+              style={{ inset: `${50 + position.y}% 0% 0% 0%` }}
+            />
+            <div className="script-editor-output-2 scroll" style={{ inset: `${50 - position.y}% 0% 0% ${position.x}%` }}>
               <div className="script-editor-output-header-bar">
                 <div className="script-editor-output-header-bar-content-fade"></div>
                 <div className="script-editor-output-header-bar-content">
