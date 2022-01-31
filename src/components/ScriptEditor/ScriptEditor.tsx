@@ -234,7 +234,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       <div className="script-editor-main-div">
         <div className="script-editor-container">
           <div className="script-editor-sub-item">
-            <div className="script-editor-input-1 scroll" style={{ inset: `0% ${-position.x}% ${50 + position.y}% -2%` }}>
+            <div className="script-editor-input-1 scroll" style={{ inset: `0% ${-position.x}% ${50 - position.y}% -2%` }}>
               <h3 className="script-editor-input-header">Stack Elements</h3>
               <ScriptEditorInput
                 scriptWiz={scriptWiz}
@@ -271,7 +271,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           />
 
           <div className="script-editor-sub-item">
-            <div className="script-editor-output-1 scroll" style={{ inset: `0% 0% ${50 + position.y}% ${position.x}%` }}>
+            <div className="script-editor-output-1 scroll" style={{ inset: `0% 0% ${50 - position.y}% ${position.x}%` }}>
               <div className="script-editor-output-header-bar" />
               <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} errorMessage={errorMessage} />
             </div>
@@ -283,7 +283,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               className="script-editor-sub-item-column"
               style={{ inset: `${50 + position.y}% 0% 0% 0%` }}
             />
-            <div className="script-editor-output-2 scroll" style={{ inset: `${50 - position.y}% 0% 0% ${position.x}%` }}>
+            <div className="script-editor-output-2 scroll" style={{ inset: `${50 + position.y}% 0% 0% ${position.x}%` }}>
               <div className="script-editor-output-header-bar">
                 <div className="script-editor-output-header-bar-content-fade"></div>
                 <div className="script-editor-output-header-bar-content">
