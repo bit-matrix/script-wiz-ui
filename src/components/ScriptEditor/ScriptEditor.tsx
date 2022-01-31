@@ -52,13 +52,11 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const scroolColumnRef = useRef<HTMLDivElement | null>(null);
 
   const onMouseMove = (event: { preventDefault: () => void; stopPropagation: () => void; movementY: number; movementX: number }) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (pressed.x && scroolRowRef.current) {
-      setPosition({ x: position.x, y: position.y + event.movementY });
-    }
-    if (pressed.y && scroolColumnRef.current) {
+    if (pressed.y && scroolRowRef.current) {
       setPosition({ x: position.x + event.movementX, y: position.y });
+    }
+    if (pressed.x && scroolColumnRef.current) {
+      setPosition({ x: position.x, y: position.y + event.movementY });
     }
   };
 
