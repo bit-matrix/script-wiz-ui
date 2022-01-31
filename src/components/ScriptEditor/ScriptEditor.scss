@@ -66,28 +66,12 @@
   height: 0.85rem;
   box-sizing: initial;
   z-index: 5;
-  position: fixed;
+  // position: fixed;
   width: 100%;
 }
 
-.script-editor-input-1 {
+.script-editor {
   position: absolute;
-  // inset: 0% 0% 50% -2%;
-}
-
-.script-editor-input-2 {
-  position: absolute;
-  // inset: 50% 0% 0% -2%;
-}
-
-.script-editor-output-1 {
-  position: absolute;
-  // inset: 0% 0% 50% 0%;
-}
-
-.script-editor-output-2 {
-  position: absolute;
-  // inset: 50% 0% 0% 0%;
 }
 
 .script-editor-sub-item-column {

@@ -17,6 +17,7 @@ import {
 import CompileModal from '../CompileModal/CompileModal';
 import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
 import CustomWhisper from './CustomWhisper';
+import { Mosaic } from 'react-mosaic-component';
 import './ScriptEditor.scss';
 
 type Props = {
@@ -44,21 +45,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
 
   const timerRef = useRef<number | undefined>(undefined);
-
-  const [pressed, setPressed] = useState({ x: false, y: false });
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-
-  const scroolRowRef = useRef<HTMLDivElement | null>(null);
-  const scroolColumnRef = useRef<HTMLDivElement | null>(null);
-
-  const onMouseMove = (event: { preventDefault: () => void; stopPropagation: () => void; movementY: number; movementX: number }) => {
-    if (pressed.y && scroolRowRef.current) {
-      setPosition({ x: position.x + event.movementX, y: position.y });
-    }
-    if (pressed.x && scroolColumnRef.current) {
-      setPosition({ x: position.x, y: position.y + event.movementY });
-    }
-  };
 
   useEffect(() => {
     let editorLines: string[] = [];
@@ -215,6 +201,51 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     [],
   );
 
+  const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
+    input1: (
+      <div className="script-editor scroll">
+        <h3 className="script-editor-input-header">Stack Elements</h3>
+        <ScriptEditorInput
+          scriptWiz={scriptWiz}
+          initialEditorValue={initialEditorValue[0]}
+          onChangeScriptEditorInput={stackElementsOnChange}
+          failedLineNumber={failedLineNumber}
+        />
+      </div>
+    ),
+    input2: (
+      <div className="script-editor scroll">
+        <h3 className="script-editor-input-header">Witness Script</h3>
+        <ScriptEditorInput
+          scriptWiz={scriptWiz}
+          initialEditorValue={initialEditorValue[1]}
+          onChangeScriptEditorInput={witnessScriptOnChange}
+          failedLineNumber={failedLineNumber}
+        />
+      </div>
+    ),
+    output1: (
+      <div className="script-editor scroll">
+        <div className="script-editor-output-header-bar" />
+        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} errorMessage={errorMessage} />
+      </div>
+    ),
+    output2: (
+      <div className="script-editor scroll">
+        <div className="script-editor-output-header-bar">
+          <div className="script-editor-output-header-bar-content-fade"></div>
+          <div className="script-editor-output-header-bar-content">
+            <div className="state">{getWhispers(firstEditorLastData)}</div>
+          </div>
+        </div>
+        <ScriptEditorOutput
+          lineStackDataListArray={lineStackDataListArray.slice(lines?.length, lineStackDataListArray.length)}
+          errorMessage={errorMessage}
+        />
+      </div>
+    ),
+  };
+
   return (
     <>
       <TransactionTemplateModal
@@ -231,69 +262,23 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       <ScriptEditorHeader compileButtonClick={compileScripts} txTemplateClick={() => setShowTemplateModal(true)} scriptWiz={scriptWiz} />
       <div className="script-editor-main-div">
         <div className="script-editor-container">
-          <div className="script-editor-sub-item">
-            <div className="script-editor-input-1 scroll" style={{ inset: `0% ${-position.x}% ${50 - position.y}% -2%` }}>
-              <h3 className="script-editor-input-header">Stack Elements</h3>
-              <ScriptEditorInput
-                scriptWiz={scriptWiz}
-                initialEditorValue={initialEditorValue[0]}
-                onChangeScriptEditorInput={stackElementsOnChange}
-                failedLineNumber={failedLineNumber}
-              />
-            </div>
-            <div
-              ref={scroolColumnRef}
-              onMouseDown={() => setPressed({ x: true, y: pressed.y })}
-              onMouseUp={() => setPressed({ x: false, y: pressed.y })}
-              onMouseMove={onMouseMove}
-              className="script-editor-sub-item-column"
-              style={{ inset: `${50 + position.y}% 0% 0% 0%` }}
-            />
-            <div className="script-editor-input-2 scroll" style={{ inset: `${50 + position.y}% ${-position.x}% 0% -2%` }}>
-              <h3 className="script-editor-input-header">Witness Script</h3>
-              <ScriptEditorInput
-                scriptWiz={scriptWiz}
-                initialEditorValue={initialEditorValue[1]}
-                onChangeScriptEditorInput={witnessScriptOnChange}
-                failedLineNumber={failedLineNumber}
-              />
-            </div>
-          </div>
-          <div
-            ref={scroolRowRef}
-            onMouseDown={() => setPressed({ x: pressed.x, y: true })}
-            onMouseUp={() => setPressed({ x: pressed.x, y: false })}
-            onMouseMove={onMouseMove}
-            className="script-editor-sub-item-row"
-            style={{ inset: `0% 0% 0% ${50 + position.x}%` }}
+          <Mosaic<string>
+            renderTile={(id) => ELEMENT_MAP[id]}
+            initialValue={{
+              direction: 'row',
+              first: {
+                direction: 'column',
+                first: 'input1',
+                second: 'input2',
+              },
+              second: {
+                direction: 'column',
+                first: 'output1',
+                second: 'output2',
+              },
+              splitPercentage: 50,
+            }}
           />
-
-          <div className="script-editor-sub-item">
-            <div className="script-editor-output-1 scroll" style={{ inset: `0% 0% ${50 - position.y}% ${position.x}%` }}>
-              <div className="script-editor-output-header-bar" />
-              <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} errorMessage={errorMessage} />
-            </div>
-            <div
-              ref={scroolColumnRef}
-              onMouseDown={() => setPressed({ x: true, y: pressed.y })}
-              onMouseUp={() => setPressed({ x: false, y: pressed.y })}
-              onMouseMove={onMouseMove}
-              className="script-editor-sub-item-column"
-              style={{ inset: `${50 + position.y}% 0% 0% 0%` }}
-            />
-            <div className="script-editor-output-2 scroll" style={{ inset: `${50 + position.y}% 0% 0% ${position.x}%` }}>
-              <div className="script-editor-output-header-bar">
-                <div className="script-editor-output-header-bar-content-fade"></div>
-                <div className="script-editor-output-header-bar-content">
-                  <div className="state">{getWhispers(firstEditorLastData)}</div>
-                </div>
-              </div>
-              <ScriptEditorOutput
-                lineStackDataListArray={lineStackDataListArray.slice(lines?.length, lineStackDataListArray.length)}
-                errorMessage={errorMessage}
-              />
-            </div>
-          </div>
         </div>
       </div>
     </>
