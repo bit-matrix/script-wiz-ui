@@ -1,3 +1,19 @@
 // .script-wiz-monaco-editor .slider {
 //   width: 3px !important;
 // }
+
+.script-wiz-monaco-editor {
+  .monaco-editor {
+    .overflow-guard {
+      .monaco-scrollable-element {
+        .decorationsOverviewRuler {
+          position: fixed !important;
+        }
+
+        .invisible {
+          position: initial !important;
+        }
+      }
+    }
+  }
+}
