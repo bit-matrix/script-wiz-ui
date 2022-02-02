@@ -137,9 +137,9 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
     <Modal
       className="tx-template-modal"
       size="lg"
-      show={showModal}
+      open={showModal}
       backdrop={false}
-      onHide={() => {
+      onClose={() => {
         // txDataCallBack(txData);
         showModalCallBack(false);
       }}

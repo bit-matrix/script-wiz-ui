@@ -4,8 +4,28 @@
   height: 3rem;
   width: 100%;
 
-  .sponsor-button {
+  .route-button {
+    width: 2rem;
+    height: 2rem;
     margin-right: 1rem;
+    border-radius: 50% !important;
+    background: #292d33;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .sponsor-button {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 1rem;
+    border-radius: 50% !important;
+    background: #292d33;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .script-editor-header-left-section {
@@ -21,9 +41,17 @@
 
     .script-editor-header-icon-item {
       color: #fff !important;
+      display: flex;
+      align-items: center;
 
       .script-editor-header-icon-item-text {
         margin-left: 0.5rem;
+      }
+
+      .script-editor-header-npm-text {
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
@@ -42,6 +70,14 @@
       }
       .rs-btn-subtle:focus {
         background-color: transparent !important;
+      }
+      .rs-btn {
+        background: #10141a;
+        color: #a4a9b3;
+
+        &:hover {
+          color: #e9ebf0;
+        }
       }
     }
   }

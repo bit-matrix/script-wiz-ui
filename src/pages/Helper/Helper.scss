@@ -2,6 +2,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  .rs-radio-group-picker .rs-radio-checked .rs-radio-checker {
+    border-bottom: none !important;
+  }
+
+  .rs-radio-group-picker {
+    display: block;
+  }
 }
 
 .helper-page-main {
@@ -15,10 +23,6 @@
   color: #ccc;
 }
 
-.helper-main-input {
-  margin-bottom: 0.5rem;
-}
-
 .helper-tab-header {
   margin-bottom: 0.25rem;
 }
@@ -29,6 +33,7 @@
   justify-content: space-between;
   font-size: 0.875rem;
   font-weight: 600;
+  margin-top: 0.5rem;
 }
 
 .helper-input-text {

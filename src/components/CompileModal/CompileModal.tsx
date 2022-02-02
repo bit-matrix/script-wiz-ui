@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { ScriptWiz, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import { taproot, TAPROOT_VERSION } from '@script-wiz/lib-core';
-import { Button, Form, FormGroup, Icon, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
+import { Button, Form, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import WizData from '@script-wiz/wiz-data';
+import { ValueType } from 'rsuite/esm/Radio';
+import CopyIcon from '../Svg/Icons/Copy';
 import './CompileModal.scss';
 
 type Props = {
@@ -70,7 +72,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
   }, [compileModalData.data, keyPath, pubKeyInput, scriptWiz, tapleafInput, tapleafVersion]);
 
   return (
-    <Modal size="sm" show={compileModalData.show} backdrop={false} onHide={() => showCompileModal(false)}>
+    <Modal size="sm" open={compileModalData.show} backdrop={false} onClose={() => showCompileModal(false)}>
       <Modal.Header />
       <Modal.Body className="compile-modal-body scroll">
         <h5 className="compile-modal-item">Compile Result</h5>
@@ -85,8 +87,8 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                 className="compile-modal-radio-group"
                 inline
                 value={keyPath}
-                onChange={(value: KeyPath) => {
-                  setKeyPath(value);
+                onChange={(value: ValueType) => {
+                  setKeyPath(value as KeyPath);
                 }}
               >
                 <Radio value={KeyPath.UNKNOWN}>Unknown discrete logarithm</Radio>
@@ -110,8 +112,8 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                 className="compile-modal-radio-group"
                 inline
                 value={tapleafVersion}
-                onChange={(value: TapleafVersion) => {
-                  setTapleafVersion(value);
+                onChange={(value: ValueType) => {
+                  setTapleafVersion(value as TapleafVersion);
                 }}
               >
                 <Radio value={TapleafVersion.DEFAULT}>Default</Radio>
@@ -130,7 +132,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
               />
             </div>
 
-            <FormGroup>
+            <Form.Group>
               <h6>Tweak Result</h6>
               <div className="compile-modal-item">
                 <div className="compile-modal-label">Tweaked Key:</div>
@@ -138,7 +140,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                   <Input value={tweakedResult.tweak} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.tweak)}>
-                      <Icon icon="copy" />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
@@ -149,7 +151,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                   <Input value={tweakedResult.scriptPubkey} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.scriptPubkey)}>
-                      <Icon icon="copy" />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
@@ -160,12 +162,12 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                   <Input value={tweakedResult.bech32} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.bech32)}>
-                      <Icon icon="copy" />
+                      <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
               </div>
-            </FormGroup>
+            </Form.Group>
           </Form>
         )}
       </Modal.Body>

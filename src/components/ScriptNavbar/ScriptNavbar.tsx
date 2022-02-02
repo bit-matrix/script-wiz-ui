@@ -1,11 +1,20 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useMemo, useState } from 'react';
-import { Dropdown, Icon, IconButton, Tooltip, Whisper } from 'rsuite';
+import { Dropdown, Tooltip, Whisper } from 'rsuite';
 import logo from '../../images/transparent_white.png';
 import { SponsorModal } from './SponsorModal/SponsorModal';
-import './ScriptNavbar.scss';
 import { VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
+import { ROUTE_PATH } from '../../router/ROUTE_PATH';
+import GithubIcon from '../Svg/Icons/Github';
+import TwitterIcon from '../Svg/Icons/Twitter';
+import MediumIcon from '../Svg/Icons/Medium';
+import TelegramIcon from '../Svg/Icons/Telegram';
+import HeartIcon from '../Svg/Icons/Heart';
+import NpmIcon from '../Svg/Icons/Npm';
+import ToolsIcon from '../Svg/Icons/Tools';
+import MagicIcon from '../Svg/Icons/Magic';
+import './ScriptNavbar.scss';
 
 type Props = {
   vm: VM;
@@ -35,29 +44,41 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           <img className="script-wiz-logo" src={logo} />
         </div>
         <a href="https://github.com/bit-matrix/script-wiz-lib" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <Icon icon="github" />
+          <GithubIcon width="1rem" height="1rem" />
           <span className="script-editor-header-icon-item-text hidden-mobile">Github</span>
         </a>
         <a href="https://www.npmjs.com/package/@script-wiz/lib" target="_blank" className="script-editor-header-icon-item npm-div" rel="noreferrer">
-          <i className="fab fa-npm fa-2x"></i>
-          <span className="script-editor-header-icon-item-text  hidden-mobile">Npm</span>
+          <NpmIcon />
+          <span className="script-editor-header-icon-item-text  hidden-mobile script-editor-header-npm-text">Npm</span>
         </a>
         <a href="https://twitter.com/script_wizard" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <Icon icon="twitter" />
+          <TwitterIcon width="0.85rem" height="0.85rem" />
           <span className="script-editor-header-icon-item-text  hidden-mobile">Twitter</span>
         </a>
         <a href="https://medium.com/script-wizard" className="script-editor-header-icon-item">
-          <Icon icon="medium" />
+          <MediumIcon width="0.85rem" height="0.85rem" />
           <span className="script-editor-header-icon-item-text  hidden-mobile">Medium</span>
         </a>
         <a href="https://t.me/scriptwizard" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
-          <Icon icon="telegram" />
+          <TelegramIcon width="0.85rem" height="0.85rem" />
           <span className="script-editor-header-icon-item-text hidden-mobile">Telegram</span>
         </a>
       </div>
       <div className="script-editor-header-right-section">
+        <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Signature Tools</Tooltip>}>
+          <div onClick={() => window.open(ROUTE_PATH.SIGNATURE_TOOLS, '_blank')} className="route-button">
+            <ToolsIcon width="1rem" height="1rem" />
+          </div>
+        </Whisper>
+        <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Wiz Data Tools</Tooltip>}>
+          <div className="route-button" onClick={() => window.open(ROUTE_PATH.HELPER, '_blank')}>
+            <MagicIcon width="1rem" height="1rem" />
+          </div>
+        </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Become a sponsor</Tooltip>}>
-          <IconButton icon={<Icon icon="heart" />} circle size="sm" className="sponsor-button" onClick={() => setShowSponsorModal(true)} />
+          <div className="sponsor-button" onClick={() => setShowSponsorModal(true)}>
+            <HeartIcon fill="#FF69B4" width="1rem" height="1rem" />
+          </div>
         </Whisper>
 
         <Dropdown className="script-editor-header-right-section-dropdown" title={<span>{title}</span>} activeKey={`${vm.network} - ${vm.ver}`}>
