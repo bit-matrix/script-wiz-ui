@@ -94,7 +94,7 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
   };
 
   // Things to do before unloading/closing the tab
-  const doSomethingBeforeUnload = useCallback(() => {
+  const saveLocalStorageData = useCallback(() => {
     if (finalEditorValue) {
       const currentLocalStorage = localStorage.getItem('scriptWizEditor');
 
@@ -123,20 +123,26 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
         localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
       }
     }
-  }, [finalEditorValue, scriptWiz.vm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finalEditorValue]);
 
   // Setup the `beforeunload` event listener
   const setupBeforeUnloadListener = useCallback(() => {
     window.addEventListener('beforeunload', (ev) => {
       ev.preventDefault();
-      return doSomethingBeforeUnload();
+      return saveLocalStorageData();
     });
-  }, [doSomethingBeforeUnload]);
+  }, [saveLocalStorageData]);
 
   useEffect(() => {
     // Activate the event listener
     setupBeforeUnloadListener();
   }, [setupBeforeUnloadListener]);
+
+  useEffect(() => {
+    saveLocalStorageData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scriptWiz.vm]);
 
   if (monaco != null) {
     return (
