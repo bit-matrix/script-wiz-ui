@@ -278,6 +278,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               },
               splitPercentage: 50,
             }}
+            resize={{ minimumPaneSizePercentage: 10 }}
           />
         </div>
       </div>
