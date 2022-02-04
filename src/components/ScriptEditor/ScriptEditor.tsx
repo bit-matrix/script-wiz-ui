@@ -60,8 +60,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
 
-  const [finalEditorValue1, setFinalEditorValue1] = useState<string>('');
-  const [finalEditorValue2, setFinalEditorValue2] = useState<string>('');
+  const [finalEditorValue1, setFinalEditorValue1] = useState<string>();
+  const [finalEditorValue2, setFinalEditorValue2] = useState<string>();
 
   const timerRef = useRef<number | undefined>(undefined);
 
@@ -78,14 +78,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       });
 
       if (localStorageObject) {
-        if (
-          localStorageObject.editorLines1 !== null &&
-          !!localStorageObject.editorLines1.trim() &&
-          localStorageObject.editorLines2 !== null &&
-          !!localStorageObject.editorLines2.trim()
-        ) {
+        if (localStorageObject.editorLines1 && localStorageObject.editorLines2) {
           editorLines = [localStorageObject.editorLines1, localStorageObject.editorLines2];
-        } else if (localStorageObject.editorLines1 !== null && !!localStorageObject.editorLines1.trim()) {
+        } else if (localStorageObject.editorLines1) {
           if (scriptWiz.vm.network === VM_NETWORK.BTC) {
             editorLines = [localStorageObject.editorLines1, initialBitcoinEditorValue2];
           } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
@@ -94,7 +89,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 ? [localStorageObject.editorLines1, initialLiquidTaprootEditorValue2]
                 : [localStorageObject.editorLines1, initialLiquidEditorValue2];
           }
-        } else if (localStorageObject.editorLines2 !== null && !!localStorageObject.editorLines2.trim()) {
+        } else if (localStorageObject.editorLines2) {
           if (scriptWiz.vm.network === VM_NETWORK.BTC) {
             editorLines = [initialBitcoinEditorValue, localStorageObject.editorLines2];
           } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
@@ -149,39 +144,23 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           return nls.vm.network === scriptWiz.vm.network && nls.vm.ver === scriptWiz.vm.ver;
         });
 
-        //local storage has same version data
+        //local storage has same version data update
         if (currentIndex > -1) {
-          if (finalEditorValue1 && finalEditorValue2) {
-            newLocalStorageArray[currentIndex].editorLines1 = finalEditorValue1;
-            newLocalStorageArray[currentIndex].editorLines2 = finalEditorValue2;
-          } else if (finalEditorValue1 && !finalEditorValue2) {
-            newLocalStorageArray[currentIndex].editorLines1 = finalEditorValue1;
-            newLocalStorageArray[currentIndex].editorLines2 = "<'ayse'>";
-          } else if (!finalEditorValue1 && finalEditorValue2) {
-            newLocalStorageArray[currentIndex].editorLines1 = "<'eda'>";
-            newLocalStorageArray[currentIndex].editorLines2 = finalEditorValue2;
-          }
+          newLocalStorageArray[currentIndex].editorLines1 = finalEditorValue1;
+          newLocalStorageArray[currentIndex].editorLines2 = finalEditorValue2;
         } else {
-          if (finalEditorValue1 && finalEditorValue2) {
-            newLocalStorageArray.push({ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm });
-          } else if (finalEditorValue1 && !finalEditorValue2) {
-            newLocalStorageArray.push({ editorLines1: finalEditorValue1, editorLines2: "<'esma'>", vm: scriptWiz.vm });
-          } else if (!finalEditorValue1 && finalEditorValue2) {
-            newLocalStorageArray.push({ editorLines1: "<'nurefsan'>", editorLines2: finalEditorValue2, vm: scriptWiz.vm });
-          }
+          // insert
+          newLocalStorageArray.push({ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm });
         }
 
         localStorage.setItem('scriptWizEditor', JSON.stringify(newLocalStorageArray));
       } else {
         //if local storage is empty
-        let localStorageValue: { editorLines1: string; editorLines2: string; vm: VM }[] = [];
-        if (finalEditorValue1 && finalEditorValue2) {
-          localStorageValue = [{ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm }];
-        } else if (finalEditorValue1 && !finalEditorValue2) {
-          localStorageValue = [{ editorLines1: finalEditorValue1, editorLines2: "<'ahmet'>", vm: scriptWiz.vm }];
-        } else if (!finalEditorValue1 && finalEditorValue2) {
-          localStorageValue = [{ editorLines1: "<'murat'>", editorLines2: finalEditorValue2, vm: scriptWiz.vm }];
-        }
+
+        const localStorageValue: { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM }[] = [
+          { editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm },
+        ];
+
         localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
       }
     }
@@ -350,7 +329,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           onChangeScriptEditorInput={stackElementsOnChange}
           failedLineNumber={failedLineNumber}
           callbackEditorValue={(value: string) => {
-            setFinalEditorValue1(value);
+            setFinalEditorValue1(value.trim());
           }}
         />
       </div>
@@ -364,7 +343,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           onChangeScriptEditorInput={witnessScriptOnChange}
           failedLineNumber={failedLineNumber}
           callbackEditorValue={(value: string) => {
-            setFinalEditorValue2(value);
+            setFinalEditorValue2(value.trim());
           }}
         />
       </div>
