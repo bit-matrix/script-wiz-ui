@@ -4,16 +4,25 @@
 
 .script-wiz-monaco-editor {
   .monaco-editor {
+    position: absolute;
+    left: -1.5rem;
     top: 2rem;
 
     .overflow-guard {
       .monaco-scrollable-element {
         .decorationsOverviewRuler {
-          position: fixed !important;
+          display: none;
+          opacity: 0;
         }
 
         .invisible {
-          position: initial !important;
+          display: none !important;
+          opacity: 0 !important;
+
+          &:hover {
+            display: none !important;
+            opacity: 0 !important;
+          }
         }
       }
     }
