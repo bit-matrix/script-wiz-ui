@@ -3,7 +3,7 @@ import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
 import { convertEditorLines } from '../../helper';
-import { ScriptWiz, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
+import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import { TxData } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
 import {
@@ -44,18 +44,69 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
 
+  const [finalEditorValue1, setFinalEditorValue1] = useState<string>('');
+  const [finalEditorValue2, setFinalEditorValue2] = useState<string>('');
+
   const timerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     let editorLines: string[] = [];
 
-    if (scriptWiz.vm.network === VM_NETWORK.BTC) {
-      editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
-    } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
-      editorLines =
-        scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
-          ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
-          : [initialLiquidEditorValue, initialLiquidEditorValue2];
+    const localStorageValue = localStorage.getItem('scriptWizEditor');
+
+    if (localStorageValue) {
+      const localStorageArray = JSON.parse(localStorageValue);
+
+      const localStorageObject = localStorageArray.find((lsa: { vm: { network: VM_NETWORK; ver: VM_NETWORK_VERSION } }) => {
+        return lsa.vm.network === scriptWiz.vm.network && lsa.vm.ver === scriptWiz.vm.ver;
+      });
+
+      if (localStorageObject) {
+        if (
+          localStorageObject.editorLines1 !== null &&
+          !!localStorageObject.editorLines1.trim() &&
+          localStorageObject.editorLines2 !== null &&
+          !!localStorageObject.editorLines2.trim()
+        ) {
+          editorLines = [localStorageObject.editorLines1, localStorageObject.editorLines2];
+        } else if (localStorageObject.editorLines1 !== null && !!localStorageObject.editorLines1.trim()) {
+          if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+            editorLines = [localStorageObject.editorLines1, initialBitcoinEditorValue2];
+          } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+            editorLines =
+              scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+                ? [localStorageObject.editorLines1, initialLiquidTaprootEditorValue2]
+                : [localStorageObject.editorLines1, initialLiquidEditorValue2];
+          }
+        } else if (localStorageObject.editorLines2 !== null && !!localStorageObject.editorLines2.trim()) {
+          if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+            editorLines = [initialBitcoinEditorValue, localStorageObject.editorLines2];
+          } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+            editorLines =
+              scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+                ? [initialLiquidTaprootEditorValue, localStorageObject.editorLines2]
+                : [initialLiquidEditorValue, localStorageObject.editorLines2];
+          }
+        }
+      } else {
+        if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+          editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
+        } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+          editorLines =
+            scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+              ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
+              : [initialLiquidEditorValue, initialLiquidEditorValue2];
+        }
+      }
+    } else {
+      if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+        editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
+      } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+        editorLines =
+          scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+            ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
+            : [initialLiquidEditorValue, initialLiquidEditorValue2];
+      }
     }
 
     let lines = convertEditorLines(editorLines[0]);
@@ -66,6 +117,78 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
     setInitialEditorValue(editorLines);
   }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
+
+  // Things to do before unloading/closing the tab
+  const saveLocalStorageData = useCallback(() => {
+    if (finalEditorValue1 || finalEditorValue2) {
+      const currentLocalStorage = localStorage.getItem('scriptWizEditor');
+
+      //check local storage
+      if (currentLocalStorage !== null) {
+        const currentLocalStorageArray = JSON.parse(currentLocalStorage);
+        const newLocalStorageArray = [...currentLocalStorageArray];
+
+        //current scriptWiz.vm index
+        const currentIndex = newLocalStorageArray.findIndex((nls) => {
+          return nls.vm.network === scriptWiz.vm.network && nls.vm.ver === scriptWiz.vm.ver;
+        });
+
+        //local storage has same version data
+        if (currentIndex > -1) {
+          if (finalEditorValue1 && finalEditorValue2) {
+            newLocalStorageArray[currentIndex].editorLines1 = finalEditorValue1;
+            newLocalStorageArray[currentIndex].editorLines2 = finalEditorValue2;
+          } else if (finalEditorValue1 && !finalEditorValue2) {
+            newLocalStorageArray[currentIndex].editorLines1 = finalEditorValue1;
+            newLocalStorageArray[currentIndex].editorLines2 = "<'ayse'>";
+          } else if (!finalEditorValue1 && finalEditorValue2) {
+            newLocalStorageArray[currentIndex].editorLines1 = "<'eda'>";
+            newLocalStorageArray[currentIndex].editorLines2 = finalEditorValue2;
+          }
+        } else {
+          if (finalEditorValue1 && finalEditorValue2) {
+            newLocalStorageArray.push({ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm });
+          } else if (finalEditorValue1 && !finalEditorValue2) {
+            newLocalStorageArray.push({ editorLines1: finalEditorValue1, editorLines2: "<'esma'>", vm: scriptWiz.vm });
+          } else if (!finalEditorValue1 && finalEditorValue2) {
+            newLocalStorageArray.push({ editorLines1: "<'nurefsan'>", editorLines2: finalEditorValue2, vm: scriptWiz.vm });
+          }
+        }
+
+        localStorage.setItem('scriptWizEditor', JSON.stringify(newLocalStorageArray));
+      } else {
+        //if local storage is empty
+        let localStorageValue: { editorLines1: string; editorLines2: string; vm: VM }[] = [];
+        if (finalEditorValue1 && finalEditorValue2) {
+          localStorageValue = [{ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm }];
+        } else if (finalEditorValue1 && !finalEditorValue2) {
+          localStorageValue = [{ editorLines1: finalEditorValue1, editorLines2: "<'ahmet'>", vm: scriptWiz.vm }];
+        } else if (!finalEditorValue1 && finalEditorValue2) {
+          localStorageValue = [{ editorLines1: "<'murat'>", editorLines2: finalEditorValue2, vm: scriptWiz.vm }];
+        }
+        localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finalEditorValue1, finalEditorValue2]);
+
+  // Setup the `beforeunload` event listener
+  const setupBeforeUnloadListener = useCallback(() => {
+    window.addEventListener('beforeunload', (ev) => {
+      ev.preventDefault();
+      return saveLocalStorageData();
+    });
+  }, [saveLocalStorageData]);
+
+  useEffect(() => {
+    // Activate the event listener
+    setupBeforeUnloadListener();
+  }, [setupBeforeUnloadListener]);
+
+  useEffect(() => {
+    saveLocalStorageData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scriptWiz.vm]);
 
   const parseInput = useCallback(
     (inputText: string, isWitnessElement: boolean = true) => {
@@ -210,6 +333,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           initialEditorValue={initialEditorValue[0]}
           onChangeScriptEditorInput={stackElementsOnChange}
           failedLineNumber={failedLineNumber}
+          callbackEditorValue={(value: string) => {
+            setFinalEditorValue1(value);
+          }}
         />
       </div>
     ),
@@ -221,6 +347,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           initialEditorValue={initialEditorValue[1]}
           onChangeScriptEditorInput={witnessScriptOnChange}
           failedLineNumber={failedLineNumber}
+          callbackEditorValue={(value: string) => {
+            setFinalEditorValue2(value);
+          }}
         />
       </div>
     ),

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './ScriptEditorInput.scss';
 
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
@@ -20,9 +20,16 @@ type Props = {
   initialEditorValue: string;
   onChangeScriptEditorInput: (lines: string[]) => void;
   failedLineNumber?: number;
+  callbackEditorValue: (value: string) => void;
 };
 
-const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onChangeScriptEditorInput, failedLineNumber = undefined }) => {
+const ScriptEditorInput: React.FC<Props> = ({
+  scriptWiz,
+  initialEditorValue,
+  onChangeScriptEditorInput,
+  failedLineNumber = undefined,
+  callbackEditorValue,
+}) => {
   const [lng] = useState(scriptWizEditor.LANGUAGE + (Math.random() * 1000).toFixed(2));
   const monaco = useMonaco();
 
@@ -83,6 +90,7 @@ const ScriptEditorInput: React.FC<Props> = ({ scriptWiz, initialEditorValue, onC
       let lines = convertEditorLines(value);
 
       onChangeScriptEditorInput(lines);
+      callbackEditorValue(value);
     } else {
       onChangeScriptEditorInput([]);
     }
