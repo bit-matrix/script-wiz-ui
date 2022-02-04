@@ -59,7 +59,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           <MediumIcon width="0.85rem" height="0.85rem" />
           <span className="script-editor-header-icon-item-text  hidden-mobile">Medium</span>
         </a>
-        <a href="https://t.me/scriptwizard" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
+        <a href="https://t.me/+bEiJnTeu-mA1ODRk" target="_blank" className="script-editor-header-icon-item" rel="noreferrer">
           <TelegramIcon width="0.85rem" height="0.85rem" />
           <span className="script-editor-header-icon-item-text hidden-mobile">Telegram</span>
         </a>
