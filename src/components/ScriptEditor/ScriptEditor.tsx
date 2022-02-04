@@ -36,6 +36,22 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [lines2, setLines2] = useState<string[]>();
   const [initialEditorValue, setInitialEditorValue] = useState<string[]>([]);
   const [firstEditorLastData, setFirstEditorLastData] = useState<Array<WizData>>(initialLastStackDataList);
+  const [editorSplits, setEditorSplits] = useState<any>({
+    direction: 'row',
+    first: {
+      direction: 'column',
+      first: 'input1',
+      second: 'input2',
+      splitPercentage: 50,
+    },
+    second: {
+      direction: 'column',
+      first: 'output1',
+      second: 'output2',
+      splitPercentage: 50,
+    },
+    splitPercentage: 50,
+  });
 
   const [compileModalData, setCompileModalData] = useState<{
     show: boolean;
@@ -264,21 +280,21 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         <div className="script-editor-container">
           <Mosaic<string>
             renderTile={(id) => ELEMENT_MAP[id]}
-            initialValue={{
-              direction: 'row',
-              first: {
-                direction: 'column',
-                first: 'input1',
-                second: 'input2',
-              },
-              second: {
-                direction: 'column',
-                first: 'output1',
-                second: 'output2',
-              },
-              splitPercentage: 50,
-            }}
             resize={{ minimumPaneSizePercentage: 10 }}
+            value={editorSplits}
+            onChange={(node: any) => {
+              const clonedNode = { ...node };
+
+              if (editorSplits.first.splitPercentage !== clonedNode.first.splitPercentage) {
+                clonedNode.second.splitPercentage = node.first.splitPercentage;
+              }
+
+              if (editorSplits.second.splitPercentage !== clonedNode.second.splitPercentage) {
+                clonedNode.first.splitPercentage = node.second.splitPercentage;
+              }
+
+              setEditorSplits(clonedNode);
+            }}
           />
         </div>
       </div>
