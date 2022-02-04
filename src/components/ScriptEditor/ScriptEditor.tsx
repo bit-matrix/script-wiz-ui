@@ -182,6 +182,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   useEffect(() => {
     saveLocalStorageData();
+    setFinalEditorValue1(undefined);
+    setFinalEditorValue2(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scriptWiz.vm]);
 
