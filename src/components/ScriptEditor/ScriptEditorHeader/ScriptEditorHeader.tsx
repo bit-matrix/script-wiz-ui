@@ -9,14 +9,21 @@ type Props = {
   scriptWiz: ScriptWiz;
   compileButtonClick: () => void;
   txTemplateClick: () => void;
+  clearLocalStorage: () => void;
 };
 
-const ScriptEditorHeader: React.FC<Props> = ({ scriptWiz, compileButtonClick, txTemplateClick }) => {
+const ScriptEditorHeader: React.FC<Props> = ({ scriptWiz, compileButtonClick, txTemplateClick, clearLocalStorage }) => {
   return (
     <div className="script-editor-headers-main">
       <div className="script-editor-header-sub-item editor">
         Editor
         <div className="compile-button">
+          <Whisper placement="top" trigger="hover" speaker={<Tooltip>Clear current editor lines</Tooltip>}>
+            <div onClick={clearLocalStorage} className="tx-template-icon">
+              <TerminalIcon width="1rem" height="1rem" />
+            </div>
+          </Whisper>
+
           {scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT && (
             <Whisper placement="top" trigger="hover" speaker={<Tooltip>Import your transaction template</Tooltip>}>
               <div onClick={txTemplateClick} className="tx-template-icon">

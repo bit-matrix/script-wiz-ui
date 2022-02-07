@@ -24,6 +24,8 @@ type Props = {
   scriptWiz: ScriptWiz;
 };
 
+type EditorLocalStorage = { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM };
+
 const initialLineStackDataListArray: Array<Array<WizData>> = [];
 const initialLastStackDataList: Array<WizData> = [];
 
@@ -66,55 +68,62 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const timerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
+    configureEditorLines(scriptWiz.vm);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scriptWiz.vm]);
+
+  const configureEditorLines = (scriptWizVm: VM) => {
     let editorLines: string[] = [];
 
     const localStorageValue = localStorage.getItem('scriptWizEditor');
+
+    console.log(localStorageValue);
 
     if (localStorageValue) {
       const localStorageArray = JSON.parse(localStorageValue);
 
       const localStorageObject = localStorageArray.find((lsa: { vm: { network: VM_NETWORK; ver: VM_NETWORK_VERSION } }) => {
-        return lsa.vm.network === scriptWiz.vm.network && lsa.vm.ver === scriptWiz.vm.ver;
+        return lsa.vm.network === scriptWizVm.network && lsa.vm.ver === scriptWizVm.ver;
       });
 
       if (localStorageObject) {
         if (localStorageObject.editorLines1 && localStorageObject.editorLines2) {
           editorLines = [localStorageObject.editorLines1, localStorageObject.editorLines2];
         } else if (localStorageObject.editorLines1) {
-          if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+          if (scriptWizVm.network === VM_NETWORK.BTC) {
             editorLines = [localStorageObject.editorLines1, initialBitcoinEditorValue2];
-          } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+          } else if (scriptWizVm.network === VM_NETWORK.LIQUID) {
             editorLines =
-              scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+              scriptWizVm.ver === VM_NETWORK_VERSION.TAPSCRIPT
                 ? [localStorageObject.editorLines1, initialLiquidTaprootEditorValue2]
                 : [localStorageObject.editorLines1, initialLiquidEditorValue2];
           }
         } else if (localStorageObject.editorLines2) {
-          if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+          if (scriptWizVm.network === VM_NETWORK.BTC) {
             editorLines = [initialBitcoinEditorValue, localStorageObject.editorLines2];
-          } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+          } else if (scriptWizVm.network === VM_NETWORK.LIQUID) {
             editorLines =
-              scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+              scriptWizVm.ver === VM_NETWORK_VERSION.TAPSCRIPT
                 ? [initialLiquidTaprootEditorValue, localStorageObject.editorLines2]
                 : [initialLiquidEditorValue, localStorageObject.editorLines2];
           }
         }
       } else {
-        if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+        if (scriptWizVm.network === VM_NETWORK.BTC) {
           editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
-        } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+        } else if (scriptWizVm.network === VM_NETWORK.LIQUID) {
           editorLines =
-            scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+            scriptWizVm.ver === VM_NETWORK_VERSION.TAPSCRIPT
               ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
               : [initialLiquidEditorValue, initialLiquidEditorValue2];
         }
       }
     } else {
-      if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+      if (scriptWizVm.network === VM_NETWORK.BTC) {
         editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
-      } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+      } else if (scriptWizVm.network === VM_NETWORK.LIQUID) {
         editorLines =
-          scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+          scriptWizVm.ver === VM_NETWORK_VERSION.TAPSCRIPT
             ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
             : [initialLiquidEditorValue, initialLiquidEditorValue2];
       }
@@ -126,8 +135,10 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setLines(lines);
     setLines2(lines2);
 
+    console.log(editorLines);
+
     setInitialEditorValue(editorLines);
-  }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
+  };
 
   // Things to do before unloading/closing the tab
   const saveLocalStorageData = useCallback(() => {
@@ -157,9 +168,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       } else {
         //if local storage is empty
 
-        const localStorageValue: { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM }[] = [
-          { editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm },
-        ];
+        const localStorageValue: EditorLocalStorage[] = [{ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm }];
 
         localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
       }
@@ -224,7 +233,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         console.error('UI: Invalid input value!!!');
       }
     },
-    [scriptWiz],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [scriptWiz.vm.network, scriptWiz.vm],
   );
 
   const addTxTemplate = useCallback(() => {
@@ -372,6 +382,33 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     ),
   };
 
+  const clearLocalStorage = () => {
+    const localStorageData = localStorage.getItem('scriptWizEditor');
+
+    setFinalEditorValue1(undefined);
+    setFinalEditorValue2(undefined);
+
+    if (localStorageData) {
+      const localStorageDataJSON: EditorLocalStorage[] = JSON.parse(localStorageData);
+      const currentLocalStorageDataIndex = localStorageDataJSON.findIndex(
+        (value: EditorLocalStorage) => value.vm.network === scriptWiz.vm.network && value.vm.ver === scriptWiz.vm.ver,
+      );
+
+      if (currentLocalStorageDataIndex > -1) {
+        const newLocalStorageDataJSON = [...localStorageDataJSON];
+        newLocalStorageDataJSON.splice(currentLocalStorageDataIndex, 1);
+
+        if (newLocalStorageDataJSON.length === 0) {
+          localStorage.removeItem('scriptWizEditor');
+        } else {
+          localStorage.setItem('scriptWizEditor', JSON.stringify(newLocalStorageDataJSON));
+        }
+      }
+    }
+
+    configureEditorLines(scriptWiz.vm);
+  };
+
   return (
     <>
       <TransactionTemplateModal
@@ -385,7 +422,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         }}
       />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
-      <ScriptEditorHeader compileButtonClick={compileScripts} txTemplateClick={() => setShowTemplateModal(true)} scriptWiz={scriptWiz} />
+      <ScriptEditorHeader
+        scriptWiz={scriptWiz}
+        compileButtonClick={compileScripts}
+        txTemplateClick={() => setShowTemplateModal(true)}
+        clearLocalStorage={clearLocalStorage}
+      />
       <div className="script-editor-main-div">
         <div className="script-editor-container">
           <Mosaic<string>
