@@ -51,6 +51,13 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const parseInput = useCallback(
     (inputText: string) => {
+
+      // Look for $label assignments, keep them for later processing and strip them from the line string.
+      const labelMatches = inputText.match(/\$\w+$/)
+      if (labelMatches) {
+        inputText = inputText.replace(/\s*\$\w+$/, '')
+      }
+
       if (inputText.startsWith('<') && inputText.endsWith('>')) {
         const inputTextValue = inputText.substring(1, inputText.length - 1);
 
@@ -74,8 +81,15 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         }
       } else if (inputText.startsWith('OP_')) {
         scriptWiz.parseOpcode(inputText);
-      } else {
+      } else if (inputText !== '') {
         console.error('UI: Invalid input value!!!');
+      }
+
+      // Assign the label to the last element on the stack
+      if (labelMatches) {
+        if (!scriptWiz.stackDataList.main.length) throw new Error('nothing to label');
+        const lastStack = scriptWiz.stackDataList.main[scriptWiz.stackDataList.main.length-1];
+        lastStack.label = labelMatches[0];
       }
     },
     [scriptWiz],

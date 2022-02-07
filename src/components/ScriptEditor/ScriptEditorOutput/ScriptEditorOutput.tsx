@@ -23,9 +23,9 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
   };
 
   const getWhisper = useCallback(
-    (key: string, tooltip: string, display: string) => (
+    (key: string, tooltip: string, display: string, label?: string) => (
       <div className="tooltip" key={key}>
-        <div className={`editor-output-text ${getOutputValueType(display)} `}>{display}</div>
+        <div className={`editor-output-text ${getOutputValueType(display)} `}>{label ? <em>{label} </em> : ''}{display}</div>
         <span className="tooltiptext">{'0x' + tooltip}</span>
       </div>
     ),
@@ -41,8 +41,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
 
         if (stackData.number !== undefined) displayValue = stackData.number.toString();
         else if (stackData.text !== undefined) displayValue = stackData.text;
-
-        return getWhisper(key, stackData.hex, displayValue);
+        return getWhisper(key, stackData.hex, displayValue, stackData.label);
       }),
     [getWhisper],
   );
