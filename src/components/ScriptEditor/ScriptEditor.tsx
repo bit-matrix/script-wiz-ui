@@ -69,15 +69,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   useEffect(() => {
     configureEditorLines(scriptWiz.vm);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scriptWiz.vm]);
 
   const configureEditorLines = (scriptWizVm: VM) => {
     let editorLines: string[] = [];
 
     const localStorageValue = localStorage.getItem('scriptWizEditor');
-
-    console.log(localStorageValue);
 
     if (localStorageValue) {
       const localStorageArray = JSON.parse(localStorageValue);
@@ -135,13 +132,10 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setLines(lines);
     setLines2(lines2);
 
-    console.log(editorLines);
-
     setInitialEditorValue(editorLines);
   };
 
-  // Things to do before unloading/closing the tab
-  const saveLocalStorageData = useCallback(() => {
+  const saveLocalStorageData = () => {
     if (finalEditorValue1 || finalEditorValue2) {
       const currentLocalStorage = localStorage.getItem('scriptWizEditor');
 
@@ -173,21 +167,14 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finalEditorValue1, finalEditorValue2]);
-
+  };
+  console.log('1', finalEditorValue1);
   // Setup the `beforeunload` event listener
-  const setupBeforeUnloadListener = useCallback(() => {
-    window.addEventListener('beforeunload', (ev) => {
-      ev.preventDefault();
-      return saveLocalStorageData();
-    });
-  }, [saveLocalStorageData]);
-
-  useEffect(() => {
-    // Activate the event listener
-    setupBeforeUnloadListener();
-  }, [setupBeforeUnloadListener]);
+  window.addEventListener('beforeunload', (ev) => {
+    ev.preventDefault();
+    console.log(finalEditorValue1);
+    return saveLocalStorageData();
+  });
 
   useEffect(() => {
     saveLocalStorageData();
@@ -337,7 +324,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         <h3 className="script-editor-input-header">Stack Elements</h3>
         <ScriptEditorInput
           scriptWiz={scriptWiz}
-          initialEditorValue={initialEditorValue[0]}
+          initialEditorValue={finalEditorValue1 || initialEditorValue[0]}
           onChangeScriptEditorInput={stackElementsOnChange}
           failedLineNumber={failedLineNumber}
           callbackEditorValue={(value: string) => {
@@ -351,7 +338,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         <h3 className="script-editor-input-header">Witness Script</h3>
         <ScriptEditorInput
           scriptWiz={scriptWiz}
-          initialEditorValue={initialEditorValue[1]}
+          initialEditorValue={finalEditorValue2 || initialEditorValue[1]}
           onChangeScriptEditorInput={witnessScriptOnChange}
           failedLineNumber={failedLineNumber}
           callbackEditorValue={(value: string) => {
