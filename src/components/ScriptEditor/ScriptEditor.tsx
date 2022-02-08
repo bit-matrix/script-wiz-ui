@@ -408,6 +408,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         clearCallBack={() => {
           setTxData(undefined);
         }}
+        vm={scriptWiz.vm}
       />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
       <ScriptEditorHeader

@@ -4,15 +4,17 @@ import { Input } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
+import { VM, VM_NETWORK } from '@script-wiz/lib';
 import './TransactionOutput.scss';
 
 type Props = {
-  txOutputOnChange: (output: TxOutput, index: number) => void;
   txOutput: { output: TxOutput; index: number };
+  vm: VM;
+  txOutputOnChange: (output: TxOutput, index: number) => void;
   removeOutput: (index: number) => void;
 };
 
-const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, removeOutput }) => {
+const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput }) => {
   const isValidAmount =
     (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
       ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
@@ -65,24 +67,26 @@ const TransactionOutput: React.FC<Props> = ({ txOutputOnChange, txOutput, remove
         />
         <div className="tx-error-line">{isValidAmount}</div>
       </div>
-      <div className="tx-output-item">
-        <div className="tx-modal-label">Asset ID:</div>
-        <Input
-          value={txOutput.output.assetId}
-          placeholder="32-bytes"
-          onChange={(value: string) => {
-            txOutputOnChange(
-              {
-                scriptPubKey: txOutput.output.scriptPubKey,
-                amount: txOutput.output.amount,
-                assetId: value,
-              },
-              txOutput.index,
-            );
-          }}
-        />
-        <div className="tx-error-line">{isValidAssetId}</div>
-      </div>
+      {vm.network === VM_NETWORK.LIQUID && (
+        <div className="tx-output-item">
+          <div className="tx-modal-label">Asset ID:</div>
+          <Input
+            value={txOutput.output.assetId}
+            placeholder="32-bytes"
+            onChange={(value: string) => {
+              txOutputOnChange(
+                {
+                  scriptPubKey: txOutput.output.scriptPubKey,
+                  amount: txOutput.output.amount,
+                  assetId: value,
+                },
+                txOutput.index,
+              );
+            }}
+          />
+          <div className="tx-error-line">{isValidAssetId}</div>
+        </div>
+      )}
     </div>
   );
 };

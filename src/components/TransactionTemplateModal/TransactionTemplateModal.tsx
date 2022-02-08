@@ -5,17 +5,18 @@ import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
-// import { validHex } from '../../utils/helper';
+import { VM } from '@script-wiz/lib';
 import './TransactionTemplateModal.scss';
 
 type Props = {
   showModal: boolean;
+  vm: VM;
   showModalCallBack: (show: boolean) => void;
   txDataCallBack: (txData: TxData) => void;
   clearCallBack: () => void;
 };
 
-const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack, clearCallBack }) => {
+const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCallBack, txDataCallBack, clearCallBack }) => {
   const txInputInitial = useMemo(() => {
     return {
       previousTxId: '',
@@ -161,6 +162,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                     key={index}
                     txInput={txInput}
                     txInputOnChange={txInputOnChange}
+                    vm={vm}
                     removeInput={(index: number) => {
                       const newTxInputs = [...txInputs];
                       if (txInputs.length > 1) {
@@ -192,6 +194,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                     key={index}
                     txOutput={txOutput}
                     txOutputOnChange={txOutputOnChange}
+                    vm={vm}
                     removeOutput={(index: number) => {
                       const newTxOutputs = [...txOutputs];
                       if (txOutputs.length > 1) {

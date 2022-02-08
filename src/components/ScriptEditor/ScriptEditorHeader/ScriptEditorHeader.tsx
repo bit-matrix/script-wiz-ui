@@ -1,4 +1,4 @@
-import { ScriptWiz, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
+import { ScriptWiz } from '@script-wiz/lib';
 import React from 'react';
 import { Tooltip, Whisper } from 'rsuite';
 import DownloadIcon from '../../Svg/Icons/Download';

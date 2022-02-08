@@ -4,15 +4,17 @@ import { Input, Radio } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
+import { VM, VM_NETWORK } from '@script-wiz/lib';
 import './TransactionInput.scss';
 
 type Props = {
-  txInputOnChange: (input: TxInput, index: number, checked: boolean) => void;
+  vm: VM;
   txInput: { input: TxInput; index: number; checked: boolean };
+  txInputOnChange: (input: TxInput, index: number, checked: boolean) => void;
   removeInput: (index: number) => void;
 };
 
-const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInput }) => {
+const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput }) => {
   const isValidPreviousTxId =
     (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
@@ -162,28 +164,30 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
         />
         <div className="tx-error-line">{isValidAmount}</div>
       </div>
-      <div className="tx-input-item">
-        <div className="tx-modal-label">Asset ID:</div>
-        <Input
-          value={txInput.input.assetId}
-          placeholder="32-bytes"
-          onChange={(value: string) => {
-            txInputOnChange(
-              {
-                previousTxId: txInput.input.previousTxId,
-                vout: txInput.input.vout,
-                sequence: txInput.input.sequence,
-                scriptPubKey: txInput.input.scriptPubKey,
-                amount: txInput.input.amount,
-                assetId: value,
-              },
-              txInput.index,
-              txInput.checked,
-            );
-          }}
-        />
-        <div className="tx-error-line">{isValidAssetId}</div>
-      </div>
+      {vm.network === VM_NETWORK.LIQUID && (
+        <div className="tx-input-item">
+          <div className="tx-modal-label">Asset ID:</div>
+          <Input
+            value={txInput.input.assetId}
+            placeholder="32-bytes"
+            onChange={(value: string) => {
+              txInputOnChange(
+                {
+                  previousTxId: txInput.input.previousTxId,
+                  vout: txInput.input.vout,
+                  sequence: txInput.input.sequence,
+                  scriptPubKey: txInput.input.scriptPubKey,
+                  amount: txInput.input.amount,
+                  assetId: value,
+                },
+                txInput.index,
+                txInput.checked,
+              );
+            }}
+          />
+          <div className="tx-error-line">{isValidAssetId}</div>
+        </div>
+      )}
     </div>
   );
 };
