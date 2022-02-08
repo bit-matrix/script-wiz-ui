@@ -62,12 +62,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           onChange={(value: string) => {
             txInputOnChange(
               {
+                ...txInput.input,
                 previousTxId: value,
-                vout: txInput.input.vout,
-                sequence: txInput.input.sequence,
-                scriptPubKey: txInput.input.scriptPubKey,
-                amount: txInput.input.amount,
-                assetId: txInput.input.assetId,
               },
               txInput.index,
               txInput.checked,
@@ -85,12 +81,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
             onChange={(value: string) => {
               txInputOnChange(
                 {
-                  previousTxId: txInput.input.previousTxId,
+                  ...txInput.input,
                   vout: value,
-                  sequence: txInput.input.sequence,
-                  scriptPubKey: txInput.input.scriptPubKey,
-                  amount: txInput.input.amount,
-                  assetId: txInput.input.assetId,
                 },
                 txInput.index,
                 txInput.checked,
@@ -107,12 +99,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
             onChange={(value: string) => {
               txInputOnChange(
                 {
-                  previousTxId: txInput.input.previousTxId,
-                  vout: txInput.input.vout,
+                  ...txInput.input,
                   sequence: value,
-                  scriptPubKey: txInput.input.scriptPubKey,
-                  amount: txInput.input.amount,
-                  assetId: txInput.input.assetId,
                 },
                 txInput.index,
                 txInput.checked,
@@ -129,12 +117,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           onChange={(value: string) => {
             txInputOnChange(
               {
-                previousTxId: txInput.input.previousTxId,
-                vout: txInput.input.vout,
-                sequence: txInput.input.sequence,
+                ...txInput.input,
                 scriptPubKey: value,
-                amount: txInput.input.amount,
-                assetId: txInput.input.assetId,
               },
               txInput.index,
               txInput.checked,
@@ -150,12 +134,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           onChange={(value: string) => {
             txInputOnChange(
               {
-                previousTxId: txInput.input.previousTxId,
-                vout: txInput.input.vout,
-                sequence: txInput.input.sequence,
-                scriptPubKey: txInput.input.scriptPubKey,
+                ...txInput.input,
                 amount: value,
-                assetId: txInput.input.assetId,
               },
               txInput.index,
               txInput.checked,
@@ -173,11 +153,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
             onChange={(value: string) => {
               txInputOnChange(
                 {
-                  previousTxId: txInput.input.previousTxId,
-                  vout: txInput.input.vout,
-                  sequence: txInput.input.sequence,
-                  scriptPubKey: txInput.input.scriptPubKey,
-                  amount: txInput.input.amount,
+                  ...txInput.input,
                   assetId: value,
                 },
                 txInput.index,

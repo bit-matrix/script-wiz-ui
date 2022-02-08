@@ -38,14 +38,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         <Input
           value={txOutput.output.scriptPubKey}
           onChange={(value: string) => {
-            txOutputOnChange(
-              {
-                scriptPubKey: value,
-                amount: txOutput.output.amount,
-                assetId: txOutput.output.assetId,
-              },
-              txOutput.index,
-            );
+            txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index);
           }}
         />
       </div>
@@ -55,14 +48,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
           value={txOutput.output.amount}
           placeholder="8-bytes"
           onChange={(value: string) => {
-            txOutputOnChange(
-              {
-                scriptPubKey: txOutput.output.scriptPubKey,
-                amount: value,
-                assetId: txOutput.output.assetId,
-              },
-              txOutput.index,
-            );
+            txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
           }}
         />
         <div className="tx-error-line">{isValidAmount}</div>
@@ -74,14 +60,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
             value={txOutput.output.assetId}
             placeholder="32-bytes"
             onChange={(value: string) => {
-              txOutputOnChange(
-                {
-                  scriptPubKey: txOutput.output.scriptPubKey,
-                  amount: txOutput.output.amount,
-                  assetId: value,
-                },
-                txOutput.index,
-              );
+              txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
             }}
           />
           <div className="tx-error-line">{isValidAssetId}</div>
