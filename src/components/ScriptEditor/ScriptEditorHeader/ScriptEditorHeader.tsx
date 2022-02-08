@@ -46,13 +46,11 @@ const ScriptEditorHeader: React.FC<Props> = ({
             </Whisper>
           )}
 
-          {scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT && (
-            <Whisper placement="top" trigger="hover" speaker={<Tooltip>Import your transaction template</Tooltip>}>
-              <div onClick={txTemplateClick} className="tx-template-icon">
-                <DownloadIcon width="1rem" height="1rem" />
-              </div>
-            </Whisper>
-          )}
+          <Whisper placement="top" trigger="hover" speaker={<Tooltip>Import your transaction template</Tooltip>}>
+            <div onClick={txTemplateClick} className="tx-template-icon">
+              <DownloadIcon width="1rem" height="1rem" />
+            </div>
+          </Whisper>
 
           <Whisper placement="top" trigger="hover" speaker={<Tooltip>Compile your script</Tooltip>}>
             <div onClick={compileButtonClick} className="script-icon">
