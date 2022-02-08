@@ -27,6 +27,8 @@ type Props = {
 const initialLineStackDataListArray: Array<Array<WizData>> = [];
 const initialLastStackDataList: Array<WizData> = [];
 
+type EditorLocalStorage = { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM };
+
 const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
@@ -62,6 +64,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const [finalEditorValue1, setFinalEditorValue1] = useState<string>();
   const [finalEditorValue2, setFinalEditorValue2] = useState<string>();
+
+  const [clearButtonVisibility, setClearButtonVisibility] = useState<boolean>(false);
 
   const timerRef = useRef<number | undefined>(undefined);
 
@@ -99,6 +103,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 : [initialLiquidEditorValue, localStorageObject.editorLines2];
           }
         }
+        setClearButtonVisibility(true);
       } else {
         if (scriptWiz.vm.network === VM_NETWORK.BTC) {
           editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
@@ -108,6 +113,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
               : [initialLiquidEditorValue, initialLiquidEditorValue2];
         }
+        setClearButtonVisibility(false);
       }
     } else {
       if (scriptWiz.vm.network === VM_NETWORK.BTC) {
@@ -118,6 +124,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
             : [initialLiquidEditorValue, initialLiquidEditorValue2];
       }
+
+      setClearButtonVisibility(false);
     }
 
     let lines = convertEditorLines(editorLines[0]);
@@ -127,9 +135,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setLines2(lines2);
 
     setInitialEditorValue(editorLines);
-  }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
+  }, [scriptWiz.vm.network, scriptWiz.vm.ver, clearButtonVisibility]);
 
-  // Things to do before unloading/closing the tab
   const saveLocalStorageData = useCallback(() => {
     if (finalEditorValue1 || finalEditorValue2) {
       const currentLocalStorage = localStorage.getItem('scriptWizEditor');
@@ -163,27 +170,17 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
         localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
       }
+
+      setClearButtonVisibility(true);
     }
+
+    setFinalEditorValue1(undefined);
+    setFinalEditorValue2(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finalEditorValue1, finalEditorValue2]);
-
-  // Setup the `beforeunload` event listener
-  const setupBeforeUnloadListener = useCallback(() => {
-    window.addEventListener('beforeunload', (ev) => {
-      ev.preventDefault();
-      return saveLocalStorageData();
-    });
-  }, [saveLocalStorageData]);
-
-  useEffect(() => {
-    // Activate the event listener
-    setupBeforeUnloadListener();
-  }, [setupBeforeUnloadListener]);
+  }, [finalEditorValue1, finalEditorValue2, clearButtonVisibility]);
 
   useEffect(() => {
     saveLocalStorageData();
-    setFinalEditorValue1(undefined);
-    setFinalEditorValue2(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scriptWiz.vm]);
 
@@ -321,6 +318,32 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     [],
   );
 
+  const clearLocalStorage = () => {
+    const localStorageData = localStorage.getItem('scriptWizEditor');
+
+    setFinalEditorValue1(undefined);
+    setFinalEditorValue2(undefined);
+    setClearButtonVisibility(false);
+
+    if (localStorageData) {
+      const localStorageDataJSON: EditorLocalStorage[] = JSON.parse(localStorageData);
+      const currentLocalStorageDataIndex = localStorageDataJSON.findIndex(
+        (value: EditorLocalStorage) => value.vm.network === scriptWiz.vm.network && value.vm.ver === scriptWiz.vm.ver,
+      );
+
+      if (currentLocalStorageDataIndex > -1) {
+        const newLocalStorageDataJSON = [...localStorageDataJSON];
+        newLocalStorageDataJSON.splice(currentLocalStorageDataIndex, 1);
+
+        if (newLocalStorageDataJSON.length === 0) {
+          localStorage.removeItem('scriptWizEditor');
+        } else {
+          localStorage.setItem('scriptWizEditor', JSON.stringify(newLocalStorageDataJSON));
+        }
+      }
+    }
+  };
+
   const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
     input1: (
       <div className="script-editor scroll">
@@ -331,6 +354,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           onChangeScriptEditorInput={stackElementsOnChange}
           failedLineNumber={failedLineNumber}
           callbackEditorValue={(value: string) => {
+            if (clearButtonVisibility) setClearButtonVisibility(false);
             setFinalEditorValue1(value.trim());
           }}
         />
@@ -345,6 +369,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           onChangeScriptEditorInput={witnessScriptOnChange}
           failedLineNumber={failedLineNumber}
           callbackEditorValue={(value: string) => {
+            if (clearButtonVisibility) setClearButtonVisibility(false);
             setFinalEditorValue2(value.trim());
           }}
         />
@@ -385,7 +410,15 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         }}
       />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
-      <ScriptEditorHeader compileButtonClick={compileScripts} txTemplateClick={() => setShowTemplateModal(true)} scriptWiz={scriptWiz} />
+      <ScriptEditorHeader
+        compileButtonClick={compileScripts}
+        txTemplateClick={() => setShowTemplateModal(true)}
+        scriptWiz={scriptWiz}
+        saveEditorClick={saveLocalStorageData}
+        clearEditorClick={clearLocalStorage}
+        clearButtonVisibility={clearButtonVisibility}
+        saveButtonVisibility={!!finalEditorValue1 || !!finalEditorValue2}
+      />
       <div className="script-editor-main-div">
         <div className="script-editor-container">
           <Mosaic<string>
