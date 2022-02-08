@@ -378,7 +378,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     output1: (
       <div className="script-editor">
         <div className="script-editor-output-header-bar" />
-        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} errorMessage={errorMessage} />
+        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} />
       </div>
     ),
     output2: (

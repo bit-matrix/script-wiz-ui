@@ -6,7 +6,7 @@ import './ScriptEditorOutput.scss';
 
 type Props = {
   lineStackDataListArray: Array<Array<WizData>>;
-  errorMessage: string | undefined;
+  errorMessage?: string;
 };
 
 const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage }) => {
