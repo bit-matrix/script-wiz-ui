@@ -1,4 +1,5 @@
 .script-editor-output-main-div {
+  position: relative;
   width: 100%;
   height: calc(100% - 1.875rem);
   background-color: #181b1e;
@@ -53,6 +54,7 @@
   position: absolute;
   background: #181b1e;
   text-align: right;
+  z-index: 1;
 }
 
 .tooltip {
