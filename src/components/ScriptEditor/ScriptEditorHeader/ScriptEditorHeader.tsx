@@ -3,7 +3,7 @@ import React from 'react';
 import { Tooltip, Whisper } from 'rsuite';
 import DownloadIcon from '../../Svg/Icons/Download';
 import SaveIcon from '../../Svg/Icons/Save';
-import BanIcon from '../../Svg/Icons/Ban';
+import TrashIcon from '../../Svg/Icons/Trash';
 import TerminalIcon from '../../Svg/Icons/Terminal';
 import './ScriptEditorHeader.scss';
 
@@ -41,7 +41,7 @@ const ScriptEditorHeader: React.FC<Props> = ({
           {clearButtonVisibility && (
             <Whisper placement="top" trigger="hover" speaker={<Tooltip>Clear Editor</Tooltip>}>
               <div onClick={clearEditorClick} className="tx-template-icon">
-                <BanIcon width="1rem" height="1rem" />
+                <TrashIcon width="1rem" height="1rem" />
               </div>
             </Whisper>
           )}
