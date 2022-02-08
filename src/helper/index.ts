@@ -34,4 +34,6 @@ const deepCopy = <T>(oldObject: T): T => {
   return JSON.parse(JSON.stringify(oldObject)) as T;
 };
 
-export { convertEditorLines, getOutputValueType, deepCopy };
+const LOCAL_STORAGE_KEY = 'scriptWizEditorV1';
+
+export { convertEditorLines, getOutputValueType, deepCopy, LOCAL_STORAGE_KEY };
