@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
-import { convertEditorLines } from '../../helper';
+import { convertEditorLines, LOCAL_STORAGE_KEY } from '../../helper';
 import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import { TxData } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
@@ -72,7 +72,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   useEffect(() => {
     let editorLines: string[] = [];
 
-    const localStorageValue = localStorage.getItem('scriptWizEditor');
+    const localStorageValue = localStorage.getItem(LOCAL_STORAGE_KEY);
 
     if (localStorageValue) {
       const localStorageArray = JSON.parse(localStorageValue);
@@ -139,7 +139,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const saveLocalStorageData = useCallback(() => {
     if (finalEditorValue1 || finalEditorValue2) {
-      const currentLocalStorage = localStorage.getItem('scriptWizEditor');
+      const currentLocalStorage = localStorage.getItem(LOCAL_STORAGE_KEY);
 
       //check local storage
       if (currentLocalStorage !== null) {
@@ -160,7 +160,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           newLocalStorageArray.push({ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm });
         }
 
-        localStorage.setItem('scriptWizEditor', JSON.stringify(newLocalStorageArray));
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newLocalStorageArray));
       } else {
         //if local storage is empty
 
@@ -168,7 +168,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           { editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm },
         ];
 
-        localStorage.setItem('scriptWizEditor', JSON.stringify(localStorageValue));
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localStorageValue));
       }
 
       setClearButtonVisibility(true);
@@ -319,7 +319,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   );
 
   const clearLocalStorage = () => {
-    const localStorageData = localStorage.getItem('scriptWizEditor');
+    const localStorageData = localStorage.getItem(LOCAL_STORAGE_KEY);
 
     setFinalEditorValue1(undefined);
     setFinalEditorValue2(undefined);
@@ -336,9 +336,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         newLocalStorageDataJSON.splice(currentLocalStorageDataIndex, 1);
 
         if (newLocalStorageDataJSON.length === 0) {
-          localStorage.removeItem('scriptWizEditor');
+          localStorage.removeItem(LOCAL_STORAGE_KEY);
         } else {
-          localStorage.setItem('scriptWizEditor', JSON.stringify(newLocalStorageDataJSON));
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newLocalStorageDataJSON));
         }
       }
     }
