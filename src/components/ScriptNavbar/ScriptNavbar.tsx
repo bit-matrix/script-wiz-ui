@@ -26,11 +26,11 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
 
   const title = useMemo(() => {
     if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
-      return 'Liquid (SegWit/Legacy)';
+      return 'Liquid (SegWit)';
     } else if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) {
       return 'Liquid (Tapscript)';
     } else if (vm.network === VM_NETWORK.BTC && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
-      return 'Bitcoin (SegWit/Legacy)';
+      return 'Bitcoin (SegWit)';
     } else if (vm.network === VM_NETWORK.BTC && vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) {
       return 'Bitcoin (Tapscript)';
     }
@@ -90,7 +90,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           >
             {
               <div className="dropdown-item">
-                <span>Liquid (SegWit/Legacy)</span>
+                <span>Liquid (SegWit)</span>
               </div>
             }
           </Dropdown.Item>
@@ -102,7 +102,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           >
             {
               <div className="dropdown-item">
-                <span>Bitcoin (SegWit/Legacy)</span>
+                <span>Bitcoin (SegWit)</span>
               </div>
             }
           </Dropdown.Item>
