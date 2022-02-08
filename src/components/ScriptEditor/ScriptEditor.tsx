@@ -323,7 +323,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
     input1: (
-      <div className="script-editor scroll">
+      <div className="script-editor">
         <h3 className="script-editor-input-header">Stack Elements</h3>
         <ScriptEditorInput
           scriptWiz={scriptWiz}
@@ -337,7 +337,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       </div>
     ),
     input2: (
-      <div className="script-editor scroll">
+      <div className="script-editor">
         <h3 className="script-editor-input-header">Witness Script</h3>
         <ScriptEditorInput
           scriptWiz={scriptWiz}
@@ -351,13 +351,13 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       </div>
     ),
     output1: (
-      <div className="script-editor scroll">
+      <div className="script-editor">
         <div className="script-editor-output-header-bar" />
         <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} errorMessage={errorMessage} />
       </div>
     ),
     output2: (
-      <div className="script-editor scroll">
+      <div className="script-editor">
         <div className="script-editor-output-header-bar">
           <div className="script-editor-output-header-bar-content-fade"></div>
           <div className="script-editor-output-header-bar-content">

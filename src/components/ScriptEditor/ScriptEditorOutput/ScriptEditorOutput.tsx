@@ -25,12 +25,13 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
   );
 
   return (
-    <>
+    <div className="script-editor-output-main-div scroll">
       {lineStackDataListArray.map((lineStackDataList, lineNumber: number) => (
         <div className="script-editor-output-main" key={`script-editor-output-main-${lineNumber.toString()}`}>
           <span key={`editor-output-text-page-number-${lineNumber.toString()}`} className="editor-output-text-page-number">
             {lineNumber + 1}
           </span>
+
           {getWhispers(lineStackDataList, lineNumber)}
           <br />
         </div>
@@ -47,7 +48,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
           </span>
         </div>
       ) : undefined}
-    </>
+    </div>
   );
 };
 

@@ -1,3 +1,9 @@
+.script-editor-output-main-div {
+  width: 100%;
+  height: calc(100% - 1.875rem);
+  background-color: #181b1e;
+}
+
 .script-editor-output-main {
   display: flex;
   font-family: 'Fira Mono', monospace;
@@ -42,25 +48,19 @@
 
 .editor-output-text-page-number {
   color: #858585;
-  text-align: end;
-  margin-right: 1.25rem;
-  min-width: 1rem;
+  padding-right: 0.5rem;
+  width: 1.5rem;
+  position: absolute;
+  background: #181b1e;
+  text-align: right;
 }
-
-// .whisper-tooltip {
-//     .rs-tooltip-inner {
-//         color: #cbcccc !important;
-//         font-size: 0.875rem;
-//         background-color: #252526 !important;
-//         border-radius: unset !important;
-//     }
-// }
 
 .tooltip {
   position: relative;
   display: inline-block;
   color: #cbcccc !important;
   border-radius: unset !important;
+  left: 1.5rem;
 
   .tooltiptext {
     visibility: hidden;
