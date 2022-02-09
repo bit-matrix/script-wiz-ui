@@ -190,21 +190,21 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         const inputTextValue = inputText.substring(1, inputText.length - 1);
 
         if (inputTextValue.startsWith('0x')) {
-          scriptWiz.parseHex(inputTextValue.substring(2));
+          scriptWiz.parseHex(inputTextValue.substring(2), !isWitnessElement);
         } else if (inputTextValue.startsWith('0b')) {
-          scriptWiz.parseBin(inputTextValue.substring(2));
+          scriptWiz.parseBin(inputTextValue.substring(2), !isWitnessElement);
         } else if (
           (inputTextValue.startsWith('"') && inputTextValue.endsWith('"')) ||
           (inputTextValue.startsWith("'") && inputTextValue.endsWith("'"))
         ) {
           const inputTextValueString = inputTextValue.substring(1, inputTextValue.length - 1);
-          scriptWiz.parseText(inputTextValueString);
+          scriptWiz.parseText(inputTextValueString, !isWitnessElement);
         } else if (!isNaN(Number(inputTextValue))) {
-          scriptWiz.parseNumber(Number(inputTextValue));
+          scriptWiz.parseNumber(Number(inputTextValue), !isWitnessElement);
         } else if (inputTextValue.startsWith('OP_')) {
           if (isWitnessElement) {
             const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
-            scriptWiz.parseHex(opwordToOphex.substring(2));
+            scriptWiz.parseHex(opwordToOphex.substring(2), !isWitnessElement);
           } else {
             setErrorMessage('Unlocking bytecode may contain only push operations.');
           }
@@ -213,7 +213,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         }
       } else if (inputText.startsWith('OP_')) {
         if (isWitnessElement) {
-          scriptWiz.parseOpcode(inputText);
+          scriptWiz.parseOpcode(inputText, !isWitnessElement);
         } else {
           setErrorMessage('Unlocking bytecode may contain only push operations.');
         }
