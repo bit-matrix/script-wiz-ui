@@ -74,9 +74,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         } else if (matches[6]) {
           scriptWiz.parseOpcode(matches[6]);
         }  else if (matches[7]) {
-          if (!scriptWiz.stackDataList.main.length) throw new Error('nothing to label');
-          const lastStack = scriptWiz.stackDataList.main[scriptWiz.stackDataList.main.length-1];
-          lastStack.label = matches[7];
+          scriptWiz.assignLabel(matches[7]);
         }
 
         lineRemain = lineRemain.slice(matches[0].length);
