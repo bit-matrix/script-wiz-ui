@@ -87,9 +87,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
       // Assign the label to the last element on the stack
       if (labelMatches) {
-        if (!scriptWiz.stackDataList.main.length) throw new Error('nothing to label');
-        const lastStack = scriptWiz.stackDataList.main[scriptWiz.stackDataList.main.length-1];
-        lastStack.label = labelMatches[0];
+        scriptWiz.assignLabel(labelMatches[0]);
       }
     },
     [scriptWiz],
