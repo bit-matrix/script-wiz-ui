@@ -1,6 +1,5 @@
 const convertEditorLines = (formattedLines: string): string[] => {
   let lines = formattedLines.split('\n');
-  lines = lines.map((line) => line.replace(/ /g, ''));
 
   lines = lines.map((line) => line.replaceAll('\r', ''));
 
