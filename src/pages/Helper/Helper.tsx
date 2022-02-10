@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import WizData from '@script-wiz/wiz-data';
 import { Checkbox, Form, Input, InputGroup, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
-import { crypto } from '@script-wiz/lib-core';
+import { crypto, conversion } from '@script-wiz/lib-core';
 import { CONVERT_TYPE } from '../../utils/enum/CONVERT_TYPE';
 import { HELPER_ERROR_MESSAGE } from '../../utils/enum/HELPER_ERROR_MESSAGE';
-import { convertBase64, reverseHex, validBin, validBytes, validHex, validNumber } from '../../utils/helper';
+import { reverseHex, validBin, validBytes, validHex, validNumber } from '../../utils/helper';
 import CopyIcon from '../../components/Svg/Icons/Copy';
 import CloseIcon from '../../components/Svg/Icons/Close';
 import { ValueType } from 'rsuite/esm/Checkbox';
@@ -18,10 +18,10 @@ type Result = {
   bytesResult: string;
   bytesLeResult: string;
   numberResult?: string;
-  base64Result: string;
   sha256Result: string;
   hash160Result: string;
-  textResult: string;
+  hex64Result: string;
+  hexLe64Result: string;
 };
 
 const initialState = {
@@ -32,10 +32,10 @@ const initialState = {
   bytesResult: '',
   bytesLeResult: '',
   numberResult: '',
-  base64Result: '',
   sha256Result: '',
   hash160Result: '',
-  textResult: '',
+  hex64Result: '',
+  hexLe64Result: '',
 };
 
 export const Helper = () => {
@@ -54,9 +54,10 @@ export const Helper = () => {
       let bytesResult = '';
       let bytesLeResult = '';
       let numberResult = '';
-      let base64Result = '';
       let sha256Result = '';
       let hash160Result = '';
+      let hex64Result = '';
+      let hexLe64Result = '';
 
       const reverseHexValue = reverseHex(wizdataInput.hex);
 
@@ -71,9 +72,10 @@ export const Helper = () => {
         bytesResult = wizdata.bytes.join(',');
         bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdataReverse.number?.toString() || '';
-        base64Result = convertBase64(wizdata.hex);
         sha256Result = crypto.sha256v2(wizdata);
         hash160Result = crypto.hash160v2(wizdata);
+        hexLe64Result = conversion.numToLE64(wizdata).hex;
+        hex64Result = reverseHex(hexLe64Result);
       }
 
       if (convertType === CONVERT_TYPE.FROM_NUMBER) {
@@ -84,9 +86,10 @@ export const Helper = () => {
         bytesResult = wizdataReverse.bytes.join(',');
         bytesLeResult = wizdata.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
-        base64Result = convertBase64(wizdataReverse.hex);
         sha256Result = crypto.sha256v2(wizdataReverse);
         hash160Result = crypto.hash160v2(wizdataReverse);
+        hexLe64Result = conversion.numToLE64(wizdata).hex;
+        hex64Result = reverseHex(hexLe64Result);
       }
 
       if (convertType === CONVERT_TYPE.FROM_BYTES) {
@@ -97,9 +100,10 @@ export const Helper = () => {
         bytesResult = wizdata.bytes.join(',');
         bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
-        base64Result = convertBase64(wizdata.hex);
         sha256Result = crypto.sha256v2(wizdata);
         hash160Result = crypto.hash160v2(wizdata);
+        hexLe64Result = conversion.numToLE64(wizdata).hex;
+        hex64Result = reverseHex(hexLe64Result);
       }
 
       if (convertType === CONVERT_TYPE.FROM_BIN) {
@@ -110,9 +114,10 @@ export const Helper = () => {
         bytesResult = wizdataReverse.bytes.join(',');
         bytesLeResult = wizdata.bytes.join(',');
         numberResult = wizdata.number?.toString() || '';
-        base64Result = convertBase64(wizdataReverse.hex);
         sha256Result = crypto.sha256v2(wizdataReverse);
         hash160Result = crypto.hash160v2(wizdataReverse);
+        hexLe64Result = conversion.numToLE64(wizdata).hex;
+        hex64Result = reverseHex(hexLe64Result);
       }
 
       if (convertType === CONVERT_TYPE.FROM_TEXT) {
@@ -123,11 +128,10 @@ export const Helper = () => {
         bytesResult = wizdata.bytes.join(',');
         bytesLeResult = wizdataReverse.bytes.join(',');
         numberResult = wizdataReverse.number?.toString() || '';
-        base64Result = convertBase64(wizdata.hex);
         sha256Result = crypto.sha256v2(wizdata);
+        hexLe64Result = conversion.numToLE64(wizdata).hex;
+        hex64Result = reverseHex(hexLe64Result);
       }
-
-      const textResult = wizdata.text || '';
 
       setConvertedWizData({
         hexResult,
@@ -137,10 +141,10 @@ export const Helper = () => {
         bytesResult,
         bytesLeResult,
         numberResult,
-        base64Result,
         sha256Result,
         hash160Result,
-        textResult,
+        hex64Result,
+        hexLe64Result,
       });
     };
 
@@ -407,12 +411,12 @@ export const Helper = () => {
           <div className="helper-footer-items">
             <div className="helper-result-text">
               <div className="helper-result-item">
-                <h6 className="helper-tab-header">TEXT</h6>
+                <h6 className="helper-tab-header">HEX 64</h6>
                 <div>
                   <InputGroup className="compile-modal-input-group">
-                    <Input value={convertedWizData.textResult || ''} disabled />
-                    <Whisper placement="top" trigger="click" speaker={<Tooltip>TEXT has been copied to clipboard!</Tooltip>}>
-                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.textResult || '')}>
+                    <Input value={convertedWizData.hex64Result || ''} disabled />
+                    <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX 64 has been copied to clipboard!</Tooltip>}>
+                      <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hex64Result || '')}>
                         <CopyIcon width="1rem" height="1rem" />
                       </InputGroup.Button>
                     </Whisper>
@@ -423,11 +427,11 @@ export const Helper = () => {
 
             <div className="helper-result-text">
               <div className="helper-result-item">
-                <h6 className="helper-tab-header">BASE 64</h6>
+                <h6 className="helper-tab-header">HEX LE 64</h6>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={convertedWizData.base64Result} disabled />
-                  <Whisper placement="top" trigger="click" speaker={<Tooltip>BASE 64 has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.base64Result)}>
+                  <Input value={convertedWizData.hexLe64Result} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>HEX LE 64 has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(convertedWizData.hexLe64Result)}>
                       <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
