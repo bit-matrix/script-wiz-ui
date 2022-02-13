@@ -52,7 +52,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const parseInput = useCallback(
     (inputText: string) => {
       // 1: hex, 2: bin, 3/4: quoted text, 5: number, 6: opcode, 7: label
-      const reWord = /^\s*(?:<(?:0x([a-fA-F0-9]+)|0b([01]+)|"([^"]+)"|'([^']+)'|(\d+))>|(OP_\w+)|(\$\w+))(?:\s+|$)/;
+      const reWord = /^\s*(?:<(?:0x([a-fA-F0-9]+)|0b([01]+)|"([^"]+)"|'([^']+)'|(-?\d+))>|(OP_\w+)|(\$\w+))(?:\s+|$)/;
 
       let lineRemain = inputText.trim();
       while (lineRemain.length) {
