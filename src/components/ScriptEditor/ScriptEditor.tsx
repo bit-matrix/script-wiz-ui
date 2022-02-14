@@ -202,7 +202,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         } else if (!isNaN(Number(inputTextValue))) {
           scriptWiz.parseNumber(Number(inputTextValue), isWitnessElement);
         } else if (inputTextValue.startsWith('OP_')) {
-          if (!isWitnessElement) {
+          if (isWitnessElement) {
             const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
             scriptWiz.parseHex(opwordToOphex.substring(2), isWitnessElement);
           } else {
