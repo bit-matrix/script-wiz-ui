@@ -265,10 +265,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
         if (line !== '') {
           if (i < firstEditorLineCount) {
-            console.log('1');
             parseInput(line, false);
           } else {
-            console.log('2');
             parseInput(line);
           }
 

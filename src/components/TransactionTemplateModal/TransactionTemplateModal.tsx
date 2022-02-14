@@ -4,7 +4,6 @@ import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
-import { TX_TEMPLATE_ERROR_MESSAGE } from '../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { VM } from '@script-wiz/lib';
 import './TransactionTemplateModal.scss';
 
@@ -121,8 +120,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
   //   return true;
   // };
 
-  const isValidVersion = version.length !== 8 && version.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VERSION_ERROR : '';
-  const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.TIMELOCK_ERROR : '';
+  // const isValidVersion = version.length !== 8 && version.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VERSION_ERROR : '';
+  // const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.TIMELOCK_ERROR : '';
 
   // const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
 

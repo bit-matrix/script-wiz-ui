@@ -27,10 +27,10 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
       ? TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR
       : '';
 
-  const isValidAmount =
-    (txInput.input.amount.length !== 16 && txInput.input.amount.length !== 0) || !validHex(txInput.input.amount)
-      ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
-      : '';
+  // const isValidAmount =
+  //   (txInput.input.amount.length !== 16 && txInput.input.amount.length !== 0) || !validHex(txInput.input.amount)
+  //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
+  //     : '';
 
   const isValidAssetId =
     (txInput.input.assetId?.length !== 64 && txInput.input.assetId?.length !== 0) || !validHex(txInput.input.assetId)
