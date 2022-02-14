@@ -20,7 +20,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
       : '';
 
-  const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VOUT_ERROR : '';
+  // const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VOUT_ERROR : '';
 
   const isValidSequence =
     (txInput.input.sequence.length !== 8 && txInput.input.sequence.length !== 0) || !validHex(txInput.input.sequence)
@@ -77,7 +77,6 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           <div className="tx-input-item">Vout:</div>
           <Input
             value={txInput.input.vout}
-            placeholder="4-bytes"
             onChange={(value: string) => {
               txInputOnChange(
                 {
@@ -89,7 +88,6 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               );
             }}
           />
-          <div className="tx-error-line">{isValidVout}</div>
         </div>
         <div className="tx-input-label">
           <div className="tx-input-item">Sequence:</div>
@@ -127,10 +125,9 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         />
       </div>
       <div className="tx-input-item">
-        <div className="tx-modal-label">Amount (LE64):</div>
+        <div className="tx-modal-label">Amount (BTC):</div>
         <Input
           value={txInput.input.amount}
-          placeholder="8-bytes"
           onChange={(value: string) => {
             txInputOnChange(
               {
@@ -142,7 +139,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
             );
           }}
         />
-        <div className="tx-error-line">{isValidAmount}</div>
+        {/* <div className="tx-error-line">{isValidAmount}</div> */}
       </div>
       {vm.network === VM_NETWORK.LIQUID && (
         <div className="tx-input-item">

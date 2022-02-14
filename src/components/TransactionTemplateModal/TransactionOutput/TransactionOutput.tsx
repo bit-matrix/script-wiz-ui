@@ -15,10 +15,10 @@ type Props = {
 };
 
 const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput }) => {
-  const isValidAmount =
-    (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
-      ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
-      : '';
+  // const isValidAmount =
+  //   (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
+  //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
+  //     : '';
 
   const isValidAssetId =
     (txOutput.output.assetId?.length !== 64 && txOutput.output.assetId?.length !== 0) || !validHex(txOutput.output.assetId)
@@ -43,15 +43,14 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         />
       </div>
       <div className="tx-output-item">
-        <div className="tx-modal-label">Amount (LE64):</div>
+        <div className="tx-modal-label">Amount (BTC):</div>
         <Input
           value={txOutput.output.amount}
-          placeholder="8-bytes"
           onChange={(value: string) => {
             txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
           }}
         />
-        <div className="tx-error-line">{isValidAmount}</div>
+        {/* <div className="tx-error-line">{isValidAmount}</div> */}
       </div>
       {vm.network === VM_NETWORK.LIQUID && (
         <div className="tx-output-item">

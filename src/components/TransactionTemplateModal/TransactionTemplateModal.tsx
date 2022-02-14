@@ -224,19 +224,18 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
         <div className="tx-template-modal-footer">
           <div className="tx-item">
             <div className="tx-modal-label">Tx Version:</div>
-            <Input value={version} placeholder="4-bytes" onChange={(value: string) => setVersion(value)} />
-            <div className="tx-error-line">{isValidVersion}</div>
+            <Input value={version} onChange={(value: string) => setVersion(value)} />
+            {/* <div className="tx-error-line">{isValidVersion}</div> */}
           </div>
           <div className="tx-item">
             <div className="tx-modal-label">Tx Timelock:</div>
             <Input
               value={timelock}
-              placeholder="4-bytes"
               onChange={(value: string) => {
                 setTimeLock(value);
               }}
             />
-            <div className="tx-error-line">{isValidTimelock}</div>
+            {/* <div className="tx-error-line">{isValidTimelock}</div> */}
           </div>
         </div>
         <Button
