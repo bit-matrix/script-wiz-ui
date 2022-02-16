@@ -142,6 +142,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
     setTxOutputs([txOutputInitial]);
     setVersion('');
     setTimeLock('');
+    setCurrentInputIndex(0);
 
     showModalCallBack(false);
   };
