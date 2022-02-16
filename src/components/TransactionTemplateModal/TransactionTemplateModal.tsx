@@ -6,6 +6,7 @@ import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import { VM } from '@script-wiz/lib';
 import './TransactionTemplateModal.scss';
+import { upsertVM } from '../../helper';
 
 type Props = {
   showModal: boolean;
@@ -13,6 +14,11 @@ type Props = {
   showModalCallBack: (show: boolean) => void;
   txDataCallBack: (txData: TxData) => void;
   clearCallBack: () => void;
+};
+
+type TxDataWithVersion = {
+  vm: VM;
+  txData: TxData;
 };
 
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCallBack, txDataCallBack, clearCallBack }) => {
@@ -41,7 +47,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
   const [timelock, setTimeLock] = useState<string>('');
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
 
-  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxData>('txData');
+  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData');
 
   useEffect(() => {
     if (
@@ -49,18 +55,24 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
       JSON.stringify(txOutputs) === JSON.stringify([txOutputInitial]) &&
       timelock === '' &&
       version === '' &&
-      currentInputIndex === 0
+      currentInputIndex === 0 &&
+      showModal
     ) {
-      const txData = getTxLocalData();
-      if (txData) {
-        setTxInputs(txData.inputs);
-        setTxOutputs(txData.outputs);
-        setVersion(txData.version);
-        setTimeLock(txData.timelock);
-        setCurrentInputIndex(txData.currentInputIndex);
+      const localStorageData = getTxLocalData();
+
+      if (localStorageData) {
+        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === vm.ver && lsd.vm.network === vm.network);
+
+        if (currentDataVersion) {
+          setTxInputs(currentDataVersion.txData.inputs);
+          setTxOutputs(currentDataVersion.txData.outputs);
+          setVersion(currentDataVersion.txData.version);
+          setTimeLock(currentDataVersion.txData.timelock);
+          setCurrentInputIndex(currentDataVersion.txData.currentInputIndex);
+        }
       }
     }
-  }, [currentInputIndex, getTxLocalData, timelock, txInputInitial, txInputs, txOutputInitial, txOutputs, version]);
+  }, [currentInputIndex, getTxLocalData, timelock, txInputInitial, txInputs, txOutputInitial, txOutputs, version, vm, showModal]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
@@ -125,12 +137,43 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
 
   // const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
 
-  const txData: TxData = {
-    inputs: txInputs,
-    outputs: txOutputs,
-    version: version,
-    timelock: timelock,
-    currentInputIndex,
+  const closeModal = () => {
+    setTxInputs([txInputInitial]);
+    setTxOutputs([txOutputInitial]);
+    setVersion('');
+    setTimeLock('');
+
+    showModalCallBack(false);
+  };
+
+  const txData: TxDataWithVersion = {
+    vm: vm,
+    txData: {
+      inputs: txInputs,
+      outputs: txOutputs,
+      version: version,
+      timelock: timelock,
+      currentInputIndex,
+    },
+  };
+
+  const clearButtonClick = () => {
+    closeModal();
+    clearCallBack();
+
+    const localStorageData = getTxLocalData();
+
+    if (localStorageData) {
+      if (localStorageData.length === 1) clearTxLocalData();
+      else {
+        const newLocalStorageData = [...localStorageData];
+        const currentIndex = newLocalStorageData.findIndex((cd) => cd.vm.ver === vm.ver && cd.vm.network === vm.network);
+
+        newLocalStorageData.splice(currentIndex, 1);
+
+        setTxLocalData(newLocalStorageData);
+      }
+    }
   };
 
   return (
@@ -141,7 +184,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
       backdrop={false}
       onClose={() => {
         // txDataCallBack(txData);
-        showModalCallBack(false);
+        closeModal();
       }}
     >
       <Modal.Header className="tx-template-modal-header" />
@@ -237,31 +280,18 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
             {/* <div className="tx-error-line">{isValidTimelock}</div> */}
           </div>
         </div>
-        <Button
-          onClick={() => {
-            setTxInputs([txInputInitial]);
-            setTxOutputs([txOutputInitial]);
-            setVersion('');
-            setTimeLock('');
-            clearCallBack();
-            clearTxLocalData();
-          }}
-        >
-          Clear
-        </Button>
+        <Button onClick={clearButtonClick}>Clear</Button>
         <Button
           className="tx-modal-save-button"
           appearance="subtle"
           onClick={() => {
-            txDataCallBack(txData);
-            showModalCallBack(false);
-            setTxLocalData(txData);
-            // if (isValidTemplate) {
-            //   txDataCallBack(txData);
-            //   showModalCallBack(false);
-            // }
+            txDataCallBack(txData.txData);
+            const previousLocalStorageData = getTxLocalData();
+            const newLocalStorageData = upsertVM(txData, previousLocalStorageData);
+            console.log(txData.txData);
+            setTxLocalData(newLocalStorageData);
+            closeModal();
           }}
-          // disabled={!isValidTemplate}
         >
           Save
         </Button>
