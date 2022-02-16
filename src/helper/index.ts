@@ -36,7 +36,7 @@ const deepCopy = <T>(oldObject: T): T => {
   return JSON.parse(JSON.stringify(oldObject)) as T;
 };
 
-const upsertVM = <T extends { vm: VM }>(currentArray: T[], newObject: T) => {
+const upsertVM = <T extends { vm: VM }>(currentArray: T[], newObject: T): T[] => {
   const currentIndex = currentArray.findIndex((cd: T) => cd.vm.ver === newObject.vm.ver && cd.vm.network === newObject.vm.network);
 
   const clonedArray = [...currentArray];
@@ -46,6 +46,8 @@ const upsertVM = <T extends { vm: VM }>(currentArray: T[], newObject: T) => {
   } else {
     clonedArray.push(newObject);
   }
+
+  return clonedArray;
 };
 
 const LOCAL_STORAGE_KEY = 'scriptWizEditorV1';
