@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './ScriptEditorInput.scss';
 
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
