@@ -1,3 +1,5 @@
+import { VM } from '@script-wiz/lib';
+
 const convertEditorLines = (formattedLines: string): string[] => {
   let lines = formattedLines.split('\n');
   lines = lines.map((line) => line.replace(/ /g, ''));
@@ -34,6 +36,18 @@ const deepCopy = <T>(oldObject: T): T => {
   return JSON.parse(JSON.stringify(oldObject)) as T;
 };
 
+const upsertVM = <T extends { vm: VM }>(currentArray: T[], newObject: T) => {
+  const currentIndex = currentArray.findIndex((cd: T) => cd.vm.ver === newObject.vm.ver && cd.vm.network === newObject.vm.network);
+
+  const clonedArray = [...currentArray];
+
+  if (currentIndex > -1) {
+    clonedArray[currentIndex] = newObject;
+  } else {
+    clonedArray.push(newObject);
+  }
+};
+
 const LOCAL_STORAGE_KEY = 'scriptWizEditorV1';
 
-export { convertEditorLines, getOutputValueType, deepCopy, LOCAL_STORAGE_KEY };
+export { convertEditorLines, getOutputValueType, deepCopy, upsertVM, LOCAL_STORAGE_KEY };
