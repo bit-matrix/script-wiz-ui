@@ -4,16 +4,15 @@ import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
-import { VM } from '@script-wiz/lib';
-import './TransactionTemplateModal.scss';
+import { ScriptWiz, VM } from '@script-wiz/lib';
 import { upsertVM } from '../../helper';
+import './TransactionTemplateModal.scss';
 
 type Props = {
   showModal: boolean;
-  vm: VM;
+  scriptWiz: ScriptWiz;
+  txData?: TxData;
   showModalCallBack: (show: boolean) => void;
-  txDataCallBack: (txData: TxData) => void;
-  clearCallBack: () => void;
 };
 
 type TxDataWithVersion = {
@@ -21,7 +20,7 @@ type TxDataWithVersion = {
   txData: TxData;
 };
 
-const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCallBack, txDataCallBack, clearCallBack }) => {
+const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
   const txInputInitial = useMemo(() => {
     return {
       previousTxId: '',
@@ -50,18 +49,11 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData');
 
   useEffect(() => {
-    if (
-      JSON.stringify(txInputs) === JSON.stringify([txInputInitial]) &&
-      JSON.stringify(txOutputs) === JSON.stringify([txOutputInitial]) &&
-      timelock === '' &&
-      version === '' &&
-      currentInputIndex === 0 &&
-      showModal
-    ) {
+    if (showModal) {
       const localStorageData = getTxLocalData();
 
       if (localStorageData) {
-        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === vm.ver && lsd.vm.network === vm.network);
+        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
 
         if (currentDataVersion) {
           setTxInputs(currentDataVersion.txData.inputs);
@@ -71,8 +63,15 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
           setCurrentInputIndex(currentDataVersion.txData.currentInputIndex);
         }
       }
+    } else {
+      const localStorageData = getTxLocalData();
+
+      if (localStorageData) {
+        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
+        scriptWiz.parseTxData(currentDataVersion?.txData);
+      }
     }
-  }, [currentInputIndex, getTxLocalData, timelock, txInputInitial, txInputs, txOutputInitial, txOutputs, version, vm, showModal]);
+  }, [showModal, scriptWiz]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
@@ -103,40 +102,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
     setTxOutputs(newTxOutputs);
   };
 
-  // const inputValidation = (input: TxInput) => {
-  //   if (input.previousTxId.length !== 64 && !validHex(input.previousTxId)) {
-  //     return false;
-  //   }
-  //   if (input.amount.length !== 16 || !validHex(input.amount)) {
-  //     return false;
-  //   }
-  //   if (input.assetId?.length !== 64 || !validHex(input.assetId)) {
-  //     return false;
-  //   }
-  //   if (input.sequence.length !== 8 || !validHex(input.sequence)) {
-  //     return false;
-  //   }
-  //   if (input.vout.length !== 8 || !validHex(input.vout)) {
-  //     return false;
-  //   }
-  //   return true;
-  // };
-
-  // const outputValidation = (output: TxOutput) => {
-  //   if (output.amount.length !== 16 || !validHex(output.amount)) {
-  //     return false;
-  //   }
-  //   if (output.assetId?.length !== 64 || !validHex(output.assetId)) {
-  //     return false;
-  //   }
-  //   return true;
-  // };
-
-  // const isValidVersion = version.length !== 8 && version.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VERSION_ERROR : '';
-  // const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.TIMELOCK_ERROR : '';
-
-  // const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
-
   const closeModal = () => {
     setTxInputs([txInputInitial]);
     setTxOutputs([txOutputInitial]);
@@ -147,20 +112,9 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
     showModalCallBack(false);
   };
 
-  const txData: TxDataWithVersion = {
-    vm: vm,
-    txData: {
-      inputs: txInputs,
-      outputs: txOutputs,
-      version: version,
-      timelock: timelock,
-      currentInputIndex,
-    },
-  };
-
   const clearButtonClick = () => {
     closeModal();
-    clearCallBack();
+    scriptWiz.parseTxData();
 
     const localStorageData = getTxLocalData();
 
@@ -168,13 +122,32 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
       if (localStorageData.length === 1) clearTxLocalData();
       else {
         const newLocalStorageData = [...localStorageData];
-        const currentIndex = newLocalStorageData.findIndex((cd) => cd.vm.ver === vm.ver && cd.vm.network === vm.network);
+        const currentIndex = newLocalStorageData.findIndex((cd) => cd.vm.ver === scriptWiz.vm.ver && cd.vm.network === scriptWiz.vm.network);
 
         newLocalStorageData.splice(currentIndex, 1);
 
         setTxLocalData(newLocalStorageData);
       }
     }
+  };
+
+  const saveButtonClick = () => {
+    const txData: TxDataWithVersion = {
+      vm: scriptWiz.vm,
+      txData: {
+        inputs: txInputs,
+        outputs: txOutputs,
+        version: version,
+        timelock: timelock,
+        currentInputIndex,
+      },
+    };
+    scriptWiz.parseTxData(txData.txData);
+
+    const previousLocalStorageData = getTxLocalData();
+    const newLocalStorageData = upsertVM(txData, previousLocalStorageData);
+    setTxLocalData(newLocalStorageData);
+    closeModal();
   };
 
   return (
@@ -184,7 +157,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
       open={showModal}
       backdrop={false}
       onClose={() => {
-        // txDataCallBack(txData);
         closeModal();
       }}
     >
@@ -205,7 +177,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
                     key={index}
                     txInput={txInput}
                     txInputOnChange={txInputOnChange}
-                    vm={vm}
+                    vm={scriptWiz.vm}
                     removeInput={(index: number) => {
                       const newTxInputs = [...txInputs];
                       if (txInputs.length > 1) {
@@ -237,7 +209,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
                     key={index}
                     txOutput={txOutput}
                     txOutputOnChange={txOutputOnChange}
-                    vm={vm}
+                    vm={scriptWiz.vm}
                     removeOutput={(index: number) => {
                       const newTxOutputs = [...txOutputs];
                       if (txOutputs.length > 1) {
@@ -282,18 +254,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, vm, showModalCal
           </div>
         </div>
         <Button onClick={clearButtonClick}>Clear</Button>
-        <Button
-          className="tx-modal-save-button"
-          appearance="subtle"
-          onClick={() => {
-            txDataCallBack(txData.txData);
-            const previousLocalStorageData = getTxLocalData();
-            const newLocalStorageData = upsertVM(txData, previousLocalStorageData);
-            console.log(txData.txData);
-            setTxLocalData(newLocalStorageData);
-            closeModal();
-          }}
-        >
+        <Button className="tx-modal-save-button" appearance="subtle" onClick={saveButtonClick}>
           Save
         </Button>
       </Modal.Footer>

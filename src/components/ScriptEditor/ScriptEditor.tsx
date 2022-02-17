@@ -33,7 +33,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
-  const [txData, setTxData] = useState<TxData>();
   const [lines, setLines] = useState<string[]>();
   const [lines2, setLines2] = useState<string[]>();
   const [initialEditorValue, setInitialEditorValue] = useState<string[]>([]);
@@ -224,12 +223,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     [scriptWiz],
   );
 
-  const addTxTemplate = useCallback(() => {
-    if (txData) {
-      scriptWiz.parseTxData(txData);
-    }
-  }, [scriptWiz, txData]);
-
   const stackElementsOnChange = (lines: string[]) => {
     setErrorMessage(undefined);
     if (timerRef.current) window.clearTimeout(timerRef.current);
@@ -252,8 +245,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     let hasError: boolean = false;
     const newLineStackDataListArray: Array<Array<WizData>> = [];
     let newLastStackDataList: Array<WizData> = [];
-
-    addTxTemplate();
 
     const addedLines = [...(lines || []), ...(lines2 || [])];
 
@@ -296,7 +287,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     }
 
     setLineStackDataListArray(newLineStackDataListArray);
-  }, [addTxTemplate, lines, lines2, parseInput, scriptWiz]);
+  }, [lines, lines2, parseInput, scriptWiz]);
 
   const compileScripts = () => {
     const compileScript = scriptWiz.compile();
@@ -399,17 +390,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   return (
     <>
-      <TransactionTemplateModal
-        showModal={showTemplateModal}
-        showModalCallBack={(show) => setShowTemplateModal(show)}
-        txDataCallBack={(txData: TxData) => {
-          setTxData(txData);
-        }}
-        clearCallBack={() => {
-          setTxData(undefined);
-        }}
-        vm={scriptWiz.vm}
-      />
+      <TransactionTemplateModal showModal={showTemplateModal} showModalCallBack={(show) => setShowTemplateModal(show)} scriptWiz={scriptWiz} />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
       <ScriptEditorHeader
         compileButtonClick={compileScripts}
