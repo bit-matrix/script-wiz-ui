@@ -8,7 +8,6 @@ import TerminalIcon from '../../Svg/Icons/Terminal';
 import './ScriptEditorHeader.scss';
 
 type Props = {
-  scriptWiz: ScriptWiz;
   saveButtonVisibility: boolean;
   clearButtonVisibility: boolean;
   compileButtonClick: () => void;
@@ -18,7 +17,6 @@ type Props = {
 };
 
 const ScriptEditorHeader: React.FC<Props> = ({
-  scriptWiz,
   saveButtonVisibility,
   clearButtonVisibility,
   compileButtonClick,

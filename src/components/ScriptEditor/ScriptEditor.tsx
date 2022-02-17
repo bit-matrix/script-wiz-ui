@@ -394,7 +394,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       <ScriptEditorHeader
         compileButtonClick={compileScripts}
         txTemplateClick={() => setShowTemplateModal(true)}
-        scriptWiz={scriptWiz}
         saveEditorClick={saveLocalStorageData}
         clearEditorClick={clearLocalStorage}
         clearButtonVisibility={clearButtonVisibility}
