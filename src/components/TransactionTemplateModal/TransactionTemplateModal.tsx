@@ -71,7 +71,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         scriptWiz.parseTxData(currentDataVersion?.txData);
       }
     }
-  }, [showModal, scriptWiz]);
+  }, [showModal, scriptWiz, getTxLocalData]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
