@@ -151,8 +151,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
         //local storage has same version data update
         if (currentIndex > -1) {
-          newLocalStorageArray[currentIndex].editorLines1 = finalEditorValue1;
-          newLocalStorageArray[currentIndex].editorLines2 = finalEditorValue2;
+          if (finalEditorValue1) newLocalStorageArray[currentIndex].editorLines1 = finalEditorValue1;
+
+          if (finalEditorValue2) newLocalStorageArray[currentIndex].editorLines2 = finalEditorValue2;
         } else {
           // insert
           newLocalStorageArray.push({ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm });
