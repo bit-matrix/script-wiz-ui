@@ -31,6 +31,7 @@ type EditorLocalStorage = { editorLines1: string | undefined; editorLines2: stri
 const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
+  const [lineStackDataListArray2, setLineStackDataListArray2] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
   const [lines, setLines] = useState<string[]>();
   const [lines2, setLines2] = useState<string[]>();
@@ -286,7 +287,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       }
     }
 
-    setLineStackDataListArray(newLineStackDataListArray);
+    setLineStackDataListArray(newLineStackDataListArray.slice(firstEditorLineCount, newLineStackDataListArray.length));
+    setLineStackDataListArray2(newLineStackDataListArray.slice(0, firstEditorLineCount));
   }, [lines, lines2, parseInput, scriptWiz]);
 
   const compileScripts = () => {
@@ -369,7 +371,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     output1: (
       <div className="script-editor">
         <div className="script-editor-output-header-bar" />
-        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray.slice(0, lines?.length)} />
+        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray2} />
       </div>
     ),
     output2: (
@@ -380,10 +382,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             <div className="state">{getWhispers(firstEditorLastData)}</div>
           </div>
         </div>
-        <ScriptEditorOutput
-          lineStackDataListArray={lineStackDataListArray.slice(lines?.length, lineStackDataListArray.length)}
-          errorMessage={errorMessage}
-        />
+        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
       </div>
     ),
   };
