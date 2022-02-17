@@ -134,7 +134,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setLines2(lines2);
 
     setInitialEditorValue(editorLines);
-  }, [scriptWiz.vm.network, scriptWiz.vm.ver, clearButtonVisibility]);
+  }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
 
   const saveLocalStorageData = useCallback(() => {
     if (finalEditorValue1 || finalEditorValue2) {
