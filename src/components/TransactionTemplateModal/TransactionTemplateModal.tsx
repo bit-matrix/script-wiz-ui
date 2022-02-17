@@ -71,7 +71,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         scriptWiz.parseTxData(currentDataVersion?.txData);
       }
     }
-  }, [showModal, scriptWiz, getTxLocalData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showModal, scriptWiz]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];

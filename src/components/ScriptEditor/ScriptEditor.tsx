@@ -4,7 +4,6 @@ import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
 import { convertEditorLines, LOCAL_STORAGE_KEY } from '../../helper';
 import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
-import { TxData } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
 import {
   initialBitcoinEditorValue,
