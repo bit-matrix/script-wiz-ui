@@ -35,7 +35,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
   const [lines, setLines] = useState<string[]>();
   const [lines2, setLines2] = useState<string[]>();
-  const [initialEditorValue, setInitialEditorValue] = useState<string[]>([]);
+  const [editorValues, setEditorValues] = useState<string[]>([]);
   const [firstEditorLastData, setFirstEditorLastData] = useState<Array<WizData>>(initialLastStackDataList);
   const [editorSplits, setEditorSplits] = useState<any>({
     direction: 'row',
@@ -61,10 +61,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
 
-  const [finalEditorValue1, setFinalEditorValue1] = useState<string>();
-  const [finalEditorValue2, setFinalEditorValue2] = useState<string>();
-
   const [clearButtonVisibility, setClearButtonVisibility] = useState<boolean>(false);
+  const [saveButtonVisibility, setSaveButtonVisibility] = useState<boolean>(false);
 
   const timerRef = useRef<number | undefined>(undefined);
 
@@ -112,6 +110,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
               ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
               : [initialLiquidEditorValue, initialLiquidEditorValue2];
         }
+
         setClearButtonVisibility(false);
       }
     } else {
@@ -133,11 +132,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setLines(lines);
     setLines2(lines2);
 
-    setInitialEditorValue(editorLines);
-  }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
+    setEditorValues(editorLines);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scriptWiz.vm, scriptWiz.vm.network, scriptWiz.vm.ver]);
 
   const saveLocalStorageData = useCallback(() => {
-    if (finalEditorValue1 || finalEditorValue2) {
+    if (clearButtonVisibility) {
       const currentLocalStorage = localStorage.getItem(LOCAL_STORAGE_KEY);
 
       //check local storage
@@ -152,12 +152,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
         //local storage has same version data update
         if (currentIndex > -1) {
-          if (finalEditorValue1) newLocalStorageArray[currentIndex].editorLines1 = finalEditorValue1;
+          if (editorValues[0]) newLocalStorageArray[currentIndex].editorLines1 = editorValues[0];
 
-          if (finalEditorValue2) newLocalStorageArray[currentIndex].editorLines2 = finalEditorValue2;
+          if (editorValues[1]) newLocalStorageArray[currentIndex].editorLines2 = editorValues[1];
         } else {
           // insert
-          newLocalStorageArray.push({ editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm });
+          newLocalStorageArray.push({ editorLines1: editorValues[0], editorLines2: editorValues[1], vm: scriptWiz.vm });
         }
 
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newLocalStorageArray));
@@ -165,24 +165,21 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         //if local storage is empty
 
         const localStorageValue: { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM }[] = [
-          { editorLines1: finalEditorValue1, editorLines2: finalEditorValue2, vm: scriptWiz.vm },
+          { editorLines1: editorValues[0], editorLines2: editorValues[1], vm: scriptWiz.vm },
         ];
 
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localStorageValue));
       }
 
-      setClearButtonVisibility(true);
+      setSaveButtonVisibility(false);
     }
-
-    setFinalEditorValue1(undefined);
-    setFinalEditorValue2(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finalEditorValue1, finalEditorValue2, clearButtonVisibility]);
+  }, [clearButtonVisibility, editorValues]);
 
   useEffect(() => {
     saveLocalStorageData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scriptWiz.vm]);
+  }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
 
   const parseInput = useCallback(
     (inputText: string, isWitnessElement: boolean = true) => {
@@ -314,10 +311,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const clearLocalStorage = () => {
     const localStorageData = localStorage.getItem(LOCAL_STORAGE_KEY);
 
-    setFinalEditorValue1(undefined);
-    setFinalEditorValue2(undefined);
-    setClearButtonVisibility(false);
-
     if (localStorageData) {
       const localStorageDataJSON: EditorLocalStorage[] = JSON.parse(localStorageData);
       const currentLocalStorageDataIndex = localStorageDataJSON.findIndex(
@@ -335,6 +328,27 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         }
       }
     }
+
+    let editorLines: string[] = [];
+    if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+      editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
+    } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+      editorLines =
+        scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+          ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
+          : [initialLiquidEditorValue, initialLiquidEditorValue2];
+    }
+
+    let lines = convertEditorLines(editorLines[0]);
+    let lines2 = convertEditorLines(editorLines[1]);
+
+    setLines(lines);
+    setLines2(lines2);
+
+    setEditorValues(editorLines);
+
+    setClearButtonVisibility(false);
+    setSaveButtonVisibility(false);
   };
 
   const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
@@ -343,12 +357,16 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         <h3 className="script-editor-input-header">Stack Elements</h3>
         <ScriptEditorInput
           scriptWiz={scriptWiz}
-          initialEditorValue={initialEditorValue[0]}
+          initialEditorValue={editorValues[0]}
           onChangeScriptEditorInput={stackElementsOnChange}
           failedLineNumber={failedLineNumber}
           callbackEditorValue={(value: string) => {
-            if (clearButtonVisibility) setClearButtonVisibility(false);
-            setFinalEditorValue1(value.trim());
+            if (!clearButtonVisibility) setClearButtonVisibility(true);
+            if (!saveButtonVisibility) setSaveButtonVisibility(true);
+
+            const prev = [...editorValues];
+            prev[0] = value;
+            setEditorValues(prev);
           }}
         />
       </div>
@@ -358,12 +376,16 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         <h3 className="script-editor-input-header">Witness Script</h3>
         <ScriptEditorInput
           scriptWiz={scriptWiz}
-          initialEditorValue={initialEditorValue[1]}
+          initialEditorValue={editorValues[1]}
           onChangeScriptEditorInput={witnessScriptOnChange}
           failedLineNumber={failedLineNumber}
           callbackEditorValue={(value: string) => {
-            if (clearButtonVisibility) setClearButtonVisibility(false);
-            setFinalEditorValue2(value.trim());
+            if (!clearButtonVisibility) setClearButtonVisibility(true);
+            if (!saveButtonVisibility) setSaveButtonVisibility(true);
+
+            const prev = [...editorValues];
+            prev[1] = value;
+            setEditorValues(prev);
           }}
         />
       </div>
@@ -397,7 +419,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         saveEditorClick={saveLocalStorageData}
         clearEditorClick={clearLocalStorage}
         clearButtonVisibility={clearButtonVisibility}
-        saveButtonVisibility={!!finalEditorValue1 || !!finalEditorValue2}
+        saveButtonVisibility={saveButtonVisibility}
       />
       <div className="script-editor-main-div">
         <div className="script-editor-container">
