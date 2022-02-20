@@ -90,8 +90,33 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       <Modal.Body className="compile-modal-body scroll">
         <h5 className="compile-modal-item">Compile Result</h5>
         <p className="compile-data-p">{compileModalData.data}</p>
-        <p className="compile-data-p">{segwitAddress?.mainnet}</p>
-        <p className="compile-data-p">{segwitAddress?.testnet}</p>
+
+        {scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.SEGWIT && (
+          <>
+            <div className="compile-modal-item">
+              <div className="compile-modal-label">Mainnet Address:</div>
+              <InputGroup className="compile-modal-input-group">
+                <Input value={segwitAddress?.mainnet} />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(segwitAddress?.mainnet || '')}>
+                    <CopyIcon width="1rem" height="1rem" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
+            </div>
+            <div className="compile-modal-item">
+              <div className="compile-modal-label">Testent Address:</div>
+              <InputGroup className="compile-modal-input-group">
+                <Input value={segwitAddress?.testnet} />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(segwitAddress?.testnet || '')}>
+                    <CopyIcon width="1rem" height="1rem" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
+            </div>
+          </>
+        )}
 
         {((scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) ||
           (scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT)) && (
