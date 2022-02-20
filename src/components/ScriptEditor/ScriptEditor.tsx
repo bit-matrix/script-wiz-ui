@@ -30,6 +30,7 @@ type EditorLocalStorage = { editorLines1: string | undefined; editorLines2: stri
 
 const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [errorMessage2, setErrorMessage2] = useState<string | undefined>();
   const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
   const [lineStackDataListArray2, setLineStackDataListArray2] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
@@ -212,7 +213,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         if (isWitnessElement) {
           scriptWiz.parseOpcode(inputText, isWitnessElement);
         } else {
-          setErrorMessage('Unlocking bytecode may contain only push operations.');
+          setErrorMessage2('Unlocking bytecode may contain only push operations.');
         }
       } else {
         console.error('UI: Invalid input value!!!');
@@ -393,7 +394,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     output1: (
       <div className="script-editor">
         <div className="script-editor-output-header-bar" />
-        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray2} />
+        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray2} errorMessage={errorMessage2} />
       </div>
     ),
     output2: (
