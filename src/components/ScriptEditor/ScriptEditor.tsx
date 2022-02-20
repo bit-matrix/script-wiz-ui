@@ -288,7 +288,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
     setLineStackDataListArray(newLineStackDataListArray.slice(firstEditorLineCount, newLineStackDataListArray.length));
     setLineStackDataListArray2(newLineStackDataListArray.slice(0, firstEditorLineCount));
-  }, [lines, lines2, parseInput, scriptWiz]);
+  }, [lines, lines2, parseInput, scriptWiz, scriptWiz.stackDataList.txData]);
 
   const compileScripts = () => {
     const compileScript = scriptWiz.compile();
