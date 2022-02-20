@@ -6,6 +6,7 @@ import WizData from '@script-wiz/wiz-data';
 import { ValueType } from 'rsuite/esm/Radio';
 import CopyIcon from '../Svg/Icons/Copy';
 import './CompileModal.scss';
+import { Address } from '@script-wiz/lib-core/taproot/model';
 
 type Props = {
   scriptWiz: ScriptWiz;
@@ -23,15 +24,10 @@ enum TapleafVersion {
   CUSTOM = 'custom',
 }
 
-type Taproot = {
+type TaprootState = {
   tweak: string;
   scriptPubkey: string;
-  bech32: string;
-};
-
-type SegwitAddress = {
-  testnet: string;
-  mainnet: string;
+  address: Address;
 };
 
 const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompileModal }) => {
@@ -39,8 +35,8 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
   const [tapleafVersion, setTapleafVersion] = useState<TapleafVersion>(TapleafVersion.DEFAULT);
   const [pubKeyInput, setPubKeyInput] = useState<string>('');
   const [tapleafInput, setTapleafInput] = useState<string>('');
-  const [tweakedResult, setTweakedResult] = useState<Taproot>({ tweak: '', scriptPubkey: '', bech32: '' });
-  const [segwitAddress, setSegwitAddress] = useState<SegwitAddress>();
+  const [tweakedResult, setTweakedResult] = useState<TaprootState>({ tweak: '', scriptPubkey: '', address: { mainnet: '', testnet: '' } });
+  const [segwitAddress, setSegwitAddress] = useState<Address>();
 
   const pubkeyDefaultValue: string = '1dae61a4a8f841952be3a511502d4f56e889ffa0685aa0098773ea2d4309f624';
   const tapleafDefaultValue: string = scriptWiz.vm.network === VM_NETWORK.LIQUID ? '0xc4' : '0xc0';
@@ -78,16 +74,28 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
           [WizData.fromHex(script)],
           scriptWiz.vm.network === VM_NETWORK.LIQUID ? TAPROOT_VERSION.LIQUID : TAPROOT_VERSION.BITCOIN,
         );
-        setTweakedResult({ tweak: result.tweak.hex, scriptPubkey: result.scriptPubKey.hex, bech32: result.bech32 });
+        setTweakedResult({ tweak: result.tweak.hex, scriptPubkey: result.scriptPubkey.hex, address: result.address });
       } catch {
-        setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result', bech32: 'Invalid result' });
+        setTweakedResult({
+          tweak: 'Invalid result',
+          scriptPubkey: 'Invalid result',
+          address: { mainnet: 'Invalid result', testnet: 'Invalid result' },
+        });
       }
     } else if (pubKeyInput.length < 64 && pubKeyInput.length > 0) {
-      setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result', bech32: 'Invalid result' });
+      setTweakedResult({
+        tweak: 'Invalid result',
+        scriptPubkey: 'Invalid result',
+        address: { mainnet: 'Invalid result', testnet: 'Invalid result' },
+      });
     } else if (tapleafVersion === TapleafVersion.CUSTOM && version !== undefined && version.length < 4) {
-      setTweakedResult({ tweak: 'Invalid result', scriptPubkey: 'Invalid result', bech32: 'Invalid result' });
+      setTweakedResult({
+        tweak: 'Invalid result',
+        scriptPubkey: 'Invalid result',
+        address: { mainnet: 'Invalid result', testnet: 'Invalid result' },
+      });
     } else {
-      setTweakedResult({ tweak: '', scriptPubkey: '', bech32: '' });
+      setTweakedResult({ tweak: '', scriptPubkey: '', address: { mainnet: '', testnet: '' } });
     }
   }, [compileModalData.data, keyPath, pubKeyInput, scriptWiz, tapleafInput, tapleafVersion]);
 
@@ -112,7 +120,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
               </InputGroup>
             </div>
             <div className="compile-modal-item">
-              <div className="compile-modal-label">Testent Address:</div>
+              <div className="compile-modal-label">Testnet Address:</div>
               <InputGroup className="compile-modal-input-group">
                 <Input value={segwitAddress?.testnet} />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
@@ -205,11 +213,22 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                 </InputGroup>
               </div>
               <div className="compile-modal-item">
-                <div className="compile-modal-label">Bech32m address:</div>
+                <div className="compile-modal-label">Mainnet address:</div>
                 <InputGroup className="compile-modal-input-group">
-                  <Input value={tweakedResult.bech32} />
+                  <Input value={tweakedResult.address.mainnet} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.bech32)}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.address.mainnet)}>
+                      <CopyIcon width="1rem" height="1rem" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
+              <div className="compile-modal-item">
+                <div className="compile-modal-label">Testnet address:</div>
+                <InputGroup className="compile-modal-input-group">
+                  <Input value={tweakedResult.address.testnet} />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.address.testnet)}>
                       <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
