@@ -375,7 +375,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     ),
     input2: (
       <div className="script-editor">
-        <h3 className="script-editor-input-header">Witness Script</h3>
+        <h3 className="script-editor-input-header">{scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT ? 'Tapscript' : 'Witness Script'}</h3>
         <ScriptEditorInput
           scriptWiz={scriptWiz}
           initialEditorValue={editorValues[1]}
