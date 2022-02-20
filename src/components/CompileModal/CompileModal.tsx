@@ -52,7 +52,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
 
     if (scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.SEGWIT) {
       const newMainnetAddress = address.createBech32Address(WizData.fromHex(script), 'bc', 0);
-      const newTestnetAddress = address.createBech32Address(WizData.fromHex(script), 'bt', 0);
+      const newTestnetAddress = address.createBech32Address(WizData.fromHex(script), 'tb', 0);
 
       setSegwitAddress({ testnet: newTestnetAddress, mainnet: newMainnetAddress });
     }
