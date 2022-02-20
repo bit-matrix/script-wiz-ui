@@ -224,6 +224,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const stackElementsOnChange = (lines: string[]) => {
     setErrorMessage(undefined);
+    setErrorMessage2(undefined);
     if (timerRef.current) window.clearTimeout(timerRef.current);
 
     timerRef.current = window.setTimeout(() => {
