@@ -43,7 +43,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         />
       </div>
       <div className="tx-output-item">
-        <div className="tx-modal-label">Amount (BTC):</div>
+        <div className="tx-modal-label">Amount (Decimal):</div>
         <Input
           value={txOutput.output.amount}
           onChange={(value: string) => {

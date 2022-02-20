@@ -125,7 +125,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         />
       </div>
       <div className="tx-input-item">
-        <div className="tx-modal-label">Amount (BTC):</div>
+        <div className="tx-modal-label">Amount (Decimal):</div>
         <Input
           value={txInput.input.amount}
           onChange={(value: string) => {
