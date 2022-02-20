@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ScriptWiz, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
-import { taproot, TAPROOT_VERSION } from '@script-wiz/lib-core';
+import { address, taproot, TAPROOT_VERSION } from '@script-wiz/lib-core';
 import { Button, Form, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import WizData from '@script-wiz/wiz-data';
 import { ValueType } from 'rsuite/esm/Radio';
@@ -29,12 +29,18 @@ type Taproot = {
   bech32: string;
 };
 
+type SegwitAddress = {
+  testnet: string;
+  mainnet: string;
+};
+
 const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompileModal }) => {
   const [keyPath, setKeyPath] = useState<KeyPath>(KeyPath.UNKNOWN);
   const [tapleafVersion, setTapleafVersion] = useState<TapleafVersion>(TapleafVersion.DEFAULT);
   const [pubKeyInput, setPubKeyInput] = useState<string>('');
   const [tapleafInput, setTapleafInput] = useState<string>('');
   const [tweakedResult, setTweakedResult] = useState<Taproot>({ tweak: '', scriptPubkey: '', bech32: '' });
+  const [segwitAddress, setSegwitAddress] = useState<SegwitAddress>();
 
   const pubkeyDefaultValue: string = '1dae61a4a8f841952be3a511502d4f56e889ffa0685aa0098773ea2d4309f624';
   const tapleafDefaultValue: string = scriptWiz.vm.network === VM_NETWORK.LIQUID ? '0xc4' : '0xc0';
@@ -43,6 +49,13 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
     const script = compileModalData.data?.substr(2) || scriptWiz.compile().substr(2);
     let pubkey = pubkeyDefaultValue;
     let version = undefined;
+
+    if (scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.SEGWIT) {
+      const newMainnetAddress = address.createBech32Address(WizData.fromHex(script), 'bc', 0);
+      const newTestnetAddress = address.createBech32Address(WizData.fromHex(script), 'bt', 0);
+
+      setSegwitAddress({ testnet: newTestnetAddress, mainnet: newMainnetAddress });
+    }
 
     if (keyPath === KeyPath.CUSTOM) pubkey = pubKeyInput;
 
@@ -77,6 +90,9 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       <Modal.Body className="compile-modal-body scroll">
         <h5 className="compile-modal-item">Compile Result</h5>
         <p className="compile-data-p">{compileModalData.data}</p>
+        <p className="compile-data-p">{segwitAddress?.mainnet}</p>
+        <p className="compile-data-p">{segwitAddress?.testnet}</p>
+
         {((scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) ||
           (scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT)) && (
           <Form fluid>
