@@ -57,6 +57,13 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
       setSegwitAddress({ testnet: newTestnetAddress, mainnet: newMainnetAddress });
     }
 
+    if (scriptWiz.vm.network === VM_NETWORK.LIQUID && scriptWiz.vm.ver === VM_NETWORK_VERSION.SEGWIT) {
+      const newMainnetAddress = address.createBech32Address(WizData.fromHex(script), 'ex', 0);
+      const newTestnetAddress = address.createBech32Address(WizData.fromHex(script), 'tex', 0);
+
+      setSegwitAddress({ testnet: newTestnetAddress, mainnet: newMainnetAddress });
+    }
+
     if (keyPath === KeyPath.CUSTOM) pubkey = pubKeyInput;
 
     if (tapleafVersion === TapleafVersion.CUSTOM) version = tapleafInput.substr(2);
@@ -91,7 +98,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
         <h5 className="compile-modal-item">Compile Result</h5>
         <p className="compile-data-p">{compileModalData.data}</p>
 
-        {scriptWiz.vm.network === VM_NETWORK.BTC && scriptWiz.vm.ver === VM_NETWORK_VERSION.SEGWIT && (
+        {scriptWiz.vm.ver === VM_NETWORK_VERSION.SEGWIT && (
           <>
             <div className="compile-modal-item">
               <div className="compile-modal-label">Mainnet Address:</div>
