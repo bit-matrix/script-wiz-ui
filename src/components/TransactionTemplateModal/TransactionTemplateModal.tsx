@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
 import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
-import { ScriptWiz, VM } from '@script-wiz/lib';
+import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { upsertVM } from '../../helper';
+import axios from 'axios';
 import './TransactionTemplateModal.scss';
 
 type Props = {
@@ -45,6 +46,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [version, setVersion] = useState<string>('');
   const [timelock, setTimeLock] = useState<string>('');
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
+  const [lastBlock, setLastBlock] = useState<any>();
 
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData');
 
@@ -151,6 +153,38 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     closeModal();
   };
 
+  const fetchBlocks = useCallback(() => {
+    axios(scriptWiz.vm.network === VM_NETWORK.BTC ? 'https://blockstream.info/api/blocks/' : 'https://blockstream.info/liquid/api/blocks').then(
+      (res) => {
+        setLastBlock(res.data[0]);
+      },
+    );
+  }, [scriptWiz.vm.network]);
+
+  useEffect(() => {
+    if (showModal) fetchBlocks();
+  }, [fetchBlocks, showModal]);
+
+  const timelockValidation = (): string | undefined => {
+    if (lastBlock) {
+      const LOCKTIME_THRESHOLD: number = 500000000;
+      let lastBlockHeight: number = 0;
+      let lastBlockTimestamp: number = 0;
+      const timelockNumber = Number(timelock);
+
+      if (isNaN(timelockNumber)) return 'must be a number';
+
+      lastBlockHeight = lastBlock.height;
+      lastBlockTimestamp = lastBlock.timestamp;
+
+      if (timelockNumber < LOCKTIME_THRESHOLD) {
+        if (timelockNumber > lastBlockHeight) return 'must be less than last block height';
+      } else {
+        if (timelockNumber > lastBlockTimestamp) return 'must be less than last block timestamp';
+      }
+    }
+  };
+
   return (
     <Modal
       className="tx-template-modal"
@@ -251,7 +285,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
                 setTimeLock(value);
               }}
             />
-            {/* <div className="tx-error-line">{isValidTimelock}</div> */}
+            {timelockValidation() && <div className="tx-error-line">{timelockValidation()}</div>}
           </div>
         </div>
         <Button onClick={clearButtonClick}>Clear</Button>
