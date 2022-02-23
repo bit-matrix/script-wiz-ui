@@ -28,10 +28,6 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
   const sequenceValidation = (): string | undefined => {
     if (lastBlock !== undefined) {
       const sequence = txInput.input.sequence;
-      const blockHeight = 724522;
-      const blockTimestamp = 1645543620;
-      const blockDifference = lastBlock.height - blockHeight;
-      const timestampDifference = lastBlock.timestamp - blockTimestamp;
 
       if (sequence.length !== 8 || !validHex(sequence)) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR;
 
@@ -40,18 +36,34 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         const sequenceHexLE = WizData.fromHex(hexLE(sequence));
 
         if (Number(sequenceHexLE.bin[0]) !== 0) return 'Disable flag must be 0';
+
         if (Number(sequenceHexLE.bin[0]) === 0) {
           if (Number(sequenceHexLE.bin[9]) === 1) {
             const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
-
             const secondUnitValue = blockUnitValue * 512;
-            if (timestampDifference > secondUnitValue) return 'Age must not be bigger than unit value';
+
+            if (txInput.input.blockTimestamp !== undefined) {
+              const blockTimestamp = Number(txInput.input.blockTimestamp);
+
+              if (blockTimestamp !== undefined && blockTimestamp) {
+                const timestampDifference = lastBlock.timestamp - blockTimestamp;
+
+                if (timestampDifference > secondUnitValue) return 'Age must not be bigger than block timestamp';
+              }
+            }
           }
           if (Number(sequenceHexLE.bin[9]) === 0) {
             const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
-            console.log(blockUnitValue);
 
-            if (blockDifference > blockUnitValue) return 'Age must not be bigger than block unit value';
+            if (txInput.input.blockHeight !== undefined) {
+              const blockHeight = Number(txInput.input.blockHeight);
+
+              if (blockHeight !== undefined && blockHeight) {
+                const blockDifference = lastBlock.height - blockHeight;
+
+                if (blockDifference > blockUnitValue) return 'Age must not be bigger than block height';
+              }
+            }
           }
         }
       }
@@ -124,7 +136,6 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           <div className="tx-input-item">Sequence:</div>
           <Input
             value={txInput.input.sequence}
-            placeholder="4-bytes"
             onChange={(value: string) => {
               txInputOnChange(
                 {
@@ -137,6 +148,42 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
             }}
           />
           {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
+        </div>
+      </div>
+      <div className="tx-input-item-double">
+        <div className="tx-input-label">
+          <div className="tx-input-item">Block Height:</div>
+          <Input
+            value={txInput.input.blockHeight}
+            onChange={(value: string) => {
+              txInputOnChange(
+                {
+                  ...txInput.input,
+                  blockHeight: value,
+                },
+                txInput.index,
+                txInput.checked,
+              );
+            }}
+          />
+        </div>
+        <div className="tx-input-label">
+          <div className="tx-input-item">Block Timestamp:</div>
+          <Input
+            value={txInput.input.blockTimestamp}
+            placeholder="4-bytes"
+            onChange={(value: string) => {
+              txInputOnChange(
+                {
+                  ...txInput.input,
+                  blockTimestamp: value,
+                },
+                txInput.index,
+                txInput.checked,
+              );
+            }}
+          />
+          {/* {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>} */}
         </div>
       </div>
       <div className="tx-input-item">

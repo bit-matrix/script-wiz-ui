@@ -30,6 +30,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       scriptPubKey: '',
       amount: '',
       assetId: '',
+      blockHeight: '',
+      blockTimestamp: '',
     };
   }, []);
 
@@ -87,6 +89,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       scriptPubKey: input.scriptPubKey,
       amount: input.amount,
       assetId: input.assetId,
+      blockHeight: input.blockHeight,
+      blockTimestamp: input.blockTimestamp,
     };
     newTxInputs[relatedInputIndex] = newInput;
     if (checked) setCurrentInputIndex(index);
