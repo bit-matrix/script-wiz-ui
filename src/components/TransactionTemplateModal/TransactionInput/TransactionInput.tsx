@@ -5,6 +5,7 @@ import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
+import WizData, { hexLE } from '@script-wiz/wiz-data';
 import './TransactionInput.scss';
 
 type Props = {
@@ -12,9 +13,11 @@ type Props = {
   txInput: { input: TxInput; index: number; checked: boolean };
   txInputOnChange: (input: TxInput, index: number, checked: boolean) => void;
   removeInput: (index: number) => void;
+  version: string;
+  lastBlock?: any;
 };
 
-const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput }) => {
+const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput, version, lastBlock }) => {
   const isValidPreviousTxId =
     (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
@@ -22,10 +25,38 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
 
   // const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VOUT_ERROR : '';
 
-  const isValidSequence =
-    (txInput.input.sequence.length !== 8 && txInput.input.sequence.length !== 0) || !validHex(txInput.input.sequence)
-      ? TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR
-      : '';
+  const sequenceValidation = (): string | undefined => {
+    if (lastBlock !== undefined) {
+      const sequence = txInput.input.sequence;
+      const blockHeight = 724522;
+      const blockTimestamp = 1645543620;
+      const blockDifference = lastBlock.height - blockHeight;
+      const timestampDifference = lastBlock.timestamp - blockTimestamp;
+
+      if (sequence.length !== 8 || !validHex(sequence)) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR;
+
+      if (sequence) {
+        if (Number(version) < 2) return 'Version must be greater than 1';
+        const sequenceHexLE = WizData.fromHex(hexLE(sequence));
+
+        if (Number(sequenceHexLE.bin[0]) !== 0) return 'Disable flag must be 0';
+        if (Number(sequenceHexLE.bin[0]) === 0) {
+          if (Number(sequenceHexLE.bin[9]) === 1) {
+            const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
+
+            const secondUnitValue = blockUnitValue * 512;
+            if (timestampDifference > secondUnitValue) return 'Age must not be bigger than unit value';
+          }
+          if (Number(sequenceHexLE.bin[9]) === 0) {
+            const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
+            console.log(blockUnitValue);
+
+            if (blockDifference > blockUnitValue) return 'Age must not be bigger than block unit value';
+          }
+        }
+      }
+    }
+  };
 
   // const isValidAmount =
   //   (txInput.input.amount.length !== 16 && txInput.input.amount.length !== 0) || !validHex(txInput.input.amount)
@@ -105,7 +136,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               );
             }}
           />
-          <div className="tx-error-line">{isValidSequence}</div>
+          {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
         </div>
       </div>
       <div className="tx-input-item">

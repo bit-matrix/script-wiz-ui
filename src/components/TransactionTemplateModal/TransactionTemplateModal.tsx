@@ -220,6 +220,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
                         setTxInputs(newTxInputs);
                       }
                     }}
+                    version={version}
+                    lastBlock={lastBlock}
                   />
                 );
               })}
