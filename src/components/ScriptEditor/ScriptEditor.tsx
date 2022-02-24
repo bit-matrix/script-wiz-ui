@@ -65,6 +65,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [clearButtonVisibility, setClearButtonVisibility] = useState<boolean>(false);
   const [saveButtonVisibility, setSaveButtonVisibility] = useState<boolean>(false);
 
+  const [firstEditorTop, setFirstEditorTop] = useState<number>(0);
+  const [secondEditorTop, setSecondEditorTop] = useState<number>(0);
+
   const timerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
@@ -353,15 +356,44 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setSaveButtonVisibility(false);
   };
 
+  const secondDivRef = useRef<HTMLInputElement>(null);
+  const fourthDivRef = useRef<HTMLInputElement>(null);
+
+  const handleScrollFirst = (value: number) => {
+    if (secondDivRef.current !== null) {
+      secondDivRef.current.scrollTop = value;
+      setFirstEditorTop(value);
+    }
+  };
+
+  const handleScrollSecond = (event: React.UIEvent<HTMLDivElement>) => {
+    setFirstEditorTop(event.currentTarget.scrollTop);
+  };
+
+  const handleScrollThird = (value: number) => {
+    if (secondDivRef.current !== null) {
+      console.log(value);
+      secondDivRef.current.scrollTop = value;
+      setSecondEditorTop(value);
+    }
+  };
+
+  const handleScrollFourth = (event: React.UIEvent<HTMLDivElement>) => {
+    setSecondEditorTop(event.currentTarget.scrollTop);
+  };
+
   const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
     input1: (
       <div className="script-editor">
         <h3 className="script-editor-input-header">Stack Elements</h3>
+
         <ScriptEditorInput
           scriptWiz={scriptWiz}
           initialEditorValue={editorValues[0]}
           onChangeScriptEditorInput={stackElementsOnChange}
           failedLineNumber={failedLineNumber}
+          scroolTopCallback={handleScrollFirst}
+          scroolTop={firstEditorTop}
           callbackEditorValue={(value: string) => {
             if (!clearButtonVisibility) setClearButtonVisibility(true);
             if (!saveButtonVisibility) setSaveButtonVisibility(true);
@@ -376,11 +408,14 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     input2: (
       <div className="script-editor">
         <h3 className="script-editor-input-header">{scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT ? 'Tapscript' : 'Witness Script'}</h3>
+
         <ScriptEditorInput
           scriptWiz={scriptWiz}
           initialEditorValue={editorValues[1]}
           onChangeScriptEditorInput={witnessScriptOnChange}
           failedLineNumber={failedLineNumber}
+          scroolTopCallback={handleScrollThird}
+          scroolTop={secondEditorTop}
           callbackEditorValue={(value: string) => {
             if (!clearButtonVisibility) setClearButtonVisibility(true);
             if (!saveButtonVisibility) setSaveButtonVisibility(true);
@@ -395,7 +430,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     output1: (
       <div className="script-editor">
         <div className="script-editor-output-header-bar" />
-        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray2} errorMessage={errorMessage2} />
+        <div className="script-editor-content" onScroll={handleScrollSecond} ref={secondDivRef}>
+          <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray2} errorMessage={errorMessage2} />
+        </div>
       </div>
     ),
     output2: (
@@ -406,7 +443,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             <div className="state">{getWhispers(firstEditorLastData)}</div>
           </div>
         </div>
-        <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+        <div className="script-editor-content" onScroll={handleScrollFourth} ref={fourthDivRef}>
+          <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+        </div>
       </div>
     ),
   };

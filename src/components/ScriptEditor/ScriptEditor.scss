@@ -21,6 +21,11 @@
           background: #4d4e4f !important;
         }
       }
+
+      .script-editor-content {
+        height: calc(100% - 1.875rem) !important;
+        overflow: scroll;
+      }
     }
 
     .script-editor-sub-item {

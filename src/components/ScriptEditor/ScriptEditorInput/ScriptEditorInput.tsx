@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './ScriptEditorInput.scss';
 
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
@@ -21,6 +21,8 @@ type Props = {
   onChangeScriptEditorInput: (lines: string[]) => void;
   failedLineNumber?: number;
   callbackEditorValue: (value: string) => void;
+  scroolTop: number;
+  scroolTopCallback: (value: number) => void;
 };
 
 const ScriptEditorInput: React.FC<Props> = ({
@@ -29,6 +31,8 @@ const ScriptEditorInput: React.FC<Props> = ({
   onChangeScriptEditorInput,
   failedLineNumber = undefined,
   callbackEditorValue,
+  scroolTop,
+  scroolTopCallback,
 }) => {
   const [lng] = useState(scriptWizEditor.LANGUAGE + (Math.random() * 1000).toFixed(2));
   const monaco = useMonaco();
@@ -96,13 +100,26 @@ const ScriptEditorInput: React.FC<Props> = ({
     }
   };
 
+  const editorRef = useRef<any>(null);
+
+  const handleEditorDidMount = (editor: any, monaco: typeof Monaco) => {
+    editorRef.current = editor;
+
+    editor.setScrollPosition({ scrollTop: scroolTop });
+    scroolTopCallback(editor.getScrollTop());
+
+    editorRef.current.onDidScrollChange((param: any) => {
+      scroolTopCallback(param.scrollTop);
+    });
+  };
+
+  if (editorRef.current) editorRef.current.setScrollPosition({ scrollTop: scroolTop });
+
   if (monaco != null) {
     return (
       <Editor
         className="script-wiz-monaco-editor"
-        onMount={() => {
-          console.log('loading state');
-        }}
+        onMount={handleEditorDidMount}
         value={initialEditorValue}
         options={editorOptions}
         language={lng}

@@ -25,7 +25,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
   );
 
   return (
-    <div className="script-editor-output-main-div scroll">
+    <div className="script-editor-output-main-div">
       {lineStackDataListArray.map((lineStackDataList, lineNumber: number) => (
         <div className="script-editor-output-main" key={`script-editor-output-main-${lineNumber.toString()}`}>
           <span key={`editor-output-text-page-number-${lineNumber.toString()}`} className="editor-output-text-page-number">
