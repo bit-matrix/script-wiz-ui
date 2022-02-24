@@ -171,7 +171,6 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           <div className="tx-input-item">Block Timestamp:</div>
           <Input
             value={txInput.input.blockTimestamp}
-            placeholder="4-bytes"
             onChange={(value: string) => {
               txInputOnChange(
                 {
