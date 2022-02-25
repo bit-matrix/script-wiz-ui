@@ -29,7 +29,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
     if (lastBlock !== undefined) {
       const sequence = txInput.input.sequence;
 
-      if (sequence.length !== 8 || !validHex(sequence)) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR;
+      if (sequence.length && (sequence.length !== 8 || !validHex(sequence))) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR;
 
       if (sequence) {
         if (Number(version) < 2) return 'Version must be greater than 1';
