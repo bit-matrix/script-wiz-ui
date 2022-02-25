@@ -24,7 +24,20 @@
 
       .script-editor-content {
         height: calc(100% - 1.875rem) !important;
-        overflow: scroll;
+        overflow: auto;
+
+        &::-webkit-scrollbar {
+          width: 3px;
+          height: 3px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #4d4e4f;
+        }
       }
     }
 
