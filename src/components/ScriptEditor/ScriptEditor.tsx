@@ -51,45 +51,33 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const parseInput = useCallback(
     (inputText: string) => {
+      // 1: hex, 2: bin, 3/4: quoted text, 5: number, 6: opcode, 7: label
+      const reWord = /^\s*(?:<(?:0x([a-fA-F0-9]+)|0b([01]+)|"([^"]+)"|'([^']+)'|(-?\d+))>|(OP_\w+)|(\$\w+))(?:\s+|$)/;
 
-      // Look for $label assignments, keep them for later processing and strip them from the line string.
-      const labelMatches = inputText.match(/\$\w+$/)
-      if (labelMatches) {
-        inputText = inputText.replace(/\s*\$\w+$/, '')
-      }
-
-      if (inputText.startsWith('<') && inputText.endsWith('>')) {
-        const inputTextValue = inputText.substring(1, inputText.length - 1);
-
-        if (inputTextValue.startsWith('0x')) {
-          scriptWiz.parseHex(inputTextValue.substring(2));
-        } else if (inputTextValue.startsWith('0b')) {
-          scriptWiz.parseBin(inputTextValue.substring(2));
-        } else if (
-          (inputTextValue.startsWith('"') && inputTextValue.endsWith('"')) ||
-          (inputTextValue.startsWith("'") && inputTextValue.endsWith("'"))
-        ) {
-          const inputTextValueString = inputTextValue.substring(1, inputTextValue.length - 1);
-          scriptWiz.parseText(inputTextValueString);
-        } else if (!isNaN(Number(inputTextValue))) {
-          scriptWiz.parseNumber(Number(inputTextValue));
-        } else if (inputTextValue.startsWith('OP_')) {
-          const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
-          scriptWiz.parseHex(opwordToOphex.substring(2));
-        } else {
-          console.error('UI: Invalid input value!!!');
+      let lineRemain = inputText.trim();
+      while (lineRemain.length) {
+        const matches = lineRemain.match(reWord);
+        if (!matches) {
+          console.error('UI: Invalid input value:', lineRemain);
+          // TODO user-visible error message
+          return;
         }
-      } else if (inputText.startsWith('OP_')) {
-        scriptWiz.parseOpcode(inputText);
-      } else if (inputText !== '') {
-        console.error('UI: Invalid input value!!!');
-      }
 
-      // Assign the label to the last element on the stack
-      if (labelMatches) {
-        if (!scriptWiz.stackDataList.main.length) throw new Error('nothing to label');
-        const lastStack = scriptWiz.stackDataList.main[scriptWiz.stackDataList.main.length-1];
-        lastStack.label = labelMatches[0];
+        if (matches[1]) {
+          scriptWiz.parseHex(matches[1]);
+        } else if (matches[2]) {
+          scriptWiz.parseBin(matches[2]);
+        } else if (matches[3] || matches[4]) {
+          scriptWiz.parseText(matches[3] || matches[4]);
+        } else if (matches[5]) {
+          scriptWiz.parseNumber(+matches[5]);
+        } else if (matches[6]) {
+          scriptWiz.parseOpcode(matches[6]);
+        }  else if (matches[7]) {
+          scriptWiz.assignLabel(matches[7]);
+        }
+
+        lineRemain = lineRemain.slice(matches[0].length);
       }
     },
     [scriptWiz],
@@ -111,7 +99,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
     if (lines) {
       for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
+        const line = lines[i].trim();
 
         if (line !== '') {
           parseInput(line);
