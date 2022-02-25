@@ -267,10 +267,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     if (addedLines) {
       for (let i = 0; i < addedLines.length; i++) {
         const line = addedLines[i];
+        let firstIndex = 0;
 
         if (line !== '') {
           if (i < firstEditorLineCount) {
             parseInput(line, false);
+            firstIndex = i;
           } else {
             parseInput(line);
           }
@@ -281,7 +283,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             newLastStackDataList = scriptWiz.stackDataList.main;
             newLineStackDataListArray.push(newLastStackDataList);
 
-            if (i === firstEditorLineCount - 1) {
+            if (i === firstIndex) {
               setFirstEditorLastData(newLastStackDataList);
             }
 
