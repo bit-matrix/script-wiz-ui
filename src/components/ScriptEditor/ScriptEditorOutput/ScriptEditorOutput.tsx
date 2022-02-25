@@ -43,7 +43,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
         else if (stackData.text !== undefined) displayValue = stackData.text;
         return getWhisper(key, stackData.hex, displayValue, stackData.label);
       }),
-    [],
+    [getWhisper],
   );
 
   return (
