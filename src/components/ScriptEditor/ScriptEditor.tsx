@@ -371,9 +371,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   };
 
   const handleScrollThird = (value: number) => {
-    if (secondDivRef.current !== null) {
+    if (fourthDivRef.current !== null) {
       console.log(value);
-      secondDivRef.current.scrollTop = value;
+      fourthDivRef.current.scrollTop = value;
       setSecondEditorTop(value);
     }
   };
