@@ -187,6 +187,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const parseInput = useCallback(
     (inputText: string, isWitnessElement: boolean = true) => {
+      // Look for $label assignments, keep them for later processing and strip them from the line string.
+      const labelMatches = inputText.match(/\$\w+$/);
+      if (labelMatches) {
+        inputText = inputText.replace(/\s*\$\w+$/, '');
+      }
+
       if (inputText.startsWith('<') && inputText.endsWith('>')) {
         const inputTextValue = inputText.substring(1, inputText.length - 1);
 
@@ -220,6 +226,11 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         }
       } else {
         console.error('UI: Invalid input value!!!');
+      }
+
+      // Assign the label to the last element on the stack
+      if (labelMatches) {
+        scriptWiz.assignLabel(labelMatches[0]);
       }
     },
     [scriptWiz],
