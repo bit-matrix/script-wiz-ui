@@ -4,31 +4,76 @@ import { Input, Radio } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
+import { VM, VM_NETWORK } from '@script-wiz/lib';
+import WizData, { hexLE } from '@script-wiz/wiz-data';
 import './TransactionInput.scss';
 
 type Props = {
-  txInputOnChange: (input: TxInput, index: number, checked: boolean) => void;
+  vm: VM;
   txInput: { input: TxInput; index: number; checked: boolean };
+  txInputOnChange: (input: TxInput, index: number, checked: boolean) => void;
   removeInput: (index: number) => void;
+  version: string;
+  lastBlock?: any;
 };
 
-const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInput }) => {
+const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput, version, lastBlock }) => {
   const isValidPreviousTxId =
     (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
       : '';
 
-  const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VOUT_ERROR : '';
+  // const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VOUT_ERROR : '';
 
-  const isValidSequence =
-    (txInput.input.sequence.length !== 8 && txInput.input.sequence.length !== 0) || !validHex(txInput.input.sequence)
-      ? TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR
-      : '';
+  const sequenceValidation = (): string | undefined => {
+    if (lastBlock !== undefined) {
+      const sequence = txInput.input.sequence;
 
-  const isValidAmount =
-    (txInput.input.amount.length !== 16 && txInput.input.amount.length !== 0) || !validHex(txInput.input.amount)
-      ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
-      : '';
+      if (sequence.length && (sequence.length !== 8 || !validHex(sequence))) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR;
+
+      if (sequence) {
+        if (Number(version) < 2) return 'Version must be greater than 1';
+        const sequenceHexLE = WizData.fromHex(hexLE(sequence));
+
+        if (Number(sequenceHexLE.bin[0]) !== 0) return 'Disable flag must be 0';
+
+        if (Number(sequenceHexLE.bin[0]) === 0) {
+          if (Number(sequenceHexLE.bin[9]) === 1) {
+            const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
+            const secondUnitValue = blockUnitValue * 512;
+
+            if (txInput.input.blockTimestamp !== undefined) {
+              const blockTimestamp = Number(txInput.input.blockTimestamp);
+
+              if (blockTimestamp !== undefined && blockTimestamp) {
+                const timestampDifference = lastBlock.timestamp - blockTimestamp;
+
+                if (timestampDifference > secondUnitValue) return 'Age must not be bigger than block timestamp';
+              }
+            }
+          }
+          if (Number(sequenceHexLE.bin[9]) === 0) {
+            const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
+
+            if (txInput.input.blockHeight !== undefined) {
+              const blockHeight = Number(txInput.input.blockHeight);
+
+              if (blockHeight !== undefined && blockHeight) {
+                const blockDifference = lastBlock.height - blockHeight;
+
+                if (blockDifference > blockUnitValue) return 'Age must not be bigger than block height';
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // const isValidAmount =
+  //   (txInput.input.amount.length !== 16 && txInput.input.amount.length !== 0) || !validHex(txInput.input.amount)
+  //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
+  //     : '';
 
   const isValidAssetId =
     (txInput.input.assetId?.length !== 64 && txInput.input.assetId?.length !== 0) || !validHex(txInput.input.assetId)
@@ -60,12 +105,8 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
           onChange={(value: string) => {
             txInputOnChange(
               {
+                ...txInput.input,
                 previousTxId: value,
-                vout: txInput.input.vout,
-                sequence: txInput.input.sequence,
-                scriptPubKey: txInput.input.scriptPubKey,
-                amount: txInput.input.amount,
-                assetId: txInput.input.assetId,
               },
               txInput.index,
               txInput.checked,
@@ -79,45 +120,69 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
           <div className="tx-input-item">Vout:</div>
           <Input
             value={txInput.input.vout}
-            placeholder="4-bytes"
             onChange={(value: string) => {
               txInputOnChange(
                 {
-                  previousTxId: txInput.input.previousTxId,
+                  ...txInput.input,
                   vout: value,
-                  sequence: txInput.input.sequence,
-                  scriptPubKey: txInput.input.scriptPubKey,
-                  amount: txInput.input.amount,
-                  assetId: txInput.input.assetId,
                 },
                 txInput.index,
                 txInput.checked,
               );
             }}
           />
-          <div className="tx-error-line">{isValidVout}</div>
         </div>
         <div className="tx-input-label">
           <div className="tx-input-item">Sequence:</div>
           <Input
             value={txInput.input.sequence}
-            placeholder="4-bytes"
             onChange={(value: string) => {
               txInputOnChange(
                 {
-                  previousTxId: txInput.input.previousTxId,
-                  vout: txInput.input.vout,
+                  ...txInput.input,
                   sequence: value,
-                  scriptPubKey: txInput.input.scriptPubKey,
-                  amount: txInput.input.amount,
-                  assetId: txInput.input.assetId,
                 },
                 txInput.index,
                 txInput.checked,
               );
             }}
           />
-          <div className="tx-error-line">{isValidSequence}</div>
+          {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
+        </div>
+      </div>
+      <div className="tx-input-item-double">
+        <div className="tx-input-label">
+          <div className="tx-input-item">Block Height:</div>
+          <Input
+            value={txInput.input.blockHeight}
+            onChange={(value: string) => {
+              txInputOnChange(
+                {
+                  ...txInput.input,
+                  blockHeight: value,
+                },
+                txInput.index,
+                txInput.checked,
+              );
+            }}
+          />
+        </div>
+        <div className="tx-input-label">
+          <div className="tx-input-item">Block Timestamp:</div>
+          <Input
+            value={txInput.input.blockTimestamp}
+            onChange={(value: string) => {
+              txInputOnChange(
+                {
+                  ...txInput.input,
+                  blockTimestamp: value,
+                },
+                txInput.index,
+                txInput.checked,
+              );
+            }}
+          />
+          {/* {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>} */}
         </div>
       </div>
       <div className="tx-input-item">
@@ -127,12 +192,8 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
           onChange={(value: string) => {
             txInputOnChange(
               {
-                previousTxId: txInput.input.previousTxId,
-                vout: txInput.input.vout,
-                sequence: txInput.input.sequence,
+                ...txInput.input,
                 scriptPubKey: value,
-                amount: txInput.input.amount,
-                assetId: txInput.input.assetId,
               },
               txInput.index,
               txInput.checked,
@@ -141,49 +202,42 @@ const TransactionInput: React.FC<Props> = ({ txInputOnChange, txInput, removeInp
         />
       </div>
       <div className="tx-input-item">
-        <div className="tx-modal-label">Amount (LE64):</div>
+        <div className="tx-modal-label">Amount (Decimal):</div>
         <Input
           value={txInput.input.amount}
-          placeholder="8-bytes"
           onChange={(value: string) => {
             txInputOnChange(
               {
-                previousTxId: txInput.input.previousTxId,
-                vout: txInput.input.vout,
-                sequence: txInput.input.sequence,
-                scriptPubKey: txInput.input.scriptPubKey,
+                ...txInput.input,
                 amount: value,
-                assetId: txInput.input.assetId,
               },
               txInput.index,
               txInput.checked,
             );
           }}
         />
-        <div className="tx-error-line">{isValidAmount}</div>
+        {/* <div className="tx-error-line">{isValidAmount}</div> */}
       </div>
-      <div className="tx-input-item">
-        <div className="tx-modal-label">Asset ID:</div>
-        <Input
-          value={txInput.input.assetId}
-          placeholder="32-bytes"
-          onChange={(value: string) => {
-            txInputOnChange(
-              {
-                previousTxId: txInput.input.previousTxId,
-                vout: txInput.input.vout,
-                sequence: txInput.input.sequence,
-                scriptPubKey: txInput.input.scriptPubKey,
-                amount: txInput.input.amount,
-                assetId: value,
-              },
-              txInput.index,
-              txInput.checked,
-            );
-          }}
-        />
-        <div className="tx-error-line">{isValidAssetId}</div>
-      </div>
+      {vm.network === VM_NETWORK.LIQUID && (
+        <div className="tx-input-item">
+          <div className="tx-modal-label">Asset ID:</div>
+          <Input
+            value={txInput.input.assetId}
+            placeholder="32-bytes"
+            onChange={(value: string) => {
+              txInputOnChange(
+                {
+                  ...txInput.input,
+                  assetId: value,
+                },
+                txInput.index,
+                txInput.checked,
+              );
+            }}
+          />
+          <div className="tx-error-line">{isValidAssetId}</div>
+        </div>
+      )}
     </div>
   );
 };

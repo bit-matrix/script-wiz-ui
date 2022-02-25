@@ -1,21 +1,27 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
 import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
-import { TX_TEMPLATE_ERROR_MESSAGE } from '../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
-// import { validHex } from '../../utils/helper';
+import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
+import { upsertVM } from '../../helper';
+import axios from 'axios';
 import './TransactionTemplateModal.scss';
 
 type Props = {
   showModal: boolean;
+  scriptWiz: ScriptWiz;
+  txData?: TxData;
   showModalCallBack: (show: boolean) => void;
-  txDataCallBack: (txData: TxData) => void;
-  clearCallBack: () => void;
 };
 
-const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBack, txDataCallBack, clearCallBack }) => {
+type TxDataWithVersion = {
+  vm: VM;
+  txData: TxData;
+};
+
+const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
   const txInputInitial = useMemo(() => {
     return {
       previousTxId: '',
@@ -24,6 +30,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       scriptPubKey: '',
       amount: '',
       assetId: '',
+      blockHeight: '',
+      blockTimestamp: '',
     };
   }, []);
 
@@ -40,27 +48,35 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
   const [version, setVersion] = useState<string>('');
   const [timelock, setTimeLock] = useState<string>('');
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
+  const [lastBlock, setLastBlock] = useState<any>();
 
-  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxData>('txData');
+  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData');
 
   useEffect(() => {
-    if (
-      JSON.stringify(txInputs) === JSON.stringify([txInputInitial]) &&
-      JSON.stringify(txOutputs) === JSON.stringify([txOutputInitial]) &&
-      timelock === '' &&
-      version === '' &&
-      currentInputIndex === 0
-    ) {
-      const txData = getTxLocalData();
-      if (txData) {
-        setTxInputs(txData.inputs);
-        setTxOutputs(txData.outputs);
-        setVersion(txData.version);
-        setTimeLock(txData.timelock);
-        setCurrentInputIndex(txData.currentInputIndex);
+    if (showModal) {
+      const localStorageData = getTxLocalData();
+
+      if (localStorageData) {
+        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
+
+        if (currentDataVersion) {
+          setTxInputs(currentDataVersion.txData.inputs);
+          setTxOutputs(currentDataVersion.txData.outputs);
+          setVersion(currentDataVersion.txData.version);
+          setTimeLock(currentDataVersion.txData.timelock);
+          setCurrentInputIndex(currentDataVersion.txData.currentInputIndex);
+        }
+      }
+    } else {
+      const localStorageData = getTxLocalData();
+
+      if (localStorageData) {
+        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
+        scriptWiz.parseTxData(currentDataVersion?.txData);
       }
     }
-  }, [currentInputIndex, getTxLocalData, timelock, txInputInitial, txInputs, txOutputInitial, txOutputs, version]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showModal, scriptWiz]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
@@ -73,6 +89,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       scriptPubKey: input.scriptPubKey,
       amount: input.amount,
       assetId: input.assetId,
+      blockHeight: input.blockHeight,
+      blockTimestamp: input.blockTimestamp,
     };
     newTxInputs[relatedInputIndex] = newInput;
     if (checked) setCurrentInputIndex(index);
@@ -91,46 +109,84 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
     setTxOutputs(newTxOutputs);
   };
 
-  // const inputValidation = (input: TxInput) => {
-  //   if (input.previousTxId.length !== 64 && !validHex(input.previousTxId)) {
-  //     return false;
-  //   }
-  //   if (input.amount.length !== 16 || !validHex(input.amount)) {
-  //     return false;
-  //   }
-  //   if (input.assetId?.length !== 64 || !validHex(input.assetId)) {
-  //     return false;
-  //   }
-  //   if (input.sequence.length !== 8 || !validHex(input.sequence)) {
-  //     return false;
-  //   }
-  //   if (input.vout.length !== 8 || !validHex(input.vout)) {
-  //     return false;
-  //   }
-  //   return true;
-  // };
+  const closeModal = () => {
+    setTxInputs([txInputInitial]);
+    setTxOutputs([txOutputInitial]);
+    setVersion('');
+    setTimeLock('');
+    setCurrentInputIndex(0);
 
-  // const outputValidation = (output: TxOutput) => {
-  //   if (output.amount.length !== 16 || !validHex(output.amount)) {
-  //     return false;
-  //   }
-  //   if (output.assetId?.length !== 64 || !validHex(output.assetId)) {
-  //     return false;
-  //   }
-  //   return true;
-  // };
+    showModalCallBack(false);
+  };
 
-  const isValidVersion = version.length !== 8 && version.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VERSION_ERROR : '';
-  const isValidTimelock = timelock.length !== 8 && timelock.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.TIMELOCK_ERROR : '';
+  const clearButtonClick = () => {
+    closeModal();
+    scriptWiz.parseTxData();
 
-  // const isValidTemplate = txInputs.every(inputValidation) && txOutputs.every(outputValidation) && isValidVersion === '' && isValidTimelock === '';
+    const localStorageData = getTxLocalData();
 
-  const txData: TxData = {
-    inputs: txInputs,
-    outputs: txOutputs,
-    version: version,
-    timelock: timelock,
-    currentInputIndex,
+    if (localStorageData) {
+      if (localStorageData.length === 1) clearTxLocalData();
+      else {
+        const newLocalStorageData = [...localStorageData];
+        const currentIndex = newLocalStorageData.findIndex((cd) => cd.vm.ver === scriptWiz.vm.ver && cd.vm.network === scriptWiz.vm.network);
+
+        newLocalStorageData.splice(currentIndex, 1);
+
+        setTxLocalData(newLocalStorageData);
+      }
+    }
+  };
+
+  const saveButtonClick = () => {
+    const txData: TxDataWithVersion = {
+      vm: scriptWiz.vm,
+      txData: {
+        inputs: txInputs,
+        outputs: txOutputs,
+        version: version,
+        timelock: timelock,
+        currentInputIndex,
+      },
+    };
+    scriptWiz.parseTxData(txData.txData);
+
+    const previousLocalStorageData = getTxLocalData();
+    const newLocalStorageData = upsertVM(txData, previousLocalStorageData);
+    setTxLocalData(newLocalStorageData);
+    closeModal();
+  };
+
+  const fetchBlocks = useCallback(() => {
+    axios(scriptWiz.vm.network === VM_NETWORK.BTC ? 'https://blockstream.info/api/blocks/' : 'https://blockstream.info/liquid/api/blocks').then(
+      (res) => {
+        setLastBlock(res.data[0]);
+      },
+    );
+  }, [scriptWiz.vm.network]);
+
+  useEffect(() => {
+    if (showModal) fetchBlocks();
+  }, [fetchBlocks, showModal]);
+
+  const timelockValidation = (): string | undefined => {
+    if (lastBlock) {
+      const LOCKTIME_THRESHOLD: number = 500000000;
+      let lastBlockHeight: number = 0;
+      let lastBlockTimestamp: number = 0;
+      const timelockNumber = Number(timelock);
+
+      if (isNaN(timelockNumber)) return 'must be a number';
+
+      lastBlockHeight = lastBlock.height;
+      lastBlockTimestamp = lastBlock.timestamp;
+
+      if (timelockNumber < LOCKTIME_THRESHOLD) {
+        if (timelockNumber > lastBlockHeight) return 'must be less than last block height';
+      } else {
+        if (timelockNumber > lastBlockTimestamp) return 'must be less than last block timestamp';
+      }
+    }
   };
 
   return (
@@ -140,8 +196,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
       open={showModal}
       backdrop={false}
       onClose={() => {
-        // txDataCallBack(txData);
-        showModalCallBack(false);
+        closeModal();
       }}
     >
       <Modal.Header className="tx-template-modal-header" />
@@ -161,6 +216,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                     key={index}
                     txInput={txInput}
                     txInputOnChange={txInputOnChange}
+                    vm={scriptWiz.vm}
                     removeInput={(index: number) => {
                       const newTxInputs = [...txInputs];
                       if (txInputs.length > 1) {
@@ -168,6 +224,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                         setTxInputs(newTxInputs);
                       }
                     }}
+                    version={version}
+                    lastBlock={lastBlock}
                   />
                 );
               })}
@@ -192,6 +250,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
                     key={index}
                     txOutput={txOutput}
                     txOutputOnChange={txOutputOnChange}
+                    vm={scriptWiz.vm}
                     removeOutput={(index: number) => {
                       const newTxOutputs = [...txOutputs];
                       if (txOutputs.length > 1) {
@@ -221,47 +280,22 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, showModalCallBac
         <div className="tx-template-modal-footer">
           <div className="tx-item">
             <div className="tx-modal-label">Tx Version:</div>
-            <Input value={version} placeholder="4-bytes" onChange={(value: string) => setVersion(value)} />
-            <div className="tx-error-line">{isValidVersion}</div>
+            <Input value={version} onChange={(value: string) => setVersion(value)} />
+            {/* <div className="tx-error-line">{isValidVersion}</div> */}
           </div>
           <div className="tx-item">
             <div className="tx-modal-label">Tx Timelock:</div>
             <Input
               value={timelock}
-              placeholder="4-bytes"
               onChange={(value: string) => {
                 setTimeLock(value);
               }}
             />
-            <div className="tx-error-line">{isValidTimelock}</div>
+            {timelockValidation() && <div className="tx-error-line">{timelockValidation()}</div>}
           </div>
         </div>
-        <Button
-          onClick={() => {
-            setTxInputs([txInputInitial]);
-            setTxOutputs([txOutputInitial]);
-            setVersion('');
-            setTimeLock('');
-            clearCallBack();
-            clearTxLocalData();
-          }}
-        >
-          Clear
-        </Button>
-        <Button
-          className="tx-modal-save-button"
-          appearance="subtle"
-          onClick={() => {
-            txDataCallBack(txData);
-            showModalCallBack(false);
-            setTxLocalData(txData);
-            // if (isValidTemplate) {
-            //   txDataCallBack(txData);
-            //   showModalCallBack(false);
-            // }
-          }}
-          // disabled={!isValidTemplate}
-        >
+        <Button onClick={clearButtonClick}>Clear</Button>
+        <Button className="tx-modal-save-button" appearance="subtle" onClick={saveButtonClick}>
           Save
         </Button>
       </Modal.Footer>

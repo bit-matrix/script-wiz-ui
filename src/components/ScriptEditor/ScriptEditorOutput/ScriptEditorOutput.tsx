@@ -4,12 +4,11 @@ import BanIcon from '../../Svg/Icons/Ban';
 import './ScriptEditorOutput.scss';
 
 type Props = {
-  lastStackDataList: Array<WizData>;
   lineStackDataListArray: Array<Array<WizData>>;
-  errorMessage: string | undefined;
+  errorMessage?: string;
 };
 
-const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataListArray, errorMessage }) => {
+const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage }) => {
   const getOutputValueType = (value: string): string => {
     if (value.startsWith('0x')) {
       return 'hex';
@@ -39,9 +38,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
     (stackDataArray: WizData[], lineNumber: number) =>
       stackDataArray.map((stackData: WizData, index: number) => {
         const key = `whisper-${lineNumber.toString()}-${index.toString()}-text`;
-
         let displayValue = '0x' + stackData.hex;
-
         if (stackData.number !== undefined) displayValue = stackData.number.toString();
         else if (stackData.text !== undefined) displayValue = stackData.text;
         return getWhisper(key, stackData.hex, displayValue, stackData.label);
@@ -50,12 +47,13 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
   );
 
   return (
-    <>
+    <div className="script-editor-output-main-div">
       {lineStackDataListArray.map((lineStackDataList, lineNumber: number) => (
         <div className="script-editor-output-main" key={`script-editor-output-main-${lineNumber.toString()}`}>
           <span key={`editor-output-text-page-number-${lineNumber.toString()}`} className="editor-output-text-page-number">
             {lineNumber + 1}
           </span>
+
           {getWhispers(lineStackDataList, lineNumber)}
           <br />
         </div>
@@ -72,7 +70,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lastStackDataList, lineStackDataL
           </span>
         </div>
       ) : undefined}
-    </>
+    </div>
   );
 };
 

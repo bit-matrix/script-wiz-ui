@@ -26,13 +26,13 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
 
   const title = useMemo(() => {
     if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
-      return 'Liquid (SegWit/Legacy)';
+      return 'Liquid (v0_p2wsh)';
     } else if (vm.network === VM_NETWORK.LIQUID && vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) {
-      return 'Liquid (Tapscript)';
+      return 'Liquid (v1_p2tr)';
     } else if (vm.network === VM_NETWORK.BTC && vm.ver === VM_NETWORK_VERSION.SEGWIT) {
-      return 'Bitcoin (SegWit/Legacy)';
+      return 'Bitcoin (v0_p2wsh)';
     } else if (vm.network === VM_NETWORK.BTC && vm.ver === VM_NETWORK_VERSION.TAPSCRIPT) {
-      return 'Bitcoin (Tapscript)';
+      return 'Bitcoin (v1_p2tr)';
     }
   }, [vm]);
 
@@ -90,7 +90,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           >
             {
               <div className="dropdown-item">
-                <span>Liquid (SegWit/Legacy)</span>
+                <span>Liquid (v0_p2wsh)</span>
               </div>
             }
           </Dropdown.Item>
@@ -102,7 +102,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           >
             {
               <div className="dropdown-item">
-                <span>Bitcoin (SegWit/Legacy)</span>
+                <span>Bitcoin (v0_p2wsh)</span>
               </div>
             }
           </Dropdown.Item>
@@ -114,7 +114,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           >
             {
               <div className="dropdown-item">
-                <span>Liquid (Tapscript)</span>
+                <span>Liquid (v1_p2tr)</span>
               </div>
             }
           </Dropdown.Item>
@@ -126,7 +126,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
           >
             {
               <div className="dropdown-item">
-                <span>Bitcoin (Tapscript)</span>
+                <span>Bitcoin (v1_p2tr)</span>
               </div>
             }
           </Dropdown.Item>
