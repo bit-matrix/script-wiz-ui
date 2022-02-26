@@ -62,6 +62,7 @@
 
     .script-editor-header-right-section-dropdown {
       min-width: 11rem;
+      z-index: 100;
       .rs-btn-subtle:active {
         background-color: transparent !important;
       }
