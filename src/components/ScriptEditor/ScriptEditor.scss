@@ -60,13 +60,16 @@
     .mosaic.mosaic-blueprint-theme {
       .-column {
         height: 2px;
-        z-index: 100;
+        z-index: 99;
         width: 100%;
+        &:hover {
+          left: 0 !important;
+        }
       }
 
       .-row {
         width: 2px;
-        z-index: 100;
+        z-index: 98;
         background-color: #26282a;
       }
       .mosaic-split {
