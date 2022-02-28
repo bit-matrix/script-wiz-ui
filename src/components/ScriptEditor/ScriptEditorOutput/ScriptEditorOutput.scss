@@ -85,11 +85,11 @@
     border: 1px solid #44474b;
     position: absolute;
     font-size: 1rem;
-    z-index: 1;
-    top: -5px;
-    left: 100%;
+    z-index: 100;
+    bottom: 100%;
+    left: 5%;
     word-wrap: break-word;
-    max-width: 15rem;
+    max-width: 500px;
   }
 
   &:hover {
