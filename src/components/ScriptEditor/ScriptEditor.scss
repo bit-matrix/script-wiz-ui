@@ -60,7 +60,7 @@
     .mosaic.mosaic-blueprint-theme {
       .-column {
         height: 2px;
-        z-index: 99;
+        z-index: 19;
         width: 100%;
         &:hover {
           left: 0 !important;
@@ -69,7 +69,7 @@
 
       .-row {
         width: 2px;
-        z-index: 98;
+        z-index: 18;
         background-color: #26282a;
       }
       .mosaic-split {
