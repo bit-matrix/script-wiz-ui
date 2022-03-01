@@ -18,7 +18,7 @@ const CustomWhisper: React.FC<Props> = ({ tooltip, display, label, key }) => {
   );
 
   return (
-    <Whisper delayOpen={500} placement="autoVerticalStart" trigger="hover" speaker={speaker} controlId={key} enterable>
+    <Whisper delayOpen={500} placement="auto" trigger="hover" speaker={speaker} controlId={key} enterable>
       <div className="tooltip">
         <div className={`editor-output-text ${getOutputValueType(display)}`}>
           {label ? <em className="editor-output-label">{label} </em> : ''}
