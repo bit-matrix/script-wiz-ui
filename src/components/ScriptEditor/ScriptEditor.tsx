@@ -354,14 +354,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     setSaveButtonVisibility(false);
   };
 
-  const secondDivRef = useRef<HTMLInputElement>(null);
-  const fourthDivRef = useRef<HTMLInputElement>(null);
-
   const handleScrollFirst = (value: number) => {
-    if (secondDivRef.current !== null) {
-      secondDivRef.current.scrollTop = value;
-      setFirstEditorTop(value);
-    }
+    setFirstEditorTop(value);
   };
 
   const handleScrollSecond = (event: React.UIEvent<HTMLDivElement>) => {
@@ -369,10 +363,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   };
 
   const handleScrollThird = (value: number) => {
-    if (fourthDivRef.current !== null) {
-      fourthDivRef.current.scrollTop = value;
-      setSecondEditorTop(value);
-    }
+    setSecondEditorTop(value);
   };
 
   const handleScrollFourth = (event: React.UIEvent<HTMLDivElement>) => {
@@ -427,9 +418,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     output1: (
       <div className="script-editor">
         <div className="script-editor-output-header-bar" />
-        <div className="script-editor-content" onScroll={handleScrollSecond} ref={secondDivRef}>
-          <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray2} errorMessage={errorMessage2} />
-        </div>
+        <ScriptEditorOutput
+          lineStackDataListArray={lineStackDataListArray2}
+          errorMessage={errorMessage2}
+          scroolTopCallback={handleScrollSecond}
+          scroolTop={firstEditorTop}
+        />
       </div>
     ),
     output2: (
@@ -440,9 +434,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             <div className="state">{getWhispers(firstEditorLastData)}</div>
           </div>
         </div>
-        <div className="script-editor-content" onScroll={handleScrollFourth} ref={fourthDivRef}>
-          <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
-        </div>
+        <ScriptEditorOutput
+          lineStackDataListArray={lineStackDataListArray}
+          errorMessage={errorMessage}
+          scroolTopCallback={handleScrollFourth}
+          scroolTop={secondEditorTop}
+        />
       </div>
     ),
   };
