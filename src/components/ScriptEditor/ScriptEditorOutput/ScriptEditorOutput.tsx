@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import WizData from '@script-wiz/wiz-data';
 import BanIcon from '../../Svg/Icons/Ban';
 import { getWhispers } from '../../../helper/getWhispers';
@@ -7,11 +7,19 @@ import './ScriptEditorOutput.scss';
 type Props = {
   lineStackDataListArray: Array<Array<WizData>>;
   errorMessage?: string;
+  scroolTop: number;
+  scroolTopCallback: (event: React.UIEvent<HTMLDivElement>) => void;
 };
 
-const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage }) => {
+const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage, scroolTop, scroolTopCallback }) => {
+  const divRef = useRef<HTMLInputElement>(null);
+
+  if (divRef.current !== null) {
+    divRef.current.scrollTop = scroolTop;
+  }
+
   return (
-    <div className="script-editor-output-main-div">
+    <div className="script-editor-output-main-div" onScroll={scroolTopCallback} ref={divRef}>
       {lineStackDataListArray.map((lineStackDataList, lineNumber: number) => (
         <div className="script-editor-output-main" key={`script-editor-output-main-${lineNumber.toString()}`}>
           <span key={`editor-output-text-page-number-${lineNumber.toString()}`} className="editor-output-text-page-number">
