@@ -1,0 +1,29 @@
+.tooltip {
+  position: relative;
+  display: inline-block;
+  color: #cbcccc !important;
+  border-radius: unset !important;
+  left: 1.5rem;
+
+  .editor-output-text {
+    margin-right: 0.75rem;
+
+    .editor-output-label {
+      color: #9477cb;
+    }
+  }
+}
+
+.custom-popover {
+  background-color: #252526 !important;
+  word-wrap: break-word;
+  max-width: 500px;
+
+  .tooltiptext {
+    color: #cbcccc;
+    font-size: 0.875rem;
+    z-index: 100;
+    bottom: 100%;
+    left: 5%;
+  }
+}

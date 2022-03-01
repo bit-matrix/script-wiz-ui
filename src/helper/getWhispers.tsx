@@ -1,5 +1,5 @@
 import WizData from '@script-wiz/wiz-data';
-import CustomWhisper from '../components/ScriptEditor/CustomWhisper';
+import CustomWhisper from '../components/CustomWhisper/CustomWhisper';
 
 export const getWhispers = (stackDataArray: WizData[], lineNumber?: number) =>
   stackDataArray.map((stackData: WizData, index: number) => {
