@@ -102,10 +102,10 @@ const ScriptEditorInput: React.FC<Props> = ({
 
   const editorRef = useRef<any>(null);
 
-  const handleEditorDidMount = (editor: any, monaco: typeof Monaco) => {
+  const handleEditorDidMount = (editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => {
     editorRef.current = editor;
 
-    editor.setScrollPosition({ scrollTop: scroolTop });
+    editor.setScrollTop(scroolTop, Monaco.editor.ScrollType.Smooth);
     scroolTopCallback(editor.getScrollTop());
 
     editorRef.current.onDidScrollChange((param: any) => {
@@ -113,7 +113,7 @@ const ScriptEditorInput: React.FC<Props> = ({
     });
   };
 
-  if (editorRef.current) editorRef.current.setScrollPosition({ scrollTop: scroolTop });
+  if (editorRef.current) editorRef.current.setScrollTop(scroolTop, Monaco.editor.ScrollType.Smooth);
 
   if (monaco != null) {
     return (
