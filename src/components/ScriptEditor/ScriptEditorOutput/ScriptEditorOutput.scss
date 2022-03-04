@@ -3,19 +3,42 @@
   width: 100%;
   height: calc(100% - 1.875rem);
   background-color: #181b1e;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
 
-  &::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
+  .script-editor-output-lines {
+    display: block;
+    height: 100%;
+    width: 2rem;
+    padding-right: 2.5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+      height: 3px;
+      display: none;
+    }
   }
+  .script-editor-output-content {
+    height: 100%;
+    width: calc(100% - 1.5rem);
+    overflow-x: auto;
+    overflow-y: auto;
 
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
+    &::-webkit-scrollbar {
+      width: 3px;
+      height: 3px;
+    }
 
-  &::-webkit-scrollbar-thumb {
-    background: #4d4e4f;
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #4d4e4f;
+    }
   }
 }
 
@@ -63,12 +86,13 @@
 
 .editor-output-text-page-number {
   color: #858585;
-  padding-right: 0.5rem;
+  // padding-right: 0.5rem;
   width: 1.5rem;
-  position: absolute;
   background: #181b1e;
   text-align: right;
   z-index: 1;
+  height: 18px;
+  font-size: 0.8125rem;
 }
 
 .editor-output-label {
