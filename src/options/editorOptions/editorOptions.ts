@@ -9,14 +9,19 @@ const editorOptions: Monaco.editor.IEditorConstructionOptions = {
   scrollBeyondLastLine: false,
   contextmenu: false,
   folding: false,
+  wordWrap: 'off',
   wrappingIndent: 'same',
   minimap: { enabled: false },
   scrollbar: {
     verticalScrollbarSize: 6,
     horizontalScrollbarSize: 6,
-    alwaysConsumeMouseWheel: false,
+    alwaysConsumeMouseWheel: true,
     vertical: 'hidden',
   },
+
+  smoothScrolling: true,
+  mouseWheelScrollSensitivity: 1,
+  fastScrollSensitivity: 1,
 };
 
 export default editorOptions;
