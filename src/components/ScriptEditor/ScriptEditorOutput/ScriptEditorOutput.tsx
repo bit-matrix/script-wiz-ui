@@ -54,7 +54,7 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
             {lineNumber + 1}
           </span>
 
-          {getWhispers(lineStackDataList, lineNumber)}
+          <div className="script-editor-output-content"> {getWhispers(lineStackDataList, lineNumber)}</div>
           <br />
         </div>
       ))}
