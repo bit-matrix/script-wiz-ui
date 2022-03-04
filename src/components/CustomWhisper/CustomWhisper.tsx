@@ -7,10 +7,9 @@ type Props = {
   tooltip: string;
   display: string;
   label?: string;
-  key: string;
 };
 
-const CustomWhisper: React.FC<Props> = ({ tooltip, display, label, key }) => {
+const CustomWhisper: React.FC<Props> = ({ tooltip, display, label }) => {
   const speaker = (
     <Popover className="custom-popover" title="">
       <span className="tooltiptext">{'0x' + tooltip}</span>
@@ -18,7 +17,7 @@ const CustomWhisper: React.FC<Props> = ({ tooltip, display, label, key }) => {
   );
 
   return (
-    <Whisper delayOpen={500} placement="auto" trigger="hover" speaker={speaker} controlId={key} enterable>
+    <Whisper delayOpen={500} placement="auto" trigger="hover" speaker={speaker} controlId={`whisper-${tooltip}-${label}`} enterable>
       <div className="tooltip">
         <div className={`editor-output-text ${getOutputValueType(display)}`}>
           {label ? <em className="editor-output-label">{label} </em> : ''}
