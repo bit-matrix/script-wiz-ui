@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import WizData from '@script-wiz/wiz-data';
 import BanIcon from '../../Svg/Icons/Ban';
 import { getWhispers } from '../../../helper/getWhispers';
