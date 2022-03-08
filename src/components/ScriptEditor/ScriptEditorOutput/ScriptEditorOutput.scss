@@ -76,33 +76,3 @@
 //         border-radius: unset !important;
 //     }
 // }
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-  color: #cbcccc !important;
-  border-radius: unset !important;
-  left: 1.5rem;
-
-  .tooltiptext {
-    display: none;
-    background-color: #252526 !important;
-    color: #cbcccc;
-    padding: 0.25rem 0.375rem;
-    border: 1px solid #44474b;
-    position: absolute;
-    font-size: 1rem;
-    z-index: 1;
-    top: -5px;
-    left: 100%;
-    word-wrap: break-word;
-    max-width: 15rem;
-  }
-
-  &:hover {
-    .tooltiptext {
-      display: block;
-      transition-delay: 0.5s;
-    }
-  }
-}
