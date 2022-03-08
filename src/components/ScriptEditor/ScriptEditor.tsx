@@ -15,8 +15,8 @@ import {
 } from './ScriptEditorInput/initialEditorValue';
 import CompileModal from '../CompileModal/CompileModal';
 import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
-import CustomWhisper from './CustomWhisper';
 import { Mosaic } from 'react-mosaic-component';
+import { getWhispers } from '../../helper/getWhispers';
 import './ScriptEditor.scss';
 
 type Props = {
@@ -310,21 +310,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     const compileScript = scriptWiz.compile();
     setCompileModalData({ show: true, data: compileScript });
   };
-
-  const getWhispers = useCallback(
-    (stackDataArray: WizData[]) =>
-      stackDataArray.map((stackData: WizData, index: number) => {
-        const key = `whisper-${index.toString()}-text`;
-
-        let displayValue = '0x' + stackData.hex;
-
-        if (stackData.number !== undefined) displayValue = stackData.number.toString();
-        else if (stackData.text !== undefined) displayValue = stackData.text;
-
-        return <CustomWhisper key={key} tooltip={stackData.hex} display={displayValue} />;
-      }),
-    [],
-  );
 
   const clearLocalStorage = () => {
     const localStorageData = localStorage.getItem(LOCAL_STORAGE_KEY);
