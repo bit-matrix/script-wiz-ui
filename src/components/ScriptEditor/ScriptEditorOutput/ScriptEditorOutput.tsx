@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import WizData from '@script-wiz/wiz-data';
 import BanIcon from '../../Svg/Icons/Ban';
 import { getWhispers } from '../../../helper/getWhispers';
@@ -14,13 +14,15 @@ type Props = {
 const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage, scroolTop, scroolTopCallback }) => {
   const divRef = useRef<HTMLInputElement>(null);
 
-  if (divRef.current !== null) {
-    divRef.current.scrollTop = scroolTop;
-  }
+  useEffect(() => {
+    if (divRef.current !== null) {
+      divRef.current.scrollTop = scroolTop;
+    }
+  }, [scroolTop]);
 
-  return (
-    <div className="script-editor-output-main-div" onScroll={scroolTopCallback} ref={divRef}>
-      {lineStackDataListArray.map((lineStackDataList, lineNumber: number) => (
+  const lineStackDataList = useMemo(
+    () =>
+      lineStackDataListArray.map((lineStackDataList, lineNumber: number) => (
         <div className="script-editor-output-main" key={`script-editor-output-main-${lineNumber.toString()}`}>
           <span key={`editor-output-text-page-number-${lineNumber.toString()}`} className="editor-output-text-page-number">
             {lineNumber + 1}
@@ -29,7 +31,12 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
           <div className="script-editor-output-content"> {getWhispers(lineStackDataList, lineNumber)}</div>
           <br />
         </div>
-      ))}
+      )),
+    [lineStackDataListArray],
+  );
+  return (
+    <div className="script-editor-output-main-div" onScroll={scroolTopCallback} ref={divRef}>
+      {lineStackDataList}
       {errorMessage ? (
         <div className="script-editor-output-main" key={`script-editor-output-main-error`}>
           <span key={`editor-output-text-page-number-error`} className="editor-output-text-page-number"></span>
