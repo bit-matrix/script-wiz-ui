@@ -111,7 +111,7 @@ const ScriptEditorInput: React.FC<Props> = ({
 
   useEffect(() => {
     if (editorRef.current) editorRef.current.setScrollPosition({ scrollTop: scroolTop });
-  }, []);
+  }, [scroolTop]);
 
   if (monaco != null) {
     return (
