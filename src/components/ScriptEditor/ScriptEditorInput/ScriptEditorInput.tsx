@@ -110,7 +110,7 @@ const ScriptEditorInput: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (editorRef.current) editorRef.current.setScrollPosition({ scrollTop: scroolTop });
+    if (editorRef.current) editorRef.current.setScrollTop(scroolTop, Monaco.editor.ScrollType.Smooth);
   }, [scroolTop]);
 
   if (monaco != null) {
