@@ -17,6 +17,10 @@ const editorOptions: Monaco.editor.IEditorConstructionOptions = {
     alwaysConsumeMouseWheel: false,
     vertical: 'hidden',
   },
+
+  // smoothScrolling: true,
+  // mouseWheelScrollSensitivity: 1,
+  fastScrollSensitivity: 1,
 };
 
 export default editorOptions;

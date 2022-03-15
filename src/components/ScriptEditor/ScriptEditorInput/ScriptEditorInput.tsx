@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import './ScriptEditorInput.scss';
-
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import themeOptions from '../../../options/editorOptions/themeOptions';
 import Editor, { useMonaco } from '@monaco-editor/react';
 import editorOptions from '../../../options/editorOptions/editorOptions';
-
 import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
 import { convertEditorLines } from '../../../helper';
 import { ScriptWiz } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
-
 import './ScriptEditorInput.scss';
 
 type Props = {
@@ -102,10 +98,10 @@ const ScriptEditorInput: React.FC<Props> = ({
 
   const editorRef = useRef<any>(null);
 
-  const handleEditorDidMount = (editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => {
+  const handleEditorDidMount = (editor: any, monaco: typeof Monaco) => {
     editorRef.current = editor;
 
-    editor.setScrollTop(scroolTop, Monaco.editor.ScrollType.Smooth);
+    editor.setScrollPosition({ scrollTop: scroolTop });
     scroolTopCallback(editor.getScrollTop());
 
     editorRef.current.onDidScrollChange((param: any) => {
@@ -113,7 +109,9 @@ const ScriptEditorInput: React.FC<Props> = ({
     });
   };
 
-  if (editorRef.current) editorRef.current.setScrollTop(scroolTop, Monaco.editor.ScrollType.Smooth);
+  useEffect(() => {
+    if (editorRef.current) editorRef.current.setScrollTop(scroolTop, Monaco.editor.ScrollType.Smooth);
+  }, [scroolTop]);
 
   if (monaco != null) {
     return (
