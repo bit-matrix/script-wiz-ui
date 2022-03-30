@@ -50,12 +50,13 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
   const [lastBlock, setLastBlock] = useState<any>();
 
-  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData');
+  const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
+  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
 
   useEffect(() => {
     if (showModal) {
       const localStorageData = getTxLocalData();
-
+      clearTxLocalDataEx();
       if (localStorageData) {
         const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
 
