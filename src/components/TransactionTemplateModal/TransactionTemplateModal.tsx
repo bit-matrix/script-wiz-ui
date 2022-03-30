@@ -50,15 +50,15 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
   const [lastBlock, setLastBlock] = useState<any>();
 
-  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData');
+  const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
+  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
 
   useEffect(() => {
-    if (showModal) {
-      const localStorageData = getTxLocalData();
-
-      if (localStorageData) {
-        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
-
+    const localStorageData = getTxLocalData();
+    clearTxLocalDataEx();
+    if (localStorageData) {
+      const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
+      if (showModal) {
         if (currentDataVersion) {
           setTxInputs(currentDataVersion.txData.inputs);
           setTxOutputs(currentDataVersion.txData.outputs);
@@ -66,17 +66,12 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
           setTimeLock(currentDataVersion.txData.timelock);
           setCurrentInputIndex(currentDataVersion.txData.currentInputIndex);
         }
-      }
-    } else {
-      const localStorageData = getTxLocalData();
-
-      if (localStorageData) {
-        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
+      } else {
         scriptWiz.parseTxData(currentDataVersion?.txData);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showModal, scriptWiz]);
+  }, [showModal, scriptWiz, getTxLocalData]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
