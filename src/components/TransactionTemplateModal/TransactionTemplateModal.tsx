@@ -12,7 +12,6 @@ import './TransactionTemplateModal.scss';
 type Props = {
   showModal: boolean;
   scriptWiz: ScriptWiz;
-  txData?: TxData;
   showModalCallBack: (show: boolean) => void;
 };
 
