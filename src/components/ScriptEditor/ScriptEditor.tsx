@@ -17,6 +17,7 @@ import CompileModal from '../CompileModal/CompileModal';
 import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
 import CustomWhisper from './CustomWhisper';
 import { Mosaic } from 'react-mosaic-component';
+import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import './ScriptEditor.scss';
 
 type Props = {
@@ -70,10 +71,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const timerRef = useRef<number | undefined>(undefined);
 
+  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<string>(LOCAL_STORAGE_KEY);
+
   useEffect(() => {
     let editorLines: string[] = [];
 
-    const localStorageValue = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const localStorageValue = getTxLocalData();
 
     if (localStorageValue) {
       const localStorageArray = JSON.parse(localStorageValue);
@@ -104,6 +107,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 : [initialLiquidEditorValue, localStorageObject.editorLines2];
           }
         }
+
         setClearButtonVisibility(true);
       } else {
         if (scriptWiz.vm.network === VM_NETWORK.BTC) {
@@ -142,10 +146,10 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const saveLocalStorageData = useCallback(() => {
     if (clearButtonVisibility) {
-      const currentLocalStorage = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const currentLocalStorage = getTxLocalData();
 
       //check local storage
-      if (currentLocalStorage !== null) {
+      if (currentLocalStorage && currentLocalStorage !== null) {
         const currentLocalStorageArray = JSON.parse(currentLocalStorage);
         const newLocalStorageArray = [...currentLocalStorageArray];
 
@@ -164,15 +168,14 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           newLocalStorageArray.push({ editorLines1: editorValues[0], editorLines2: editorValues[1], vm: scriptWiz.vm });
         }
 
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newLocalStorageArray));
+        setTxLocalData(JSON.stringify(newLocalStorageArray));
       } else {
         //if local storage is empty
-
         const localStorageValue: { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM }[] = [
           { editorLines1: editorValues[0], editorLines2: editorValues[1], vm: scriptWiz.vm },
         ];
 
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localStorageValue));
+        setTxLocalData(JSON.stringify(localStorageValue));
       }
 
       setSaveButtonVisibility(false);
@@ -184,6 +187,50 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     saveLocalStorageData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
+
+  const clearLocalStorageData = () => {
+    const localStorageData = getTxLocalData();
+
+    if (localStorageData) {
+      const localStorageDataJSON: EditorLocalStorage[] = JSON.parse(localStorageData);
+      const currentLocalStorageDataIndex = localStorageDataJSON.findIndex(
+        (value: EditorLocalStorage) => value.vm.network === scriptWiz.vm.network && value.vm.ver === scriptWiz.vm.ver,
+      );
+
+      if (currentLocalStorageDataIndex > -1) {
+        const newLocalStorageDataJSON = [...localStorageDataJSON];
+        newLocalStorageDataJSON.splice(currentLocalStorageDataIndex, 1);
+
+        if (newLocalStorageDataJSON.length === 0) {
+          clearTxLocalData();
+        } else {
+          setTxLocalData(JSON.stringify(newLocalStorageDataJSON));
+        }
+      }
+    }
+
+    let editorLines: string[] = [];
+
+    if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+      editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
+    } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+      editorLines =
+        scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+          ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
+          : [initialLiquidEditorValue, initialLiquidEditorValue2];
+    }
+
+    let lines = convertEditorLines(editorLines[0]);
+    let lines2 = convertEditorLines(editorLines[1]);
+
+    setLines(lines);
+    setLines2(lines2);
+
+    setEditorValues(editorLines);
+
+    setClearButtonVisibility(false);
+    setSaveButtonVisibility(false);
+  };
 
   const parseInput = useCallback(
     (inputText: string, isWitnessElement: boolean = true) => {
@@ -239,8 +286,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const stackElementsOnChange = (lines: string[]) => {
     setErrorMessage(undefined);
     setErrorMessage2(undefined);
-    if (timerRef.current) window.clearTimeout(timerRef.current);
 
+    if (timerRef.current) window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
       setLines(lines);
     }, 250);
@@ -248,6 +295,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const witnessScriptOnChange = (lines2: string[]) => {
     setErrorMessage(undefined);
+
     if (timerRef.current) window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
       setLines2(lines2);
@@ -325,49 +373,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       }),
     [],
   );
-
-  const clearLocalStorage = () => {
-    const localStorageData = localStorage.getItem(LOCAL_STORAGE_KEY);
-
-    if (localStorageData) {
-      const localStorageDataJSON: EditorLocalStorage[] = JSON.parse(localStorageData);
-      const currentLocalStorageDataIndex = localStorageDataJSON.findIndex(
-        (value: EditorLocalStorage) => value.vm.network === scriptWiz.vm.network && value.vm.ver === scriptWiz.vm.ver,
-      );
-
-      if (currentLocalStorageDataIndex > -1) {
-        const newLocalStorageDataJSON = [...localStorageDataJSON];
-        newLocalStorageDataJSON.splice(currentLocalStorageDataIndex, 1);
-
-        if (newLocalStorageDataJSON.length === 0) {
-          localStorage.removeItem(LOCAL_STORAGE_KEY);
-        } else {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newLocalStorageDataJSON));
-        }
-      }
-    }
-
-    let editorLines: string[] = [];
-    if (scriptWiz.vm.network === VM_NETWORK.BTC) {
-      editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
-    } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
-      editorLines =
-        scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
-          ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
-          : [initialLiquidEditorValue, initialLiquidEditorValue2];
-    }
-
-    let lines = convertEditorLines(editorLines[0]);
-    let lines2 = convertEditorLines(editorLines[1]);
-
-    setLines(lines);
-    setLines2(lines2);
-
-    setEditorValues(editorLines);
-
-    setClearButtonVisibility(false);
-    setSaveButtonVisibility(false);
-  };
 
   const secondDivRef = useRef<HTMLInputElement>(null);
   const fourthDivRef = useRef<HTMLInputElement>(null);
@@ -470,7 +475,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         compileButtonClick={compileScripts}
         txTemplateClick={() => setShowTemplateModal(true)}
         saveEditorClick={saveLocalStorageData}
-        clearEditorClick={clearLocalStorage}
+        clearEditorClick={clearLocalStorageData}
         clearButtonVisibility={clearButtonVisibility}
         saveButtonVisibility={saveButtonVisibility}
       />
