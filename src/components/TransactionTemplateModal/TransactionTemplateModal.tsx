@@ -53,24 +53,27 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
 
   useEffect(() => {
-    const localStorageData = getTxLocalData();
     clearTxLocalDataEx();
+
+    const localStorageData = getTxLocalData();
+
     if (localStorageData) {
       const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
-      if (showModal) {
-        if (currentDataVersion) {
+
+      if (currentDataVersion) {
+        if (showModal) {
           setTxInputs(currentDataVersion.txData.inputs);
           setTxOutputs(currentDataVersion.txData.outputs);
           setVersion(currentDataVersion.txData.version);
           setTimeLock(currentDataVersion.txData.timelock);
           setCurrentInputIndex(currentDataVersion.txData.currentInputIndex);
+        } else {
+          scriptWiz.parseTxData(currentDataVersion?.txData);
         }
-      } else {
-        scriptWiz.parseTxData(currentDataVersion?.txData);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showModal, scriptWiz, getTxLocalData]);
+  }, [showModal, scriptWiz]);
 
   const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
     const newTxInputs = [...txInputs];
@@ -166,9 +169,9 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const timelockValidation = (): string | undefined => {
     if (lastBlock) {
       const LOCKTIME_THRESHOLD: number = 500000000;
+      const timelockNumber = Number(timelock);
       let lastBlockHeight: number = 0;
       let lastBlockTimestamp: number = 0;
-      const timelockNumber = Number(timelock);
 
       if (isNaN(timelockNumber)) return 'must be a number';
 
