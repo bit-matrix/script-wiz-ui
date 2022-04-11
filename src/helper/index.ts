@@ -54,6 +54,7 @@ const upsertVM = <T extends { vm: VM }>(newObject: T, currentArray?: T[]): T[] =
   return [newObject];
 };
 
-const LOCAL_STORAGE_KEY = 'scriptWizEditorV1';
+const LOCAL_STORAGE_OLD_KEY = 'scriptWizEditorV1';
+const LOCAL_STORAGE_KEY = 'scriptWizEditor';
 
-export { convertEditorLines, getOutputValueType, deepCopy, upsertVM, LOCAL_STORAGE_KEY };
+export { convertEditorLines, getOutputValueType, deepCopy, upsertVM, LOCAL_STORAGE_KEY, LOCAL_STORAGE_OLD_KEY };
