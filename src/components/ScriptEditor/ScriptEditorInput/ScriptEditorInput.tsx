@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import './ScriptEditorInput.scss';
-
 import * as languageOptions from '../../../options/editorOptions/languageOptions';
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import themeOptions from '../../../options/editorOptions/themeOptions';
 import Editor, { useMonaco } from '@monaco-editor/react';
 import editorOptions from '../../../options/editorOptions/editorOptions';
-
 import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
 import { convertEditorLines } from '../../../helper';
 import { ScriptWiz } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
-
 import './ScriptEditorInput.scss';
 
 type Props = {
