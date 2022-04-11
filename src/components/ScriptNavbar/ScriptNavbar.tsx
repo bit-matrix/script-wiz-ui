@@ -15,6 +15,7 @@ import NpmIcon from '../Svg/Icons/Npm';
 import ToolsIcon from '../Svg/Icons/Tools';
 import MagicIcon from '../Svg/Icons/Magic';
 import './ScriptNavbar.scss';
+import LeafIcon from '../Svg/Icons/Leaf';
 
 type Props = {
   vm: VM;
@@ -65,6 +66,11 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
         </a>
       </div>
       <div className="script-editor-header-right-section">
+        <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Mast Tool</Tooltip>}>
+          <div onClick={() => window.open(ROUTE_PATH.MAST_TOOL, '_blank')} className="route-button">
+            <LeafIcon width="1rem" height="1rem" />
+          </div>
+        </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Signature Tools</Tooltip>}>
           <div onClick={() => window.open(ROUTE_PATH.SIGNATURE_TOOLS, '_blank')} className="route-button">
             <ToolsIcon width="1rem" height="1rem" />
