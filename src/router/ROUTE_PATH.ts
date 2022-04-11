@@ -3,4 +3,5 @@ export enum ROUTE_PATH {
   HELPER = '/helper',
   SIGNATURE_TOOLS = '/signaturetools',
   TAPLEAF_CALCULATOR = '/tapleafcalculator',
+  MAST_TOOL = '/masthelper',
 }
