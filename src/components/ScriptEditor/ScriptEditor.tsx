@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
-import { convertEditorLines, LOCAL_STORAGE_KEY } from '../../helper';
+import { convertEditorLines, LOCAL_STORAGE_KEY, LOCAL_STORAGE_OLD_KEY } from '../../helper';
 import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import WizData from '@script-wiz/wiz-data';
 import {
@@ -71,9 +71,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const timerRef = useRef<number | undefined>(undefined);
 
+  const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<string>(LOCAL_STORAGE_OLD_KEY);
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<string>(LOCAL_STORAGE_KEY);
 
   useEffect(() => {
+    clearTxLocalDataEx();
+
     let editorLines: string[] = [];
 
     const localStorageValue = getTxLocalData();
