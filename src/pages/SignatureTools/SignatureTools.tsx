@@ -317,7 +317,13 @@ export const SignatureTools = () => {
               {verifyErrorMessage ? <div className="signature-tools-error-message error-div">{verifyErrorMessage}</div> : null}
             </div>
             <div className="signature-tools-message-verify">
-              <Button className="signature-tools-button" appearance="primary" size="md" onClick={messageVerify}>
+              <Button
+                className="signature-tools-button"
+                appearance="primary"
+                size="md"
+                onClick={messageVerify}
+                disabled={!verifySignature || !verifyMessage || !verifyPublicKey}
+              >
                 Verify Message
               </Button>
               <Input value={verifyResultNumber || ''} disabled />
