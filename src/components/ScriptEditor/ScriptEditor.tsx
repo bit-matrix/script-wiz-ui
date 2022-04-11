@@ -287,7 +287,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   );
 
   const stackElementsOnChange = (lines: string[]) => {
-    setWitnessScriptErrorMessage(undefined);
     setStackElementsErrorMessage(undefined);
 
     if (timerRef.current) window.clearTimeout(timerRef.current);
