@@ -36,6 +36,10 @@ export const MastTool: React.FC = () => {
     setControlBlockModal({ show: true, data: result });
   };
 
+  const checkInnerKeyValid = () => {
+    return validHex(innerKey) && innerKey.length === 64;
+  };
+
   return (
     <div className="signature-tools-page-main ">
       <div className="signature-tools-page-tabs">
@@ -63,6 +67,7 @@ export const MastTool: React.FC = () => {
           value={innerKey}
           onChange={(value: string) => setInnerkey(value.replace(/\s/g, ''))}
         />
+        <div className="helper-tab-info">{!checkInnerKeyValid() ? <div className="helper-error-message">Invalid Inner Key</div> : null}</div>
       </div>
       {scripts.map((sc, index) => {
         return (
@@ -91,13 +96,14 @@ export const MastTool: React.FC = () => {
                     onClick={() => {
                       showControlBlock(index);
                     }}
-                    disabled={!validHex(innerKey)}
+                    disabled={!checkInnerKeyValid() || !validHex(scripts[index]) || scripts[index] === ''}
                   >
                     Show Control Block
                   </Button>
                 </Col>
               </Row>
             </Grid>
+            <div className="helper-tab-info">{!validHex(scripts[index]) ? <div className="helper-error-message">Invalid Leaf Hex</div> : null}</div>
           </div>
         );
       })}
@@ -112,7 +118,6 @@ export const MastTool: React.FC = () => {
             newScripts.push('');
             setScripts(newScripts);
           }}
-          disabled={!validHex(innerKey)}
         >
           + Add Leaf
         </Button>
@@ -126,11 +131,12 @@ export const MastTool: React.FC = () => {
           onClick={() => {
             calculateTaprootResult();
           }}
-          disabled={!validHex(innerKey)}
+          disabled={!checkInnerKeyValid()}
         >
           Show Taproot Result
         </Button>
       </div>
+
       {taprootResult && (
         <Form>
           <Form.Group>
