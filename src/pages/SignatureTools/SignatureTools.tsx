@@ -18,8 +18,12 @@ export const SignatureTools = () => {
   const [signAlgorithm, setSignAlgorithm] = useState<string>('ECDSA');
   const [importPrivateKey, setImportPrivateKey] = useState<boolean>(false);
   const [privateKeyInput, setPrivateKeyInput] = useState<string>('');
+  const [verifySignature, setVerifySignature] = useState<string>('');
+  const [verifyMessage, setVerifyMessage] = useState<string>('');
+  const [verifyPublicKey, setVerifyPublicKey] = useState<string>('');
   const [keysErrorMessage, setKeysErrorMessage] = useState<string>('');
   const [signErrorMessage, setSignErrorMessage] = useState<string>('');
+  const [verifyErrorMessage, setVerifyErrorMessage] = useState<string>('');
 
   const generateKey = () => {
     if (signAlgorithm === 'ECDSA') {
@@ -94,6 +98,34 @@ export const SignatureTools = () => {
     }
   };
 
+  const messageVerify = () => {
+    if (!verifySignature) throw 'Unknown signature';
+    if (!verifyMessage) throw 'Unknown message';
+    if (!verifyPublicKey) throw 'Unknown public key';
+
+    const wizDataVerifySignature = WizData.fromHex(verifySignature);
+    const wizDataVerifyMessage = WizData.fromHex(verifyMessage);
+    const wizDataVerifyPublicKey = WizData.fromHex(verifyPublicKey);
+
+    if (signAlgorithm === 'ECDSA') {
+      try {
+        const ecdsaVerify = crypto.ecdsaVerify(wizDataVerifySignature, wizDataVerifyMessage, wizDataVerifyPublicKey);
+
+        console.log(ecdsaVerify);
+      } catch (err) {
+        setVerifyErrorMessage(err as string);
+      }
+    } else {
+      try {
+        const shnorrVerify = crypto.shnorrSigVerify(wizDataVerifySignature, wizDataVerifyMessage, wizDataVerifyPublicKey);
+
+        console.log(shnorrVerify);
+      } catch (err) {
+        setVerifyErrorMessage(err as string);
+      }
+    }
+  };
+
   const clearKeys = () => {
     setPrivateKey(undefined);
     setPublicKey(undefined);
@@ -103,6 +135,7 @@ export const SignatureTools = () => {
     setSignMessage('');
     setKeysErrorMessage('');
     setSignErrorMessage('');
+    setVerifyErrorMessage('');
   };
 
   const generateButtonValidation = () => {
@@ -202,7 +235,9 @@ export const SignatureTools = () => {
             >
               Generate Key
             </Button>
+
             <Divider />
+
             <div className="signature-tools-result-item">
               <h6 className="signature-tools-tab-header">Message (Hex)</h6>
               <Input
@@ -245,6 +280,45 @@ export const SignatureTools = () => {
 
             <Button className="signature-tools-button" appearance="primary" size="md" onClick={MessageSign} disabled={!privateKey}>
               Sign
+            </Button>
+
+            <Divider />
+
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Signature (Hex)</h6>
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                value={verifySignature}
+                onChange={(value: string) => setVerifySignature(value.replace(/\s/g, ''))}
+              />
+
+              {verifyErrorMessage ? <div className="signature-tools-error-message error-div">{verifyErrorMessage}</div> : null}
+            </div>
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Message (Hex)</h6>
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                value={verifyMessage}
+                onChange={(value: string) => setVerifyMessage(value.replace(/\s/g, ''))}
+              />
+
+              {verifyErrorMessage ? <div className="signature-tools-error-message error-div">{verifyErrorMessage}</div> : null}
+            </div>
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Public Key (Hex)</h6>
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                value={verifyPublicKey}
+                onChange={(value: string) => setVerifyPublicKey(value.replace(/\s/g, ''))}
+              />
+
+              {verifyErrorMessage ? <div className="signature-tools-error-message error-div">{verifyErrorMessage}</div> : null}
+            </div>
+            <Button className="signature-tools-button" appearance="primary" size="md" onClick={messageVerify}>
+              Verify Message
             </Button>
           </div>
         </div>
