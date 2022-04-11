@@ -43,9 +43,9 @@ export const SignatureTools = () => {
   };
 
   const MessageSign = () => {
-    if (signAlgorithm === 'ECDSA') {
-      if (!privateKey) throw 'Unknown private key';
+    if (!privateKey) throw 'Unknown private key';
 
+    if (signAlgorithm === 'ECDSA') {
       try {
         const signResult = crypto.secp256k1Sign(WizData.fromHex(signMessage), privateKey);
 
@@ -55,8 +55,6 @@ export const SignatureTools = () => {
         setSignErrorMessage(err as string);
       }
     } else {
-      if (!privateKey) throw 'Unknown private key';
-
       try {
         const signResult = crypto.schnorrSign(WizData.fromHex(signMessage), privateKey);
 
@@ -72,6 +70,7 @@ export const SignatureTools = () => {
     if (signAlgorithm === 'ECDSA') {
       try {
         const keys = crypto.secp256k1CreatePublicKey(WizData.fromHex(privateKeyInput));
+
         setPrivateKey(keys.privateKey);
         setPublicKey(keys.publicKey);
         setUncompressedPublicKey(keys.uncompressedPubKey);
@@ -100,10 +99,6 @@ export const SignatureTools = () => {
   };
 
   const messageVerify = () => {
-    if (!verifySignature) throw 'Unknown signature';
-    if (!verifyMessage) throw 'Unknown message';
-    if (!verifyPublicKey) throw 'Unknown public key';
-
     const wizDataVerifySignature = WizData.fromHex(verifySignature);
     const wizDataVerifyMessage = WizData.fromHex(verifyMessage);
     const wizDataVerifyPublicKey = WizData.fromHex(verifyPublicKey);
