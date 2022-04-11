@@ -12,8 +12,8 @@ export const SignatureTools = () => {
   const [privateKey, setPrivateKey] = useState<WizData>();
   const [publicKey, setPublicKey] = useState<WizData>();
   const [uncompressedPublicKey, setUncompressedPublicKey] = useState<WizData>();
-  const [message, setMessage] = useState<string>('');
-  const [signature, setSignature] = useState<WizData>();
+  const [signMessage, setSignMessage] = useState<string>('');
+  const [signSignature, setSignSignature] = useState<WizData>();
   const [derEncodedSignature, setDerEncodedSignature] = useState<WizData>();
   const [signAlgorithm, setSignAlgorithm] = useState<string>('ECDSA');
   const [importPrivateKey, setImportPrivateKey] = useState<boolean>(false);
@@ -37,14 +37,14 @@ export const SignatureTools = () => {
     }
   };
 
-  const signMessage = () => {
+  const MessageSign = () => {
     if (signAlgorithm === 'ECDSA') {
       if (!privateKey) throw 'Unknown private key';
 
       try {
-        const signResult = crypto.secp256k1Sign(WizData.fromHex(message), privateKey);
+        const signResult = crypto.secp256k1Sign(WizData.fromHex(signMessage), privateKey);
 
-        setSignature(signResult.sign);
+        setSignSignature(signResult.sign);
         setDerEncodedSignature(signResult.derEncodedSign);
       } catch (err) {
         setSignErrorMessage(err as string);
@@ -53,9 +53,9 @@ export const SignatureTools = () => {
       if (!privateKey) throw 'Unknown private key';
 
       try {
-        const signResult = crypto.schnorrSign(WizData.fromHex(message), privateKey);
+        const signResult = crypto.schnorrSign(WizData.fromHex(signMessage), privateKey);
 
-        setSignature(signResult.sign);
+        setSignSignature(signResult.sign);
         // setDerEncodedSignature(signResult.derEncodedSign);
       } catch (err) {
         setSignErrorMessage(err as string);
@@ -98,9 +98,9 @@ export const SignatureTools = () => {
     setPrivateKey(undefined);
     setPublicKey(undefined);
     setUncompressedPublicKey(undefined);
-    setSignature(undefined);
+    setSignSignature(undefined);
     setDerEncodedSignature(undefined);
-    setMessage('');
+    setSignMessage('');
     setKeysErrorMessage('');
     setSignErrorMessage('');
   };
@@ -208,8 +208,8 @@ export const SignatureTools = () => {
               <Input
                 className="signature-tools-main-input"
                 type="text"
-                value={message}
-                onChange={(value: string) => setMessage(value.replace(/\s/g, ''))}
+                value={signMessage}
+                onChange={(value: string) => setSignMessage(value.replace(/\s/g, ''))}
               />
 
               {signErrorMessage ? <div className="signature-tools-error-message error-div">{signErrorMessage}</div> : null}
@@ -218,9 +218,9 @@ export const SignatureTools = () => {
               <h6 className="signature-tools-tab-header">Signature</h6>
               <div>
                 <InputGroup className="signature-tools-compile-modal-input-group">
-                  <Input value={signature?.hex || ''} disabled />
+                  <Input value={signSignature?.hex || ''} disabled />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Signature has been copied to clipboard!</Tooltip>}>
-                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(signature?.hex || '')}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(signSignature?.hex || '')}>
                       <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>
@@ -243,7 +243,7 @@ export const SignatureTools = () => {
               </div>
             )}
 
-            <Button className="signature-tools-button" appearance="primary" size="md" onClick={signMessage} disabled={!privateKey}>
+            <Button className="signature-tools-button" appearance="primary" size="md" onClick={MessageSign} disabled={!privateKey}>
               Sign
             </Button>
           </div>
