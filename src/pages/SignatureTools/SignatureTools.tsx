@@ -24,6 +24,7 @@ export const SignatureTools = () => {
   const [keysErrorMessage, setKeysErrorMessage] = useState<string>('');
   const [signErrorMessage, setSignErrorMessage] = useState<string>('');
   const [verifyErrorMessage, setVerifyErrorMessage] = useState<string>('');
+  const [verifyResultNumber, setVerifyResultNumber] = useState<number>();
 
   const generateKey = () => {
     if (signAlgorithm === 'ECDSA') {
@@ -109,17 +110,15 @@ export const SignatureTools = () => {
 
     if (signAlgorithm === 'ECDSA') {
       try {
-        const ecdsaVerify = crypto.ecdsaVerify(wizDataVerifySignature, wizDataVerifyMessage, wizDataVerifyPublicKey);
-
-        console.log(ecdsaVerify);
+        const verifyResult = crypto.ecdsaVerify(wizDataVerifySignature, wizDataVerifyMessage, wizDataVerifyPublicKey);
+        setVerifyResultNumber(verifyResult.number);
       } catch (err) {
         setVerifyErrorMessage(err as string);
       }
     } else {
       try {
-        const shnorrVerify = crypto.shnorrSigVerify(wizDataVerifySignature, wizDataVerifyMessage, wizDataVerifyPublicKey);
-
-        console.log(shnorrVerify);
+        const verifyResult = crypto.shnorrSigVerify(wizDataVerifySignature, wizDataVerifyMessage, wizDataVerifyPublicKey);
+        setVerifyResultNumber(verifyResult.number);
       } catch (err) {
         setVerifyErrorMessage(err as string);
       }
@@ -321,7 +320,7 @@ export const SignatureTools = () => {
               <Button className="signature-tools-button" appearance="primary" size="md" onClick={messageVerify}>
                 Verify Message
               </Button>
-              <Input value={''} disabled />
+              <Input value={verifyResultNumber || ''} disabled />
             </div>
           </div>
         </div>
