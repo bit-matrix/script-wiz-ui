@@ -20,28 +20,24 @@ type TxDataWithVersion = {
   txData: TxData;
 };
 
+const txInputInitial = {
+  previousTxId: '',
+  vout: '',
+  sequence: '',
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+  blockHeight: '',
+  blockTimestamp: '',
+};
+
+const txOutputInitial = {
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+};
+
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
-  const txInputInitial = useMemo(() => {
-    return {
-      previousTxId: '',
-      vout: '',
-      sequence: '',
-      scriptPubKey: '',
-      amount: '',
-      assetId: '',
-      blockHeight: '',
-      blockTimestamp: '',
-    };
-  }, []);
-
-  const txOutputInitial = useMemo(() => {
-    return {
-      scriptPubKey: '',
-      amount: '',
-      assetId: '',
-    };
-  }, []);
-
   const [txInputs, setTxInputs] = useState<TxInput[]>([txInputInitial]);
   const [txOutputs, setTxOutputs] = useState<TxOutput[]>([txOutputInitial]);
   const [version, setVersion] = useState<string>('');
@@ -68,7 +64,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
           setTimeLock(currentDataVersion.txData.timelock);
           setCurrentInputIndex(currentDataVersion.txData.currentInputIndex);
         } else {
-          scriptWiz.parseTxData(currentDataVersion?.txData);
+          scriptWiz.parseTxData(currentDataVersion.txData);
         }
       }
     }
@@ -89,9 +85,11 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       blockHeight: input.blockHeight,
       blockTimestamp: input.blockTimestamp,
     };
+
     newTxInputs[relatedInputIndex] = newInput;
-    if (checked) setCurrentInputIndex(index);
     setTxInputs(newTxInputs);
+
+    if (checked) setCurrentInputIndex(index);
   };
 
   const txOutputOnChange = (output: TxOutput, index: number) => {
@@ -117,7 +115,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   };
 
   const clearButtonClick = () => {
-    closeModal();
     scriptWiz.parseTxData();
 
     const localStorageData = getTxLocalData();
@@ -133,6 +130,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         setTxLocalData(newLocalStorageData);
       }
     }
+    closeModal();
   };
 
   const saveButtonClick = () => {
@@ -151,7 +149,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     const previousLocalStorageData = getTxLocalData();
     const newLocalStorageData = upsertVM(txData, previousLocalStorageData);
     setTxLocalData(newLocalStorageData);
-    closeModal();
+    showModalCallBack(false);
   };
 
   const fetchBlocks = useCallback(() => {
