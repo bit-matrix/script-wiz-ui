@@ -158,5 +158,6 @@
 @media only screen and (max-height: 780px) {
   .helper-content {
     height: 65vh;
+    overflow-y: auto;
   }
 }
