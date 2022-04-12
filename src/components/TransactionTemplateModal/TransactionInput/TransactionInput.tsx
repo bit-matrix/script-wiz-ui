@@ -23,16 +23,27 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
       : '';
 
+  const isValidAssetId =
+    (txInput.input.assetId?.length !== 64 && txInput.input.assetId?.length !== 0) || !validHex(txInput.input.assetId)
+      ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR
+      : '';
+
   // const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VOUT_ERROR : '';
 
+  // const isValidAmount =
+  //   (txInput.input.amount.length !== 16 && txInput.input.amount.length !== 0) || !validHex(txInput.input.amount)
+  //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
+  //     : '';
+
   const sequenceValidation = (): string | undefined => {
-    if (lastBlock !== undefined) {
+    if (lastBlock) {
       const sequence = txInput.input.sequence;
 
       if (sequence.length && (sequence.length !== 8 || !validHex(sequence))) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR;
 
       if (sequence) {
         if (Number(version) < 2) return 'Version must be greater than 1';
+
         const sequenceHexLE = WizData.fromHex(hexLE(sequence));
 
         if (Number(sequenceHexLE.bin[0]) !== 0) return 'Disable flag must be 0';
@@ -42,23 +53,19 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
             const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
             const secondUnitValue = blockUnitValue * 512;
 
-            if (txInput.input.blockTimestamp !== undefined) {
+            if (txInput.input.blockTimestamp) {
               const blockTimestamp = Number(txInput.input.blockTimestamp);
+              const timestampDifference = lastBlock.timestamp - blockTimestamp;
 
-              if (blockTimestamp !== undefined && blockTimestamp) {
-                const timestampDifference = lastBlock.timestamp - blockTimestamp;
-
-                if (timestampDifference > secondUnitValue) return 'Age must not be bigger than block timestamp';
-              }
+              if (timestampDifference > secondUnitValue) return 'Age must not be bigger than block timestamp';
             }
-          }
-          if (Number(sequenceHexLE.bin[9]) === 0) {
+          } else if (Number(sequenceHexLE.bin[9]) === 0) {
             const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
 
-            if (txInput.input.blockHeight !== undefined) {
+            if (txInput.input.blockHeight) {
               const blockHeight = Number(txInput.input.blockHeight);
 
-              if (blockHeight !== undefined && blockHeight) {
+              if (blockHeight) {
                 const blockDifference = lastBlock.height - blockHeight;
 
                 if (blockDifference > blockUnitValue) return 'Age must not be bigger than block height';
@@ -69,16 +76,6 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
       }
     }
   };
-
-  // const isValidAmount =
-  //   (txInput.input.amount.length !== 16 && txInput.input.amount.length !== 0) || !validHex(txInput.input.amount)
-  //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
-  //     : '';
-
-  const isValidAssetId =
-    (txInput.input.assetId?.length !== 64 && txInput.input.assetId?.length !== 0) || !validHex(txInput.input.assetId)
-      ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR
-      : '';
 
   return (
     <div className="tx-input-main">

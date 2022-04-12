@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
-import { convertEditorLines, LOCAL_STORAGE_KEY } from '../../helper';
+import { convertEditorLines, LOCAL_STORAGE_KEY, LOCAL_STORAGE_OLD_KEY } from '../../helper';
 import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import WizData from '@script-wiz/wiz-data';
 import {
@@ -17,6 +17,7 @@ import CompileModal from '../CompileModal/CompileModal';
 import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
 import CustomWhisper from './CustomWhisper';
 import { Mosaic } from 'react-mosaic-component';
+import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import './ScriptEditor.scss';
 
 type Props = {
@@ -29,15 +30,15 @@ const initialLastStackDataList: Array<WizData> = [];
 type EditorLocalStorage = { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM };
 
 const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
-  const [errorMessage2, setErrorMessage2] = useState<string | undefined>();
-  const [lineStackDataListArray, setLineStackDataListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
-  const [lineStackDataListArray2, setLineStackDataListArray2] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
+  const [witnessScriptErrorMessage, setWitnessScriptErrorMessage] = useState<string | undefined>();
+  const [stackElementsErrorMessage, setStackElementsErrorMessage] = useState<string | undefined>();
+  const [witnessScriptLineStackListArray, setWitnessScriptLineStackListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
+  const [stackElementsLineStackListArray, setStackElementsLineStackListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
   const [failedLineNumber, setFailedLineNumber] = useState<number>();
-  const [lines, setLines] = useState<string[]>();
-  const [lines2, setLines2] = useState<string[]>();
+  const [witnessScriptLines, setWitnessScriptLines] = useState<string[]>();
+  const [stackElementsLines, setStackElementsLines] = useState<string[]>();
   const [editorValues, setEditorValues] = useState<string[]>([]);
-  const [firstEditorLastData, setFirstEditorLastData] = useState<Array<WizData>>(initialLastStackDataList);
+  const [witnessScriptLastData, setWitnessScriptLastData] = useState<Array<WizData>>(initialLastStackDataList);
   const [editorSplits, setEditorSplits] = useState<any>({
     direction: 'row',
     first: {
@@ -65,15 +66,20 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [clearButtonVisibility, setClearButtonVisibility] = useState<boolean>(false);
   const [saveButtonVisibility, setSaveButtonVisibility] = useState<boolean>(false);
 
-  const [firstEditorTop, setFirstEditorTop] = useState<number>(0);
-  const [secondEditorTop, setSecondEditorTop] = useState<number>(0);
+  const [witnessScriptTop, setWitnessScriptTop] = useState<number>(0);
+  const [stackElementsTop, setStackElementsTop] = useState<number>(0);
 
   const timerRef = useRef<number | undefined>(undefined);
 
+  const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<string>(LOCAL_STORAGE_OLD_KEY);
+  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<string>(LOCAL_STORAGE_KEY);
+
   useEffect(() => {
+    clearTxLocalDataEx();
+
     let editorLines: string[] = [];
 
-    const localStorageValue = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const localStorageValue = getTxLocalData();
 
     if (localStorageValue) {
       const localStorageArray = JSON.parse(localStorageValue);
@@ -104,6 +110,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
                 : [initialLiquidEditorValue, localStorageObject.editorLines2];
           }
         }
+
         setClearButtonVisibility(true);
       } else {
         if (scriptWiz.vm.network === VM_NETWORK.BTC) {
@@ -133,8 +140,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     let lines = convertEditorLines(editorLines[0]);
     let lines2 = convertEditorLines(editorLines[1]);
 
-    setLines(lines);
-    setLines2(lines2);
+    setWitnessScriptLines(lines);
+    setStackElementsLines(lines2);
 
     setEditorValues(editorLines);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -142,10 +149,10 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const saveLocalStorageData = useCallback(() => {
     if (clearButtonVisibility) {
-      const currentLocalStorage = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const currentLocalStorage = getTxLocalData();
 
       //check local storage
-      if (currentLocalStorage !== null) {
+      if (currentLocalStorage && currentLocalStorage !== null) {
         const currentLocalStorageArray = JSON.parse(currentLocalStorage);
         const newLocalStorageArray = [...currentLocalStorageArray];
 
@@ -164,15 +171,14 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           newLocalStorageArray.push({ editorLines1: editorValues[0], editorLines2: editorValues[1], vm: scriptWiz.vm });
         }
 
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newLocalStorageArray));
+        setTxLocalData(JSON.stringify(newLocalStorageArray));
       } else {
         //if local storage is empty
-
         const localStorageValue: { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM }[] = [
           { editorLines1: editorValues[0], editorLines2: editorValues[1], vm: scriptWiz.vm },
         ];
 
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localStorageValue));
+        setTxLocalData(JSON.stringify(localStorageValue));
       }
 
       setSaveButtonVisibility(false);
@@ -184,6 +190,50 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     saveLocalStorageData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scriptWiz.vm.network, scriptWiz.vm.ver]);
+
+  const clearLocalStorageData = () => {
+    const localStorageData = getTxLocalData();
+
+    if (localStorageData) {
+      const localStorageDataJSON: EditorLocalStorage[] = JSON.parse(localStorageData);
+      const currentLocalStorageDataIndex = localStorageDataJSON.findIndex(
+        (value: EditorLocalStorage) => value.vm.network === scriptWiz.vm.network && value.vm.ver === scriptWiz.vm.ver,
+      );
+
+      if (currentLocalStorageDataIndex > -1) {
+        const newLocalStorageDataJSON = [...localStorageDataJSON];
+        newLocalStorageDataJSON.splice(currentLocalStorageDataIndex, 1);
+
+        if (newLocalStorageDataJSON.length === 0) {
+          clearTxLocalData();
+        } else {
+          setTxLocalData(JSON.stringify(newLocalStorageDataJSON));
+        }
+      }
+    }
+
+    let editorLines: string[] = [];
+
+    if (scriptWiz.vm.network === VM_NETWORK.BTC) {
+      editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
+    } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
+      editorLines =
+        scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
+          ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
+          : [initialLiquidEditorValue, initialLiquidEditorValue2];
+    }
+
+    let lines = convertEditorLines(editorLines[0]);
+    let lines2 = convertEditorLines(editorLines[1]);
+
+    setWitnessScriptLines(lines);
+    setStackElementsLines(lines2);
+
+    setEditorValues(editorLines);
+
+    setClearButtonVisibility(false);
+    setSaveButtonVisibility(false);
+  };
 
   const parseInput = useCallback(
     (inputText: string, isWitnessElement: boolean = true) => {
@@ -213,7 +263,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             const opwordToOphex = scriptWiz.opCodes.wordHex(inputTextValue);
             scriptWiz.parseHex(opwordToOphex.substring(2), isWitnessElement);
           } else {
-            setErrorMessage('Unlocking bytecode may contain only push operations.');
+            setWitnessScriptErrorMessage('Unlocking bytecode may contain only push operations.');
           }
         } else {
           console.error('UI: Invalid input value!!!');
@@ -222,7 +272,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         if (isWitnessElement) {
           scriptWiz.parseOpcode(inputText, isWitnessElement);
         } else {
-          setErrorMessage2('Unlocking bytecode may contain only push operations.');
+          setStackElementsErrorMessage('Unlocking bytecode may contain only push operations.');
         }
       } else {
         console.error('UI: Invalid input value!!!');
@@ -237,20 +287,20 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   );
 
   const stackElementsOnChange = (lines: string[]) => {
-    setErrorMessage(undefined);
-    setErrorMessage2(undefined);
-    if (timerRef.current) window.clearTimeout(timerRef.current);
+    setStackElementsErrorMessage(undefined);
 
+    if (timerRef.current) window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
-      setLines(lines);
+      setWitnessScriptLines(lines);
     }, 250);
   };
 
   const witnessScriptOnChange = (lines2: string[]) => {
-    setErrorMessage(undefined);
+    setWitnessScriptErrorMessage(undefined);
+
     if (timerRef.current) window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
-      setLines2(lines2);
+      setStackElementsLines(lines2);
     }, 250);
   };
 
@@ -260,9 +310,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     const newLineStackDataListArray: Array<Array<WizData>> = [];
     let newLastStackDataList: Array<WizData> = [];
 
-    const addedLines = [...(lines || []), ...(lines2 || [])];
+    const addedLines = [...(witnessScriptLines || []), ...(stackElementsLines || [])];
 
-    const firstEditorLineCount = lines?.length || 0;
+    const firstEditorLineCount = witnessScriptLines?.length || 0;
 
     if (addedLines) {
       for (let i = 0; i < addedLines.length; i++) {
@@ -284,27 +334,27 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
             newLineStackDataListArray.push(newLastStackDataList);
 
             if (i === firstIndex) {
-              setFirstEditorLastData(newLastStackDataList);
+              setWitnessScriptLastData(newLastStackDataList);
             }
 
             if (scriptWizErrorMessage) {
               hasError = true;
-              setErrorMessage(scriptWizErrorMessage);
+              setWitnessScriptErrorMessage(scriptWizErrorMessage);
               setFailedLineNumber(i + 1);
             }
           }
         } else {
           if (!hasError) {
             newLineStackDataListArray.push([]);
-            setErrorMessage(undefined);
+            setWitnessScriptErrorMessage(undefined);
           }
         }
       }
     }
 
-    setLineStackDataListArray(newLineStackDataListArray.slice(firstEditorLineCount, newLineStackDataListArray.length));
-    setLineStackDataListArray2(newLineStackDataListArray.slice(0, firstEditorLineCount));
-  }, [lines, lines2, parseInput, scriptWiz, scriptWiz.stackDataList.txData]);
+    setWitnessScriptLineStackListArray(newLineStackDataListArray.slice(firstEditorLineCount, newLineStackDataListArray.length));
+    setStackElementsLineStackListArray(newLineStackDataListArray.slice(0, firstEditorLineCount));
+  }, [witnessScriptLines, stackElementsLines, parseInput, scriptWiz, scriptWiz.stackDataList.txData]);
 
   const compileScripts = () => {
     const compileScript = scriptWiz.compile();
@@ -326,72 +376,29 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     [],
   );
 
-  const clearLocalStorage = () => {
-    const localStorageData = localStorage.getItem(LOCAL_STORAGE_KEY);
-
-    if (localStorageData) {
-      const localStorageDataJSON: EditorLocalStorage[] = JSON.parse(localStorageData);
-      const currentLocalStorageDataIndex = localStorageDataJSON.findIndex(
-        (value: EditorLocalStorage) => value.vm.network === scriptWiz.vm.network && value.vm.ver === scriptWiz.vm.ver,
-      );
-
-      if (currentLocalStorageDataIndex > -1) {
-        const newLocalStorageDataJSON = [...localStorageDataJSON];
-        newLocalStorageDataJSON.splice(currentLocalStorageDataIndex, 1);
-
-        if (newLocalStorageDataJSON.length === 0) {
-          localStorage.removeItem(LOCAL_STORAGE_KEY);
-        } else {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newLocalStorageDataJSON));
-        }
-      }
-    }
-
-    let editorLines: string[] = [];
-    if (scriptWiz.vm.network === VM_NETWORK.BTC) {
-      editorLines = [initialBitcoinEditorValue, initialBitcoinEditorValue2];
-    } else if (scriptWiz.vm.network === VM_NETWORK.LIQUID) {
-      editorLines =
-        scriptWiz.vm.ver === VM_NETWORK_VERSION.TAPSCRIPT
-          ? [initialLiquidTaprootEditorValue, initialLiquidTaprootEditorValue2]
-          : [initialLiquidEditorValue, initialLiquidEditorValue2];
-    }
-
-    let lines = convertEditorLines(editorLines[0]);
-    let lines2 = convertEditorLines(editorLines[1]);
-
-    setLines(lines);
-    setLines2(lines2);
-
-    setEditorValues(editorLines);
-
-    setClearButtonVisibility(false);
-    setSaveButtonVisibility(false);
-  };
-
   const secondDivRef = useRef<HTMLInputElement>(null);
   const fourthDivRef = useRef<HTMLInputElement>(null);
 
   const handleScrollFirst = (value: number) => {
     if (secondDivRef.current !== null) {
       secondDivRef.current.scrollTop = value;
-      setFirstEditorTop(value);
+      setWitnessScriptTop(value);
     }
   };
 
   const handleScrollSecond = (event: React.UIEvent<HTMLDivElement>) => {
-    setFirstEditorTop(event.currentTarget.scrollTop);
+    setWitnessScriptTop(event.currentTarget.scrollTop);
   };
 
   const handleScrollThird = (value: number) => {
     if (fourthDivRef.current !== null) {
       fourthDivRef.current.scrollTop = value;
-      setSecondEditorTop(value);
+      setStackElementsTop(value);
     }
   };
 
   const handleScrollFourth = (event: React.UIEvent<HTMLDivElement>) => {
-    setSecondEditorTop(event.currentTarget.scrollTop);
+    setStackElementsTop(event.currentTarget.scrollTop);
   };
 
   const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
@@ -405,7 +412,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           onChangeScriptEditorInput={stackElementsOnChange}
           failedLineNumber={failedLineNumber}
           scroolTopCallback={handleScrollFirst}
-          scroolTop={firstEditorTop}
+          scroolTop={witnessScriptTop}
           callbackEditorValue={(value: string) => {
             if (!clearButtonVisibility) setClearButtonVisibility(true);
             if (!saveButtonVisibility) setSaveButtonVisibility(true);
@@ -427,7 +434,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           onChangeScriptEditorInput={witnessScriptOnChange}
           failedLineNumber={failedLineNumber}
           scroolTopCallback={handleScrollThird}
-          scroolTop={secondEditorTop}
+          scroolTop={stackElementsTop}
           callbackEditorValue={(value: string) => {
             if (!clearButtonVisibility) setClearButtonVisibility(true);
             if (!saveButtonVisibility) setSaveButtonVisibility(true);
@@ -443,7 +450,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       <div className="script-editor">
         <div className="script-editor-output-header-bar" />
         <div className="script-editor-content" onScroll={handleScrollSecond} ref={secondDivRef}>
-          <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray2} errorMessage={errorMessage2} />
+          <ScriptEditorOutput lineStackDataListArray={stackElementsLineStackListArray} errorMessage={stackElementsErrorMessage} />
         </div>
       </div>
     ),
@@ -452,11 +459,11 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         <div className="script-editor-output-header-bar">
           <div className="script-editor-output-header-bar-content-fade"></div>
           <div className="script-editor-output-header-bar-content">
-            <div className="state">{getWhispers(firstEditorLastData)}</div>
+            <div className="state">{getWhispers(witnessScriptLastData)}</div>
           </div>
         </div>
         <div className="script-editor-content" onScroll={handleScrollFourth} ref={fourthDivRef}>
-          <ScriptEditorOutput lineStackDataListArray={lineStackDataListArray} errorMessage={errorMessage} />
+          <ScriptEditorOutput lineStackDataListArray={witnessScriptLineStackListArray} errorMessage={witnessScriptErrorMessage} />
         </div>
       </div>
     ),
@@ -470,7 +477,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         compileButtonClick={compileScripts}
         txTemplateClick={() => setShowTemplateModal(true)}
         saveEditorClick={saveLocalStorageData}
-        clearEditorClick={clearLocalStorage}
+        clearEditorClick={clearLocalStorageData}
         clearButtonVisibility={clearButtonVisibility}
         saveButtonVisibility={saveButtonVisibility}
       />

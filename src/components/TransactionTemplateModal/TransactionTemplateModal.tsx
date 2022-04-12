@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
 import { Button, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
@@ -12,7 +12,6 @@ import './TransactionTemplateModal.scss';
 type Props = {
   showModal: boolean;
   scriptWiz: ScriptWiz;
-  txData?: TxData;
   showModalCallBack: (show: boolean) => void;
 };
 
@@ -21,28 +20,24 @@ type TxDataWithVersion = {
   txData: TxData;
 };
 
+const txInputInitial = {
+  previousTxId: '',
+  vout: '',
+  sequence: '',
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+  blockHeight: '',
+  blockTimestamp: '',
+};
+
+const txOutputInitial = {
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+};
+
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
-  const txInputInitial = useMemo(() => {
-    return {
-      previousTxId: '',
-      vout: '',
-      sequence: '',
-      scriptPubKey: '',
-      amount: '',
-      assetId: '',
-      blockHeight: '',
-      blockTimestamp: '',
-    };
-  }, []);
-
-  const txOutputInitial = useMemo(() => {
-    return {
-      scriptPubKey: '',
-      amount: '',
-      assetId: '',
-    };
-  }, []);
-
   const [txInputs, setTxInputs] = useState<TxInput[]>([txInputInitial]);
   const [txOutputs, setTxOutputs] = useState<TxOutput[]>([txOutputInitial]);
   const [version, setVersion] = useState<string>('');
@@ -54,26 +49,23 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
 
   useEffect(() => {
-    if (showModal) {
-      const localStorageData = getTxLocalData();
-      clearTxLocalDataEx();
-      if (localStorageData) {
-        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
+    clearTxLocalDataEx();
 
-        if (currentDataVersion) {
+    const localStorageData = getTxLocalData();
+
+    if (localStorageData) {
+      const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
+
+      if (currentDataVersion) {
+        if (showModal) {
           setTxInputs(currentDataVersion.txData.inputs);
           setTxOutputs(currentDataVersion.txData.outputs);
           setVersion(currentDataVersion.txData.version);
           setTimeLock(currentDataVersion.txData.timelock);
           setCurrentInputIndex(currentDataVersion.txData.currentInputIndex);
+        } else {
+          scriptWiz.parseTxData(currentDataVersion.txData);
         }
-      }
-    } else {
-      const localStorageData = getTxLocalData();
-
-      if (localStorageData) {
-        const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
-        scriptWiz.parseTxData(currentDataVersion?.txData);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,9 +85,11 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       blockHeight: input.blockHeight,
       blockTimestamp: input.blockTimestamp,
     };
+
     newTxInputs[relatedInputIndex] = newInput;
-    if (checked) setCurrentInputIndex(index);
     setTxInputs(newTxInputs);
+
+    if (checked) setCurrentInputIndex(index);
   };
 
   const txOutputOnChange = (output: TxOutput, index: number) => {
@@ -121,7 +115,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   };
 
   const clearButtonClick = () => {
-    closeModal();
     scriptWiz.parseTxData();
 
     const localStorageData = getTxLocalData();
@@ -137,6 +130,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         setTxLocalData(newLocalStorageData);
       }
     }
+    closeModal();
   };
 
   const saveButtonClick = () => {
@@ -155,7 +149,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     const previousLocalStorageData = getTxLocalData();
     const newLocalStorageData = upsertVM(txData, previousLocalStorageData);
     setTxLocalData(newLocalStorageData);
-    closeModal();
+    showModalCallBack(false);
   };
 
   const fetchBlocks = useCallback(() => {
@@ -173,9 +167,9 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const timelockValidation = (): string | undefined => {
     if (lastBlock) {
       const LOCKTIME_THRESHOLD: number = 500000000;
+      const timelockNumber = Number(timelock);
       let lastBlockHeight: number = 0;
       let lastBlockTimestamp: number = 0;
-      const timelockNumber = Number(timelock);
 
       if (isNaN(timelockNumber)) return 'must be a number';
 
