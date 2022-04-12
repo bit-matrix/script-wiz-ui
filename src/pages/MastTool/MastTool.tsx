@@ -67,7 +67,9 @@ export const MastTool: React.FC = () => {
           value={innerKey}
           onChange={(value: string) => setInnerkey(value.replace(/\s/g, ''))}
         />
-        <div className="helper-tab-info">{!checkInnerKeyValid() ? <div className="helper-error-message">Invalid Inner Key</div> : null}</div>
+        <div className="helper-tab-info">
+          {!checkInnerKeyValid() && innerKey !== '' ? <div className="helper-error-message">Invalid Inner Key</div> : null}
+        </div>
       </div>
       {scripts.map((sc, index) => {
         return (
