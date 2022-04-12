@@ -44,6 +44,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [timelock, setTimeLock] = useState<string>('');
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
   const [lastBlock, setLastBlock] = useState<any>();
+  const [transactionId, setTransactionId] = useState<any>('');
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
@@ -164,6 +165,21 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     if (showModal) fetchBlocks();
   }, [fetchBlocks, showModal]);
 
+  const fetchTransaction = () => {
+    axios
+      .get(
+        scriptWiz.vm.network === VM_NETWORK.BTC
+          ? `https://blockstream.info/api/tx/${transactionId}`
+          : `https://blockstream.info/liquid/api/tx/${transactionId}`,
+      )
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const timelockValidation = (): string | undefined => {
     if (lastBlock) {
       const LOCKTIME_THRESHOLD: number = 500000000;
@@ -196,8 +212,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     >
       <Modal.Header className="tx-template-modal-header">
         <div className="tx-template-import">
-          <Input></Input>
-          <Button>Import</Button>
+          <Input onChange={(value) => setTransactionId(value)}></Input>
+          <Button onClick={fetchTransaction}>Import</Button>
         </div>
         <Divider />
         <div className="tx-template-header">
