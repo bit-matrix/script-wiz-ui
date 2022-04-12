@@ -42,12 +42,13 @@ export const SignatureTools = () => {
     }
   };
 
-  const MessageSign = () => {
+  const messageSign = () => {
     if (!privateKey) throw 'Unknown private key';
 
     if (signAlgorithm === 'ECDSA') {
       try {
-        const signResult = crypto.secp256k1Sign(WizData.fromHex(signMessage), privateKey);
+        const messageHash = WizData.fromHex(crypto.sha256(WizData.fromHex(signMessage)).toString());
+        const signResult = crypto.secp256k1Sign(messageHash, privateKey);
 
         setSignSignature(signResult.sign);
         setDerEncodedSignature(signResult.derEncodedSign);
@@ -102,10 +103,12 @@ export const SignatureTools = () => {
     const wizDataVerifySignature = WizData.fromHex(verifySignature);
     const wizDataVerifyMessage = WizData.fromHex(verifyMessage);
     const wizDataVerifyPublicKey = WizData.fromHex(verifyPublicKey);
+    setVerifyErrorMessage('');
 
     if (signAlgorithm === 'ECDSA') {
       try {
         const verifyResult = crypto.ecdsaVerify(wizDataVerifySignature, wizDataVerifyMessage, wizDataVerifyPublicKey);
+
         setVerifyResultNumber(verifyResult.number);
       } catch (err) {
         setVerifyErrorMessage(err as string);
@@ -272,7 +275,7 @@ export const SignatureTools = () => {
               </div>
             )}
 
-            <Button className="signature-tools-button" appearance="primary" size="md" onClick={MessageSign} disabled={!privateKey}>
+            <Button className="signature-tools-button" appearance="primary" size="md" onClick={messageSign} disabled={!privateKey}>
               Sign
             </Button>
 
@@ -321,7 +324,7 @@ export const SignatureTools = () => {
               >
                 Verify Message
               </Button>
-              <Input value={verifyResultNumber || ''} disabled />
+              <Input value={verifyResultNumber} disabled />
             </div>
           </div>
         </div>
