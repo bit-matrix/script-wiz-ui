@@ -7,6 +7,7 @@ import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { upsertVM } from '../../helper';
 import axios from 'axios';
+import WizData from '@script-wiz/wiz-data';
 import './TransactionTemplateModal.scss';
 
 type Props = {
@@ -44,7 +45,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [timelock, setTimeLock] = useState<string>('');
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
   const [lastBlock, setLastBlock] = useState<any>();
-  const [transactionId, setTransactionId] = useState<any>('');
+  const [transactionId, setTransactionId] = useState<string>('');
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
@@ -173,7 +174,50 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
           : `https://blockstream.info/liquid/api/tx/${transactionId}`,
       )
       .then((res) => {
-        console.log(res.data);
+        const transactionData = res.data;
+        const transactionDataInputs = res.data.vin;
+        const transactionDataOutputs = res.data.vout;
+        const transactionDataInputBlockHeight = res.data.status.block_height;
+        const transactionDataInputBlockTime = res.data.status.block_time;
+
+        let txOutput;
+        let txInput;
+        let newTxOutputs = [];
+        let newTxInputs = [];
+
+        for (let i = 0; i < transactionDataInputs.length; i++) {
+          const transactionDataInputsSequence = WizData.fromNumber(transactionDataInputs[i].sequence).hex;
+
+          txInput = {
+            vout: transactionDataInputs[i].vout ? transactionDataInputs[i].vout : '',
+            sequence: transactionDataInputs[i].sequence ? transactionDataInputsSequence : '',
+            previousTxId: transactionDataInputs[i].txid ? transactionDataInputs[i].txid : '',
+            scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey ? transactionDataInputs[i].prevout.scriptpubkey : '',
+            amount: '3',
+            assetId: 'adf',
+            blockHeight: transactionDataInputBlockHeight ? transactionDataInputBlockHeight : '',
+            blockTimestamp: transactionDataInputBlockTime ? transactionDataInputBlockTime : '',
+          };
+
+          newTxInputs.push(txInput);
+        }
+
+        setTxInputs(newTxInputs);
+
+        for (let i = 0; i < transactionDataOutputs.length; i++) {
+          txOutput = {
+            scriptPubKey: transactionDataOutputs[i].scriptpubkey ? transactionDataOutputs[i].scriptpubkey : '',
+            amount: transactionDataOutputs[i].value ? transactionDataOutputs[i].value : '',
+            assetId: transactionDataOutputs[i].asset ? transactionDataOutputs[i].asset : '',
+          };
+
+          newTxOutputs.push(txOutput);
+        }
+
+        setTxOutputs(newTxOutputs);
+
+        setTimeLock(transactionData.locktime);
+        setVersion(transactionData.version);
       })
       .catch((err) => {
         console.log(err);
@@ -320,3 +364,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
 };
 
 export default TransactionTemplateModal;
+function hexLE(hex: string) {
+  throw new Error('Function not implemented.');
+}
