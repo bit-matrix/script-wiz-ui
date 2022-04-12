@@ -45,6 +45,17 @@
   margin-top: 0.5rem;
   height: 90vh;
   overflow-y: auto;
+
+  .signature-tools-message-verify {
+    display: flex;
+    justify-content: space-between;
+
+    input {
+      width: 20rem;
+      height: 2.5rem;
+      margin: 0.5rem 0 !important;
+    }
+  }
 }
 
 .signature-tools-result-item {
