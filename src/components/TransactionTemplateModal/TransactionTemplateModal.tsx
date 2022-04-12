@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
-import { Button, Input, Modal } from 'rsuite';
+import { Button, Divider, Input, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
@@ -194,14 +194,19 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         closeModal();
       }}
     >
-      <Modal.Header className="tx-template-modal-header" />
+      <Modal.Header className="tx-template-modal-header">
+        <div className="tx-template-import">
+          <Input></Input>
+          <Button>Import</Button>
+        </div>
+        <Divider />
+        <div className="tx-template-header">
+          <p>Inputs</p>
+          <p>Outputs</p>
+        </div>
+      </Modal.Header>
       <Modal.Body>
         <div>
-          <div className="tx-template-header">
-            <p>Inputs</p>
-            <p>Outputs</p>
-          </div>
-
           <div className="tx-template-main">
             <div className="tx-inputs">
               {txInputs.map((input: TxInput, index: number) => {

@@ -1,6 +1,12 @@
 .tx-template-modal {
   .rs-modal-content {
     background-color: #eee !important;
+    height: 42rem;
+
+    .rs-modal-body {
+      margin-top: unset;
+      min-height: 23rem;
+    }
   }
 
   .tx-template-main {
@@ -72,7 +78,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-top: 0.25rem#d6d6d6 solid !important;
+    border-top: 0.25rem #d6d6d6 solid !important;
     padding-top: 1rem;
   }
 
@@ -93,7 +99,25 @@
   }
 
   .tx-template-modal-header {
-    margin-bottom: 2rem;
+    .tx-template-import {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      margin-top: 2rem;
+
+      .rs-input {
+        margin-right: 1rem;
+        height: 2rem;
+        width: 30rem;
+        background-color: #fff !important;
+        color: #292d33 !important;
+        border: 1px solid #ccc;
+      }
+
+      .rs-btn {
+        height: 2rem;
+      }
+    }
   }
 
   .tx-template-modal-header .rs-modal-header-close {
