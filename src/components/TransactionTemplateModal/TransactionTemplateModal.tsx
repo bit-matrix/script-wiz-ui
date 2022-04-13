@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, ReactElement } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
-import { Button, Divider, Input, InputGroup, Modal } from 'rsuite';
+import { Button, Divider, Input, InputGroup, Message, Modal, toaster } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
@@ -38,6 +38,8 @@ const txOutputInitial = {
   amount: '',
   assetId: '',
 };
+
+let message: ReactElement;
 
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
   const [txInputs, setTxInputs] = useState<TxInput[]>([txInputInitial]);
@@ -222,6 +224,15 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       })
       .catch((err) => {
         console.log(err);
+
+        message = (
+          <Message showIcon type="warning">
+            Invalid transaction id.
+          </Message>
+        );
+        toaster.push(message);
+
+        setTransactionId('');
       });
   };
 
