@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
-import { Button, Divider, Input, Modal } from 'rsuite';
+import { Button, Divider, Input, InputGroup, Modal } from 'rsuite';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
@@ -8,6 +8,7 @@ import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { upsertVM } from '../../helper';
 import axios from 'axios';
 import WizData from '@script-wiz/wiz-data';
+import CloseIcon from '../Svg/Icons/Close';
 import './TransactionTemplateModal.scss';
 
 type Props = {
@@ -256,7 +257,12 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     >
       <Modal.Header className="tx-template-modal-header">
         <div className="tx-template-import">
-          <Input onChange={(value) => setTransactionId(value)}></Input>
+          <InputGroup className="tx-template-input-group">
+            <Input value={transactionId} onChange={(value) => setTransactionId(value)}></Input>
+            <div onClick={() => setTransactionId('')}>
+              <CloseIcon width="1rem" height="1rem" />
+            </div>
+          </InputGroup>
           <Button onClick={fetchTransaction}>Import</Button>
         </div>
         <Divider />
@@ -364,6 +370,3 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
 };
 
 export default TransactionTemplateModal;
-function hexLE(hex: string) {
-  throw new Error('Function not implemented.');
-}

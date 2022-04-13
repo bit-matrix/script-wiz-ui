@@ -106,17 +106,27 @@
       align-items: flex-end;
       margin-top: 2rem;
 
-      .rs-input {
-        margin-right: 1rem;
-        height: 2rem;
-        width: 32rem;
-        background-color: #fff !important;
-        color: #292d33 !important;
+      .tx-template-input-group {
         border: 1px solid #ccc;
+        width: 32rem;
+        margin-right: 1rem;
+
+        .rs-input {
+          background-color: #fff !important;
+          margin-right: 0.5rem;
+          height: 2rem;
+          color: #292d33 !important;
+        }
       }
 
       .rs-btn {
         height: 2rem;
+      }
+
+      svg {
+        color: black;
+        margin: 0.5rem 0.5rem 0px 0px;
+        cursor: pointer;
       }
     }
   }
