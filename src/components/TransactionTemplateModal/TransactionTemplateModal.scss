@@ -108,19 +108,24 @@
 
       .tx-template-input-group {
         border: 1px solid #ccc;
-        width: 32rem;
+        width: 34rem;
         margin-right: 1rem;
 
         .rs-input {
           background-color: #fff !important;
           margin-right: 0.5rem;
-          height: 2rem;
           color: #292d33 !important;
         }
       }
 
       .rs-btn {
-        height: 2rem;
+        background-color: #ccc !important;
+        color: #292d33 !important;
+
+        &:hover {
+          color: #e9ebf0 !important;
+          background-color: #3c3f43 !important;
+        }
       }
 
       svg {
