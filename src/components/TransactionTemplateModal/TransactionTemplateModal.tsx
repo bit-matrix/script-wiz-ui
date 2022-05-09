@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, ReactElement } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
-import { Button, Divider, Input, InputGroup, Message, Modal, toaster } from 'rsuite';
+import { Button, Divider, Input, InputGroup, Message, Modal, Radio, RadioGroup, toaster } from 'rsuite';
+import { ValueType } from 'rsuite/esm/Radio';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
@@ -39,6 +40,11 @@ const txOutputInitial = {
   assetId: '',
 };
 
+enum Networks {
+  MAINNET = 'Mainnet',
+  TESTNET = 'Testnet',
+}
+
 let message: ReactElement;
 
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
@@ -49,6 +55,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
   const [lastBlock, setLastBlock] = useState<any>();
   const [transactionId, setTransactionId] = useState<string>('');
+  const [networkList, setNetworkList] = useState<Networks>(Networks.MAINNET);
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
@@ -268,6 +275,19 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     >
       <Modal.Header className="tx-template-modal-header">
         <div className="tx-template-import">
+          <div className="tx-template-networks">
+            <RadioGroup
+              inline
+              name="radioList"
+              value={networkList}
+              onChange={(value: ValueType) => {
+                setNetworkList(value as Networks);
+              }}
+            >
+              <Radio value={Networks.MAINNET}>{Networks.MAINNET}</Radio>
+              <Radio value={Networks.TESTNET}>{Networks.TESTNET}</Radio>
+            </RadioGroup>
+          </div>
           <InputGroup className="tx-template-input-group">
             <Input value={transactionId} onChange={(value) => setTransactionId(value)}></Input>
             <div onClick={() => setTransactionId('')}>
