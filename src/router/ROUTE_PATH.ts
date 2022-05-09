@@ -4,4 +4,5 @@ export enum ROUTE_PATH {
   SIGNATURE_TOOLS = '/signaturetools',
   TAPLEAF_CALCULATOR = '/tapleafcalculator',
   MAST_TOOL = '/masthelper',
+  SHA256D = '/sha256d',
 }

@@ -131,6 +131,21 @@ export const MastTool: React.FC = () => {
           appearance="primary"
           size="md"
           onClick={() => {
+            const newScripts = [...scripts];
+            newScripts.pop();
+            setScripts(newScripts);
+          }}
+        >
+          + Remove Last Leaf
+        </Button>
+      </div>
+
+      <div className="signature-tools-result-item">
+        <Button
+          className="signature-tools-button"
+          appearance="primary"
+          size="md"
+          onClick={() => {
             calculateTaprootResult();
           }}
           disabled={!checkInnerKeyValid()}
