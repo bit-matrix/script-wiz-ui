@@ -197,7 +197,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
             previousTxId: transactionDataInputs[i].txid ? transactionDataInputs[i].txid : '',
             scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey ? transactionDataInputs[i].prevout.scriptpubkey : '',
             amount: transactionDataInputs[i].prevout.value ? transactionDataInputs[i].prevout.value : '',
-            assetId: transactionDataInputs[i].issuance.asset_id ? transactionDataInputs[i].issuance.asset_id : '',
+            assetId: transactionDataInputs[i].issuance?.asset_id ? transactionDataInputs[i].issuance.asset_id : '',
             blockHeight: transactionDataInputBlockHeight ? transactionDataInputBlockHeight : '',
             blockTimestamp: transactionDataInputBlockTime ? transactionDataInputBlockTime : '',
           };
