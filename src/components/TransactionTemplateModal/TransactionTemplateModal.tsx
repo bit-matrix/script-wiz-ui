@@ -202,8 +202,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         const transactionDataInputBlockHeight = res.data.status.block_height;
         const transactionDataInputBlockTime = res.data.status.block_time;
 
-        let txOutput;
-        let txInput;
+        let txOutput: TxOutput;
+        let txInput: TxInput;
         let newTxOutputs = [];
         let newTxInputs = [];
 
@@ -212,14 +212,14 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
           const transactionDataInputsSequence = transactionDataInputsSequenceHex.substring(0, transactionDataInputsSequenceHex.length - 2);
 
           txInput = {
-            vout: transactionDataInputs[i].vout ? transactionDataInputs[i].vout : '',
-            sequence: transactionDataInputs[i].sequence ? transactionDataInputsSequence : '',
-            previousTxId: transactionDataInputs[i].txid ? transactionDataInputs[i].txid : '',
-            scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey ? transactionDataInputs[i].prevout.scriptpubkey : '',
-            amount: transactionDataInputs[i].prevout.value ? transactionDataInputs[i].prevout.value : '',
+            vout: transactionDataInputs[i].vout.toString(),
+            sequence: transactionDataInputsSequence,
+            previousTxId: transactionDataInputs[i].txid,
+            scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey,
+            amount: transactionDataInputs[i].prevout.value !== undefined ? transactionDataInputs[i].prevout.value : '',
             assetId: transactionDataInputs[i].issuance?.asset_id ? transactionDataInputs[i].issuance.asset_id : '',
-            blockHeight: transactionDataInputBlockHeight ? transactionDataInputBlockHeight : '',
-            blockTimestamp: transactionDataInputBlockTime ? transactionDataInputBlockTime : '',
+            blockHeight: transactionDataInputBlockHeight,
+            blockTimestamp: transactionDataInputBlockTime,
           };
 
           newTxInputs.push(txInput);
@@ -228,13 +228,15 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         setTxInputs(newTxInputs);
 
         for (let i = 0; i < transactionDataOutputs.length; i++) {
-          txOutput = {
-            scriptPubKey: transactionDataOutputs[i].scriptpubkey ? transactionDataOutputs[i].scriptpubkey : '',
-            amount: transactionDataOutputs[i].value ? transactionDataOutputs[i].value : '',
-            assetId: transactionDataOutputs[i].asset ? transactionDataOutputs[i].asset : '',
-          };
+          if (transactionDataOutputs[i].scriptpubkey_type !== 'fee') {
+            txOutput = {
+              scriptPubKey: transactionDataOutputs[i].scriptpubkey ? transactionDataOutputs[i].scriptpubkey : '',
+              amount: transactionDataOutputs[i].value !== undefined ? transactionDataOutputs[i].value : '',
+              assetId: transactionDataOutputs[i].asset ? transactionDataOutputs[i].asset : '',
+            };
 
-          newTxOutputs.push(txOutput);
+            newTxOutputs.push(txOutput);
+          }
         }
 
         setTxOutputs(newTxOutputs);
