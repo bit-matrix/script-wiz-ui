@@ -1,6 +1,12 @@
 .tx-template-modal {
   .rs-modal-content {
     background-color: #eee !important;
+    height: 42rem;
+
+    .rs-modal-body {
+      margin-top: unset;
+      min-height: 23rem;
+    }
   }
 
   .tx-template-main {
@@ -72,13 +78,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-top: 0.25rem#d6d6d6 solid !important;
+    border-top: 0.25rem #d6d6d6 solid !important;
     padding-top: 1rem;
   }
 
   .tx-item {
     margin: 0 0.5rem;
     width: 25%;
+
     .rs-input {
       background-color: #fff !important;
       color: #292d33 !important;
@@ -93,7 +100,52 @@
   }
 
   .tx-template-modal-header {
-    margin-bottom: 2rem;
+    .tx-template-import {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      margin-top: 2rem;
+
+      .tx-template-networks {
+        margin-right: auto;
+
+        .rs-radio-group-inline {
+          .rs-radio {
+            .rs-radio-checker label {
+              color: #000;
+            }
+          }
+        }
+      }
+
+      .tx-template-input-group {
+        border: 1px solid #ccc;
+        width: 34rem;
+        margin-right: 1rem;
+
+        .rs-input {
+          background-color: #fff !important;
+          margin-right: 0.5rem;
+          color: #292d33 !important;
+        }
+      }
+
+      .rs-btn {
+        background-color: #ccc !important;
+        color: #292d33 !important;
+
+        &:hover {
+          color: #e9ebf0 !important;
+          background-color: #3c3f43 !important;
+        }
+      }
+
+      svg {
+        color: black;
+        margin: 0.5rem 0.5rem 0px 0px;
+        cursor: pointer;
+      }
+    }
   }
 
   .tx-template-modal-header .rs-modal-header-close {
@@ -128,4 +180,8 @@
   .tx-modal-save-button {
     border: 1px solid;
   }
+}
+
+.rs-message-container {
+  background-color: #ccc;
 }

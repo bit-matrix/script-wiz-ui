@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, ReactElement } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
-import { Button, Input, Modal } from 'rsuite';
+import { Button, Divider, Input, InputGroup, Message, Modal, Radio, RadioGroup, toaster } from 'rsuite';
+import { ValueType } from 'rsuite/esm/Radio';
 import TransactionInput from './TransactionInput/TransactionInput';
 import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { upsertVM } from '../../helper';
 import axios from 'axios';
+import WizData from '@script-wiz/wiz-data';
+import CloseIcon from '../Svg/Icons/Close';
 import './TransactionTemplateModal.scss';
 
 type Props = {
@@ -37,6 +40,13 @@ const txOutputInitial = {
   assetId: '',
 };
 
+enum Networks {
+  MAINNET = 'Mainnet',
+  TESTNET = 'Testnet',
+}
+
+let message: ReactElement;
+
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
   const [txInputs, setTxInputs] = useState<TxInput[]>([txInputInitial]);
   const [txOutputs, setTxOutputs] = useState<TxOutput[]>([txOutputInitial]);
@@ -44,6 +54,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [timelock, setTimeLock] = useState<string>('');
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
   const [lastBlock, setLastBlock] = useState<any>();
+  const [transactionId, setTransactionId] = useState<string>('');
+  const [networkValue, setNetworkValue] = useState<Networks>(Networks.MAINNET);
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
@@ -109,6 +121,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     setTxOutputs([txOutputInitial]);
     setVersion('');
     setTimeLock('');
+    setTransactionId('');
     setCurrentInputIndex(0);
 
     showModalCallBack(false);
@@ -153,16 +166,101 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   };
 
   const fetchBlocks = useCallback(() => {
-    axios(scriptWiz.vm.network === VM_NETWORK.BTC ? 'https://blockstream.info/api/blocks/' : 'https://blockstream.info/liquid/api/blocks').then(
-      (res) => {
-        setLastBlock(res.data[0]);
-      },
-    );
-  }, [scriptWiz.vm.network]);
+    const api: string =
+      scriptWiz.vm.network === VM_NETWORK.BTC
+        ? networkValue === Networks.MAINNET
+          ? 'https://blockstream.info/api/blocks/'
+          : 'https://blockstream.info/testnet/api/blocks/'
+        : networkValue === Networks.MAINNET
+        ? 'https://blockstream.info/liquid/api/blocks'
+        : 'https://blockstream.info/liquidtestnet/api/blocks/';
+
+    axios(api).then((res) => {
+      setLastBlock(res.data[0]);
+    });
+  }, [scriptWiz.vm.network, networkValue]);
 
   useEffect(() => {
     if (showModal) fetchBlocks();
   }, [fetchBlocks, showModal]);
+
+  const fetchTransaction = () => {
+    const api: string =
+      scriptWiz.vm.network === VM_NETWORK.BTC
+        ? networkValue === Networks.MAINNET
+          ? `https://blockstream.info/api/tx/${transactionId}`
+          : `https://blockstream.info/testnet/api/tx/${transactionId}`
+        : networkValue === Networks.MAINNET
+        ? `https://blockstream.info/liquid/api/tx/${transactionId}`
+        : `https://blockstream.info/liquidtestnet/api/tx/${transactionId}`;
+    axios
+      .get(api)
+      .then((res) => {
+        const transactionData = res.data;
+        const transactionDataInputs = res.data.vin;
+        const transactionDataOutputs = res.data.vout;
+        const transactionDataInputBlockHeight = res.data.status.block_height;
+        const transactionDataInputBlockTime = res.data.status.block_time;
+
+        let txOutput: TxOutput;
+        let txInput: TxInput;
+        let newTxOutputs = [];
+        let newTxInputs = [];
+
+        for (let i = 0; i < transactionDataInputs.length; i++) {
+          const transactionDataInputsSequenceHex = WizData.fromNumber(transactionDataInputs[i].sequence).hex;
+          const transactionDataInputsSequence = transactionDataInputsSequenceHex.substring(0, transactionDataInputsSequenceHex.length - 2);
+
+          txInput = {
+            vout: transactionDataInputs[i].vout.toString(),
+            sequence: transactionDataInputsSequence,
+            previousTxId: transactionDataInputs[i].txid,
+            scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey,
+            amount: transactionDataInputs[i].prevout.value !== undefined ? transactionDataInputs[i].prevout.value : '',
+            assetId: transactionDataInputs[i].issuance?.asset_id ? transactionDataInputs[i].issuance.asset_id : '',
+            blockHeight: transactionDataInputBlockHeight,
+            blockTimestamp: transactionDataInputBlockTime,
+          };
+
+          newTxInputs.push(txInput);
+        }
+
+        setTxInputs(newTxInputs);
+
+        for (let i = 0; i < transactionDataOutputs.length; i++) {
+          if (transactionDataOutputs[i].scriptpubkey_type !== 'fee') {
+            txOutput = {
+              scriptPubKey: transactionDataOutputs[i].scriptpubkey ? transactionDataOutputs[i].scriptpubkey : '',
+              amount: transactionDataOutputs[i].value !== undefined ? transactionDataOutputs[i].value : '',
+              assetId: transactionDataOutputs[i].asset ? transactionDataOutputs[i].asset : '',
+            };
+
+            newTxOutputs.push(txOutput);
+          }
+        }
+
+        setTxOutputs(newTxOutputs);
+
+        setTimeLock(transactionData.locktime);
+        setVersion(transactionData.version);
+      })
+      .catch((err) => {
+        message = (
+          <Message showIcon type="warning">
+            Invalid transaction id.
+          </Message>
+        );
+        toaster.push(message);
+
+        setTxInputs([txInputInitial]);
+        setTxOutputs([txOutputInitial]);
+        setVersion('');
+        setTimeLock('');
+        setCurrentInputIndex(0);
+        setLastBlock(undefined);
+        setTransactionId('');
+      });
+  };
 
   const timelockValidation = (): string | undefined => {
     if (lastBlock) {
@@ -194,14 +292,37 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         closeModal();
       }}
     >
-      <Modal.Header className="tx-template-modal-header" />
+      <Modal.Header className="tx-template-modal-header">
+        <div className="tx-template-import">
+          <div className="tx-template-networks">
+            <RadioGroup
+              inline
+              name="radioList"
+              value={networkValue}
+              onChange={(value: ValueType) => {
+                setNetworkValue(value as Networks);
+              }}
+            >
+              <Radio value={Networks.MAINNET}>{Networks.MAINNET}</Radio>
+              <Radio value={Networks.TESTNET}>{Networks.TESTNET}</Radio>
+            </RadioGroup>
+          </div>
+          <InputGroup className="tx-template-input-group">
+            <Input value={transactionId} onChange={(value) => setTransactionId(value)}></Input>
+            <div onClick={() => setTransactionId('')}>
+              <CloseIcon width="1rem" height="1rem" />
+            </div>
+          </InputGroup>
+          <Button onClick={fetchTransaction}>Import</Button>
+        </div>
+        <Divider />
+        <div className="tx-template-header">
+          <p>Inputs</p>
+          <p>Outputs</p>
+        </div>
+      </Modal.Header>
       <Modal.Body>
         <div>
-          <div className="tx-template-header">
-            <p>Inputs</p>
-            <p>Outputs</p>
-          </div>
-
           <div className="tx-template-main">
             <div className="tx-inputs">
               {txInputs.map((input: TxInput, index: number) => {
