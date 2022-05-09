@@ -55,7 +55,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
   const [lastBlock, setLastBlock] = useState<any>();
   const [transactionId, setTransactionId] = useState<string>('');
-  const [networkList, setNetworkList] = useState<Networks>(Networks.MAINNET);
+  const [networkValue, setNetworkValue] = useState<Networks>(Networks.MAINNET);
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
@@ -165,24 +165,35 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   };
 
   const fetchBlocks = useCallback(() => {
-    axios(scriptWiz.vm.network === VM_NETWORK.BTC ? 'https://blockstream.info/api/blocks/' : 'https://blockstream.info/liquid/api/blocks').then(
-      (res) => {
-        setLastBlock(res.data[0]);
-      },
-    );
-  }, [scriptWiz.vm.network]);
+    const api: string =
+      scriptWiz.vm.network === VM_NETWORK.BTC
+        ? networkValue === Networks.MAINNET
+          ? 'https://blockstream.info/api/blocks/'
+          : 'https://blockstream.info/testnet/api/blocks/'
+        : networkValue === Networks.MAINNET
+        ? 'https://blockstream.info/liquid/api/blocks'
+        : 'https://blockstream.info/liquidtestnet/api/blocks/';
+
+    axios(api).then((res) => {
+      setLastBlock(res.data[0]);
+    });
+  }, [scriptWiz.vm.network, networkValue]);
 
   useEffect(() => {
     if (showModal) fetchBlocks();
   }, [fetchBlocks, showModal]);
 
   const fetchTransaction = () => {
-    axios
-      .get(
-        scriptWiz.vm.network === VM_NETWORK.BTC
+    const api: string =
+      scriptWiz.vm.network === VM_NETWORK.BTC
+        ? networkValue === Networks.MAINNET
           ? `https://blockstream.info/api/tx/${transactionId}`
-          : `https://blockstream.info/liquid/api/tx/${transactionId}`,
-      )
+          : `https://blockstream.info/testnet/api/tx/${transactionId}`
+        : networkValue === Networks.MAINNET
+        ? `https://blockstream.info/liquid/api/tx/${transactionId}`
+        : `https://blockstream.info/liquidtestnet/api/tx/${transactionId}`;
+    axios
+      .get(api)
       .then((res) => {
         const transactionData = res.data;
         const transactionDataInputs = res.data.vin;
@@ -279,9 +290,9 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
             <RadioGroup
               inline
               name="radioList"
-              value={networkList}
+              value={networkValue}
               onChange={(value: ValueType) => {
-                setNetworkList(value as Networks);
+                setNetworkValue(value as Networks);
               }}
             >
               <Radio value={Networks.MAINNET}>{Networks.MAINNET}</Radio>
