@@ -241,8 +241,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         setVersion(transactionData.version);
       })
       .catch((err) => {
-        console.log(err);
-
         message = (
           <Message showIcon type="warning">
             Invalid transaction id.
@@ -250,6 +248,12 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         );
         toaster.push(message);
 
+        setTxInputs([txInputInitial]);
+        setTxOutputs([txOutputInitial]);
+        setVersion('');
+        setTimeLock('');
+        setCurrentInputIndex(0);
+        setLastBlock(undefined);
         setTransactionId('');
       });
   };
