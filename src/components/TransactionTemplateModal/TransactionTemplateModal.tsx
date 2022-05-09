@@ -121,6 +121,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     setTxOutputs([txOutputInitial]);
     setVersion('');
     setTimeLock('');
+    setTransactionId('');
     setCurrentInputIndex(0);
 
     showModalCallBack(false);
