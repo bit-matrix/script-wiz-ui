@@ -207,7 +207,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         let newTxInputs = [];
 
         for (let i = 0; i < transactionDataInputs.length; i++) {
-          const transactionDataInputsSequence = WizData.fromNumber(transactionDataInputs[i].sequence).hex;
+          const transactionDataInputsSequenceHex = WizData.fromNumber(transactionDataInputs[i].sequence).hex;
+          const transactionDataInputsSequence = transactionDataInputsSequenceHex.substring(0, transactionDataInputsSequenceHex.length - 2);
 
           txInput = {
             vout: transactionDataInputs[i].vout ? transactionDataInputs[i].vout : '',
