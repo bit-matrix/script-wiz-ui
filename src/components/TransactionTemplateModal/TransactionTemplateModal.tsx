@@ -8,7 +8,7 @@ import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { upsertVM } from '../../helper';
 import axios from 'axios';
-import WizData from '@script-wiz/wiz-data';
+import WizData, { hexLE } from '@script-wiz/wiz-data';
 import CloseIcon from '../Svg/Icons/Close';
 import './TransactionTemplateModal.scss';
 
@@ -210,10 +210,11 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         for (let i = 0; i < transactionDataInputs.length; i++) {
           const transactionDataInputsSequenceHex = WizData.fromNumber(transactionDataInputs[i].sequence).hex;
           const transactionDataInputsSequence = transactionDataInputsSequenceHex.substring(0, transactionDataInputsSequenceHex.length - 2);
+          const transactionDataInputsSequenceHexLE = hexLE(transactionDataInputsSequence);
 
           txInput = {
             vout: transactionDataInputs[i].vout.toString(),
-            sequence: transactionDataInputsSequence,
+            sequence: transactionDataInputsSequenceHexLE,
             previousTxId: transactionDataInputs[i].txid,
             scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey,
             amount: transactionDataInputs[i].prevout.value !== undefined ? transactionDataInputs[i].prevout.value : '',
