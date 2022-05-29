@@ -358,38 +358,150 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   }, [witnessScriptLines, stackElementsLines, parseInput, scriptWiz, scriptWiz.stackDataList.txData]);
 
   const compileScripts = () => {
-    const compileScript = scriptWiz.compile();
-    const artifact = compileIonioArtifact();
-    setCompileModalData({ show: true, data: compileScript, artifact  });
+    try {
+      const compileScript = scriptWiz.compile();
+      const artifact = compileIonioArtifact();
+      setCompileModalData({ show: true, data: compileScript, artifact });
+    } catch(e) {
+      console.error(e)
+    }
   };
 
   const compileIonioArtifact = () => {
+
+    // asm
+    let asm: string[] = [];
+    let constructorInputs: { name: string, type: string }[] = [];
+    let functionInputs: { name: string, type: string }[] = [];
+    let constructorInputsValues: string[] = [];
+    let require: { type: string, expected: any, atIndex?: number }[] = [];
+  
     const inputHexes = scriptWiz.stackDataList.inputHexes;
+    const cleanInputHexes = inputHexes.filter((hex: string) => hex && hex.length > 0);
+
+    cleanInputHexes.forEach((hex: string, index: number) => {
+      const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
+      if (!opcode) {
+        // assign random name as template
+        const name = `param${index}`;
+        // we defualt to bytes for now
+        const type = 'bytes';
+        // collect the actual value of template if not present already
+        if (!constructorInputsValues.includes(hex)) {
+          constructorInputs.push({ name, type });
+          constructorInputsValues.push(hex);
+          // push the template name to the asm
+          return asm.push(`$${name}`);
+        } else {
+          // this means we have a duplicated value, let's use the one already present
+          const indexOfDuplicate = constructorInputsValues.findIndex((value: string) => value === hex);
+          return asm.push(`$${constructorInputs[indexOfDuplicate].name}`);
+        }
+      }
+
+
+      if (!opcode.word) {
+        throw new Error(`opcode not found for ${hex}`);
+      }
+
+      // let's understand if this script needs parameters 
+      switch (opcode.word) {
+        case 'OP_CHECKSIG':
+        case 'OP_CHECKSIGVERIFY':
+          functionInputs.push({ name: `signature${index}`, type: 'sig' });
+          break;
+        case 'OP_CHECKSIGFROMSTACK':
+        case 'OP_CHECKSIGFROMSTACKVERIFY':
+          functionInputs.push({ name: `datasignature${index}`, type: 'datasig' });
+          break;
+        default:
+          break;
+      }
+
+      // let's understand if this script got covenants
+      switch (opcode.word) {
+        case 'OP_INSPECTOUTPUTSCRIPTPUBKEY': {
+          const prevStackElm = cleanInputHexes[index - 1];
+          const atIndex = parseInt(prevStackElm.replace('OP_', ''));
+
+          const nextStackElm = cleanInputHexes[index + 1];
+          const version = parseInt(nextStackElm.replace('OP_', ''));
+
+          const program = cleanInputHexes[index + 3];
+
+          require.push({ type: 'outputscript', expected: { version, program }, atIndex });
+          break;
+        }
+        case 'OP_INSPECTOUTPUTVALUE': {
+          const prevStackElm = cleanInputHexes[index - 1];
+          const atIndex = parseInt(prevStackElm.replace('OP_', ''));
+
+          const amount = cleanInputHexes[index + 3];
+
+          require.push({ type: 'outputvalue', expected: amount, atIndex });
+          break;
+        }
+        case 'OP_INSPECTOUTPUTASSET': {
+          const prevStackElm = cleanInputHexes[index - 1];
+          const atIndex = parseInt(prevStackElm.replace('OP_', ''));
+          
+          const asset = cleanInputHexes[index + 3];
+
+          require.push({ type: 'outputasset', expected: asset, atIndex });
+          break;
+        }
+        case 'OP_INSPECTOUTPUTNONCE': {
+          const prevStackElm = cleanInputHexes[index - 1];
+          const atIndex = parseInt(prevStackElm.replace('OP_', ''));
+
+          const nonce = cleanInputHexes[index + 1];
+          require.push({ type: 'outputnonce', expected: nonce, atIndex });
+          break;
+        }
+        default:
+          break;
+      }
+
+
+      return asm.push(opcode.word);;
+    });
+
+    // optmize the requirement type
+    /* const inspectOutByIndex: Record<number, string[]> = {};
+    for (const { atIndex, type } of require) {
+      if (!atIndex) return;
+      if (!inspectOutByIndex[atIndex]) {
+        inspectOutByIndex[atIndex] = [];
+      }
+      inspectOutByIndex[atIndex].push(type);
+    }
+
+    for (const [atIndexString, types] of Object.entries(inspectOutByIndex)) {
+      const atIndex = parseInt(atIndexString);
+      const fullCovenantOutput = types.includes('outputscript') && types.includes('outputvalue') && types.includes('outputasset') && types.includes('outputnonce');
+      if (fullCovenantOutput) {
+        require = require.filter((req: { type: string, expected: any, atIndex?: number }) => {
+          if (!req.atIndex) return false;
+          const toBeRemoved = req.atIndex === atIndex && req.type.startsWith('output')
+          return !toBeRemoved;
+        });
+      }
+    } */
+
     const artifact: Record<string, any> = {
       contractName: 'myContract',
-      constructorInputs: [],
+      constructorInputs,
       functions: [
         {
           name: 'myFunction',
-          functionInputs: [],
-          require: [],
-          asm: [],
+          functionInputs,
+          require,
+          asm,
         }
       ],
     };
 
-    artifact.functions[0].asm = inputHexes
-      .filter((hex: string) => hex && hex.length > 0)
-      .map((hex: string, i: number) => {
-      const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
-      if (!opcode) {
-        const name = `param${i}`;
-        const type = 'bytes';
-        artifact.constructorInputs.push({ name, type });
-        return `$${name}`;
-      }
-      return opcode?.word;
-    });
+    console.log(JSON.stringify(artifact, null, 2));
 
     return artifact;
   }
