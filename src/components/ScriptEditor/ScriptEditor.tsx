@@ -59,6 +59,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [compileModalData, setCompileModalData] = useState<{
     show: boolean;
     data?: string;
+    artifact?: Record<string, any>;
   }>({ show: false });
 
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
@@ -358,8 +359,40 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   const compileScripts = () => {
     const compileScript = scriptWiz.compile();
-    setCompileModalData({ show: true, data: compileScript });
+    const artifact = compileIonioArtifact();
+    setCompileModalData({ show: true, data: compileScript, artifact  });
   };
+
+  const compileIonioArtifact = () => {
+    const inputHexes = scriptWiz.stackDataList.inputHexes;
+    const artifact: Record<string, any> = {
+      contractName: 'myContract',
+      constructorInputs: [],
+      functions: [
+        {
+          name: 'myFunction',
+          functionInputs: [],
+          require: [],
+          asm: [],
+        }
+      ],
+    };
+
+    artifact.functions[0].asm = inputHexes
+      .filter((hex: string) => hex && hex.length > 0)
+      .map((hex: string, i: number) => {
+      const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
+      if (!opcode) {
+        const name = `param${i}`;
+        const type = 'bytes';
+        artifact.constructorInputs.push({ name, type });
+        return `$${name}`;
+      }
+      return opcode?.word;
+    });
+
+    return artifact;
+  }
 
   const getWhispers = useCallback(
     (stackDataArray: WizData[]) =>
