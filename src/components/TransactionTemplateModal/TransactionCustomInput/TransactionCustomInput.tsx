@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Input, Radio, RadioGroup } from 'rsuite';
 import { ValueType } from 'rsuite/esm/Checkbox';
+import './TransactionCustomInput.scss';
 
 enum types {
   BE = 'BE',
@@ -10,22 +11,30 @@ enum types {
 
 type Props = {
   label: string;
-  showPlaceholder: boolean;
   placeholderValue?: string;
   typeOnChange?: (type: types) => void;
   showTypes: boolean;
   txModalOnChange: (value: string) => void;
+  localStorageValue: string;
 };
 
-const TransactionCustomInput: FC<Props> = ({ label, showPlaceholder, placeholderValue, typeOnChange, showTypes, txModalOnChange }) => {
+const TransactionCustomInput: FC<Props> = ({ label, placeholderValue, typeOnChange, showTypes, txModalOnChange, localStorageValue }) => {
   const [type, setType] = useState<types>(types.BE);
 
   return (
-    <div className="tx-input-item">
-      <div className="tx-modal-label-with-radio">
-        <div className="tx-modal-label">{label}</div>
+    <div className="tx-custom-input-item">
+      <div className="tx-custom-input-label-radio">
+        <div className="tx-custom-input-label">{label}</div>
         {showTypes && (
-          <RadioGroup inline name="radioList" value={type} onChange={(value: ValueType) => {}}>
+          <RadioGroup
+            inline
+            name="radioList"
+            value={type}
+            onChange={(value: ValueType) => {
+              setType(value as types);
+              if (showTypes) typeOnChange?.(value as types);
+            }}
+          >
             <Radio value={types.BE}>{types.BE}</Radio>
             <Radio value={types.LE}>{types.LE}</Radio>
             <Radio value={types.DECIMAL}>{types.DECIMAL}</Radio>
@@ -33,7 +42,8 @@ const TransactionCustomInput: FC<Props> = ({ label, showPlaceholder, placeholder
         )}
       </div>
       <Input
-        placeholder={showPlaceholder ? placeholderValue : ''}
+        value={localStorageValue}
+        placeholder={placeholderValue ? placeholderValue : ''}
         onChange={(value: string) => {
           txModalOnChange(value);
         }}
