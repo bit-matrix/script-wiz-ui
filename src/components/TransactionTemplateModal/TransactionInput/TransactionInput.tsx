@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TxInput } from '@script-wiz/lib-core';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
@@ -25,9 +25,6 @@ enum types {
 }
 
 const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput, version, lastBlock }) => {
-  const [amountType, setAmountType] = useState<types>(types.DECIMAL);
-  const [sequenceType, setSequenceType] = useState<types>(types.BE);
-
   const isValidPreviousTxId =
     (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
@@ -120,7 +117,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               txInput.checked,
             );
           }}
-          localStorageValue={txInput.input.previousTxId}
+          value={txInput.input.previousTxId}
         />
         <div className="tx-error-line">{isValidPreviousTxId}</div>
       </div>
@@ -138,12 +135,13 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
             txInput.checked,
           );
         }}
-        localStorageValue={txInput.input.vout}
+        value={txInput.input.vout}
       />
 
       <div>
         <TransactionCustomInput
-          label={'Sequence:'}
+          name="sequence"
+          label="Sequence:"
           showTypes={true}
           defaultType={types.BE}
           txModalOnChange={(value) => {
@@ -156,11 +154,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               txInput.checked,
             );
           }}
-          localStorageValue={txInput.input.sequence}
-          typeOnChange={(value) => {
-            setSequenceType(value);
-          }}
-          placeholderValue={types.DECIMAL === sequenceType ? '0' : '4-bytes'}
+          value={txInput.input.sequence}
         />
         {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
       </div>
@@ -179,7 +173,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               txInput.checked,
             );
           }}
-          localStorageValue={txInput.input.blockHeight}
+          value={txInput.input.blockHeight}
         />
         <div>
           <TransactionCustomInput
@@ -195,7 +189,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
                 txInput.checked,
               );
             }}
-            localStorageValue={txInput.input.blockTimestamp}
+            value={txInput.input.blockTimestamp}
           />
           {/* {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>} */}
         </div>
@@ -214,11 +208,12 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
             txInput.checked,
           );
         }}
-        localStorageValue={txInput.input.scriptPubKey}
+        value={txInput.input.scriptPubKey}
       />
 
       <div>
         <TransactionCustomInput
+          name="amount"
           label={'Amount:'}
           showTypes={true}
           defaultType={types.DECIMAL}
@@ -232,11 +227,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               txInput.checked,
             );
           }}
-          localStorageValue={txInput.input.amount}
-          typeOnChange={(value) => {
-            setAmountType(value);
-          }}
-          placeholderValue={types.DECIMAL === amountType ? '0' : '8-bytes'}
+          value={txInput.input.amount}
         />
         {/* <div className="tx-error-line">{isValidAmount}</div> */}
       </div>
@@ -256,7 +247,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
                 txInput.checked,
               );
             }}
-            localStorageValue={txInput.input.assetId}
+            value={txInput.input.assetId}
             placeholderValue={'32-bytes'}
           />
           <div className="tx-error-line">{isValidAssetId}</div>

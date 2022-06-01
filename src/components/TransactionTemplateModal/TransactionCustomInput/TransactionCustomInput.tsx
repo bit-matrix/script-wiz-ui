@@ -10,17 +10,28 @@ enum types {
 }
 
 type Props = {
+  name?: string;
   label: string;
   placeholderValue?: string;
-  typeOnChange?: (type: types) => void;
   showTypes: boolean;
   defaultType?: types;
   txModalOnChange: (value: string) => void;
-  localStorageValue: string | undefined;
+  value: string | undefined;
 };
 
-const TransactionCustomInput: FC<Props> = ({ label, placeholderValue, typeOnChange, showTypes, defaultType, txModalOnChange, localStorageValue }) => {
+const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, showTypes, defaultType, txModalOnChange, value }) => {
   const [type, setType] = useState<types | undefined>(defaultType);
+
+  const placeholderSelector = () => {
+    if (type === types.DECIMAL) {
+      return '0';
+    } else if (type === types.BE || type === types.LE) {
+      if (name === 'sequence') return '4-bytes';
+      if (name === 'amount') return '8-bytes';
+    }
+
+    return placeholderValue;
+  };
 
   return (
     <div className="tx-custom-input-item">
@@ -33,7 +44,6 @@ const TransactionCustomInput: FC<Props> = ({ label, placeholderValue, typeOnChan
             value={type}
             onChange={(value: ValueType) => {
               setType(value as types);
-              if (showTypes) typeOnChange?.(value as types);
             }}
           >
             <Radio value={types.BE}>{types.BE}</Radio>
@@ -43,8 +53,8 @@ const TransactionCustomInput: FC<Props> = ({ label, placeholderValue, typeOnChan
         )}
       </div>
       <Input
-        value={localStorageValue}
-        placeholder={placeholderValue ? placeholderValue : ''}
+        value={value}
+        placeholder={placeholderSelector()}
         onChange={(value: string) => {
           txModalOnChange(value);
         }}
