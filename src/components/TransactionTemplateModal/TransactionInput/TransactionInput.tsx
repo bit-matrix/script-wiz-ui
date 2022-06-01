@@ -1,11 +1,12 @@
 import React from 'react';
 import { TxInput } from '@script-wiz/lib-core';
+import { VM, VM_NETWORK } from '@script-wiz/lib';
+import WizData, { hexLE } from '@script-wiz/wiz-data';
 import { Input, Radio } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
-import { VM, VM_NETWORK } from '@script-wiz/lib';
-import WizData, { hexLE } from '@script-wiz/wiz-data';
+import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
 import './TransactionInput.scss';
 
 type Props = {
@@ -94,12 +95,11 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           <CloseIcon width="1rem" height="1rem" />
         </div>
       </div>
-      <div className="tx-input-modal-item">
-        <div className="tx-modal-label">Previous TX ID:</div>
-        <Input
-          value={txInput.input.previousTxId}
-          placeholder="32-bytes"
-          onChange={(value: string) => {
+      <div>
+        <TransactionCustomInput
+          label={'Previous TX ID:'}
+          showTypes={false}
+          txModalOnChange={(value) => {
             txInputOnChange(
               {
                 ...txInput.input,
@@ -109,44 +109,48 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               txInput.checked,
             );
           }}
+          localStorageValue={txInput.input.previousTxId}
         />
         <div className="tx-error-line">{isValidPreviousTxId}</div>
       </div>
-      <div className="tx-input-item-double">
-        <div className="tx-input-label">
-          <div className="tx-input-item">Vout:</div>
-          <Input
-            value={txInput.input.vout}
-            onChange={(value: string) => {
-              txInputOnChange(
-                {
-                  ...txInput.input,
-                  vout: value,
-                },
-                txInput.index,
-                txInput.checked,
-              );
-            }}
-          />
-        </div>
-        <div className="tx-input-label">
-          <div className="tx-input-item">Sequence:</div>
-          <Input
-            value={txInput.input.sequence}
-            onChange={(value: string) => {
-              txInputOnChange(
-                {
-                  ...txInput.input,
-                  sequence: value,
-                },
-                txInput.index,
-                txInput.checked,
-              );
-            }}
-          />
-          {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
-        </div>
+
+      <TransactionCustomInput
+        label={'Vout:'}
+        showTypes={false}
+        txModalOnChange={(value) => {
+          txInputOnChange(
+            {
+              ...txInput.input,
+              vout: value,
+            },
+            txInput.index,
+            txInput.checked,
+          );
+        }}
+        localStorageValue={txInput.input.vout}
+      />
+      <div>
+        <TransactionCustomInput
+          label={'Sequence:'}
+          showTypes={true}
+          txModalOnChange={(value) => {
+            txInputOnChange(
+              {
+                ...txInput.input,
+                sequence: value,
+              },
+              txInput.index,
+              txInput.checked,
+            );
+          }}
+          localStorageValue={txInput.input.sequence}
+          typeOnChange={(value) => {
+            console.log(value);
+          }}
+        />
+        {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
       </div>
+
       <div className="tx-input-item-double">
         <div className="tx-input-label">
           <div className="tx-input-item">Block Height:</div>
