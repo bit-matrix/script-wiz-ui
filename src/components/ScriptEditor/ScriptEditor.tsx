@@ -362,44 +362,70 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       const compileScript = scriptWiz.compile();
       const artifact = compileIonioArtifact();
       setCompileModalData({ show: true, data: compileScript, artifact });
-    } catch(e) {
+    } catch (e) {
       console.error(e)
     }
   };
 
+  const numberOrOpCode = (line: string): number => {
+    if (line.startsWith('OP_')) {
+      return parseInt(line.replace('OP_', ''));
+    } else if (typeof line === 'number' || !isNaN(Number(line))) {
+      return Number(line);
+    } else {
+      throw new Error('Invalid input value, expected number');
+    }
+  }
   const compileIonioArtifact = () => {
 
     // asm
     let asm: string[] = [];
     let constructorInputs: { name: string, type: string }[] = [];
     let functionInputs: { name: string, type: string }[] = [];
-    let constructorInputsValues: string[] = [];
+    let constructorInputsValues: Map<string, string> = new Map();
     let require: { type: string, expected: any, atIndex?: number }[] = [];
-  
+
     const inputHexes = scriptWiz.stackDataList.inputHexes;
     const cleanInputHexes = inputHexes.filter((hex: string) => hex && hex.length > 0);
 
-    cleanInputHexes.forEach((hex: string, index: number) => {
+    let paramCount = 0;
+    for (let i = 0; i < cleanInputHexes.length; i++) {
+      const hex = cleanInputHexes[i];
+      const nextHex = cleanInputHexes[i + 1];
+      console.log(hex, nextHex)
       const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
+      const nextOpcode = scriptWiz.opCodes.codeData(Number(`0x${nextHex}`));
       if (!opcode) {
+        // we skip adding param if is a signature check, will be replaced by function input later
+        if (nextOpcode && (nextOpcode.word === 'OP_CHECKSIGVERIFY' || nextOpcode.word === 'OP_CHECKSIG')) continue;
         // assign random name as template
-        const name = `param${index}`;
+        const name = `param${paramCount}`;
         // we defualt to bytes for now
         const type = 'bytes';
         // collect the actual value of template if not present already
-        if (!constructorInputsValues.includes(hex)) {
+        if (!Array.from(constructorInputsValues.keys()).includes(hex)) {
           constructorInputs.push({ name, type });
-          constructorInputsValues.push(hex);
+          constructorInputsValues.set(hex, name);
+          // increment the count
+          paramCount++;
           // push the template name to the asm
-          return asm.push(`$${name}`);
+          asm.push(`$${name}`);
+          continue;
         } else {
           // this means we have a duplicated value, let's use the one already present
-          const indexOfDuplicate = constructorInputsValues.findIndex((value: string) => value === hex);
-          return asm.push(`$${constructorInputs[indexOfDuplicate].name}`);
+          asm.push(`$${constructorInputsValues.get(hex)}`);
+          continue;
         }
       }
+      asm.push(opcode.word);
+    };
 
 
+
+    let functionParamCount = 0;
+    cleanInputHexes.forEach((hex: string, index: number) => {
+      const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
+      if (!opcode) return;
       if (!opcode.word) {
         throw new Error(`opcode not found for ${hex}`);
       }
@@ -408,62 +434,66 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       switch (opcode.word) {
         case 'OP_CHECKSIG':
         case 'OP_CHECKSIGVERIFY':
-          functionInputs.push({ name: `signature${index}`, type: 'sig' });
+          const name = `signature${functionParamCount}`;
+          const type = `sig`;
+          asm.splice(index-1, 0, name);
+          functionInputs.push({ name, type });
+          functionParamCount++;
           break;
         case 'OP_CHECKSIGFROMSTACK':
         case 'OP_CHECKSIGFROMSTACKVERIFY':
-          functionInputs.push({ name: `datasignature${index}`, type: 'datasig' });
+          functionInputs.push({ name: `datasignature${functionParamCount}`, type: 'datasig' });
+          functionParamCount++;
           break;
-        default:
-          break;
-      }
 
-      // let's understand if this script got covenants
-      switch (opcode.word) {
         case 'OP_INSPECTOUTPUTSCRIPTPUBKEY': {
           const prevStackElm = cleanInputHexes[index - 1];
-          const atIndex = parseInt(prevStackElm.replace('OP_', ''));
+          const atIndex = numberOrOpCode(prevStackElm);
 
           const nextStackElm = cleanInputHexes[index + 1];
-          const version = parseInt(nextStackElm.replace('OP_', ''));
+          let version = numberOrOpCode(nextStackElm);
 
-          const program = cleanInputHexes[index + 3];
+          const nextNextStackElm = cleanInputHexes[index + 3];
+          const program = constructorInputsValues.has(nextNextStackElm) ? `$${constructorInputsValues.get(nextNextStackElm)}` : nextNextStackElm;
 
           require.push({ type: 'outputscript', expected: { version, program }, atIndex });
           break;
         }
         case 'OP_INSPECTOUTPUTVALUE': {
           const prevStackElm = cleanInputHexes[index - 1];
-          const atIndex = parseInt(prevStackElm.replace('OP_', ''));
+          const atIndex = numberOrOpCode(prevStackElm);
 
-          const amount = cleanInputHexes[index + 3];
+          //const nextStackElm = cleanInputHexes[index + 1];
+          //let prefix = numberOrOpCode(nextStackElm);
 
-          require.push({ type: 'outputvalue', expected: amount, atIndex });
+          const nextNextStackElm = cleanInputHexes[index + 3];
+          const value = constructorInputsValues.has(nextNextStackElm) ? `$${constructorInputsValues.get(nextNextStackElm)}` : nextNextStackElm;
+
+          require.push({ type: 'outputvalue', expected: value, atIndex });
           break;
         }
         case 'OP_INSPECTOUTPUTASSET': {
           const prevStackElm = cleanInputHexes[index - 1];
-          const atIndex = parseInt(prevStackElm.replace('OP_', ''));
-          
-          const asset = cleanInputHexes[index + 3];
+          const atIndex = numberOrOpCode(prevStackElm);
 
+          const nextNextStackElm = cleanInputHexes[index + 3];
+          const asset = constructorInputsValues.has(nextNextStackElm) ? `$${constructorInputsValues.get(nextNextStackElm)}` : nextNextStackElm;
+          
           require.push({ type: 'outputasset', expected: asset, atIndex });
           break;
         }
         case 'OP_INSPECTOUTPUTNONCE': {
           const prevStackElm = cleanInputHexes[index - 1];
-          const atIndex = parseInt(prevStackElm.replace('OP_', ''));
+          const atIndex = numberOrOpCode(prevStackElm);
 
-          const nonce = cleanInputHexes[index + 1];
+          const nextStackElm = cleanInputHexes[index + 1];
+          const nonce = constructorInputsValues.has(nextStackElm) ? constructorInputsValues.get(nextStackElm) : nextStackElm;
           require.push({ type: 'outputnonce', expected: nonce, atIndex });
           break;
         }
         default:
           break;
       }
-
-
-      return asm.push(opcode.word);;
     });
 
     // optmize the requirement type
