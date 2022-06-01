@@ -14,12 +14,13 @@ type Props = {
   placeholderValue?: string;
   typeOnChange?: (type: types) => void;
   showTypes: boolean;
+  defaultType?: types;
   txModalOnChange: (value: string) => void;
-  localStorageValue: string;
+  localStorageValue: string | undefined;
 };
 
-const TransactionCustomInput: FC<Props> = ({ label, placeholderValue, typeOnChange, showTypes, txModalOnChange, localStorageValue }) => {
-  const [type, setType] = useState<types>(types.BE);
+const TransactionCustomInput: FC<Props> = ({ label, placeholderValue, typeOnChange, showTypes, defaultType, txModalOnChange, localStorageValue }) => {
+  const [type, setType] = useState<types | undefined>(defaultType);
 
   return (
     <div className="tx-custom-input-item">
