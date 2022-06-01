@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TxInput } from '@script-wiz/lib-core';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
@@ -18,7 +18,15 @@ type Props = {
   lastBlock?: any;
 };
 
+enum types {
+  BE = 'BE',
+  LE = 'LE',
+  DECIMAL = 'Decimal',
+}
+
 const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput, version, lastBlock }) => {
+  const [type, setType] = useState<types>();
+
   const isValidPreviousTxId =
     (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
@@ -145,8 +153,9 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           }}
           localStorageValue={txInput.input.sequence}
           typeOnChange={(value) => {
-            console.log(value);
+            setType(value);
           }}
+          placeholderValue={types.DECIMAL === type ? '0' : '4-bytes'}
         />
         {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
       </div>
