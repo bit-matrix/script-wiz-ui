@@ -396,12 +396,15 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
       const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
       const nextOpcode = scriptWiz.opCodes.codeData(Number(`0x${nextHex}`));
       if (!opcode) {
-        // we skip adding param if is a signature check, will be replaced by function input later
-        if (nextOpcode && (nextOpcode.word === 'OP_CHECKSIGVERIFY' || nextOpcode.word === 'OP_CHECKSIG')) continue;
         // assign random name as template
         const name = `param${paramCount}`;
         // we defualt to bytes for now
-        const type = 'bytes';
+        let type = 'bytes';
+        // we skip adding param if is a signature check, will be replaced by function input later
+        if (nextOpcode && (nextOpcode.word === 'OP_CHECKSIGVERIFY' || nextOpcode.word === 'OP_CHECKSIG')) {
+          type = 'xonlypubkey'
+        }
+ 
         // collect the actual value of template if not present already
         if (!Array.from(constructorInputsValues.keys()).includes(hex)) {
           constructorInputs.push({ name, type });
@@ -488,7 +491,8 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
           const nextStackElm = cleanInputHexes[index + 1];
           const nonce = constructorInputsValues.has(nextStackElm) ? constructorInputsValues.get(nextStackElm) : nextStackElm;
-          require.push({ type: 'outputnonce', expected: nonce, atIndex });
+          const cleanedNonce = nonce === '00' ? '' : nonce;
+          require.push({ type: 'outputnonce', expected: cleanedNonce, atIndex });
           break;
         }
         default:
