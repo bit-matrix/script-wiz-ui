@@ -105,7 +105,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
 
       <div>
         <TransactionCustomInput
-          label={'Previous TX ID:'}
+          name="previousTxId"
+          label="Previous TX ID:"
           showTypes={false}
           txModalOnChange={(value) => {
             txInputOnChange(
@@ -123,7 +124,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
       </div>
 
       <TransactionCustomInput
-        label={'Vout:'}
+        name="vout"
+        label="Vout:"
         showTypes={false}
         txModalOnChange={(value) => {
           txInputOnChange(
@@ -161,7 +163,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
 
       <div className="tx-input-item-double">
         <TransactionCustomInput
-          label={'Block Height:'}
+          name="blockHeight"
+          label="Block Height:"
           showTypes={false}
           txModalOnChange={(value) => {
             txInputOnChange(
@@ -177,7 +180,8 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         />
         <div>
           <TransactionCustomInput
-            label={'Block Timestamp:'}
+            name="blockTimestamp"
+            label="Block Timestamp:"
             showTypes={false}
             txModalOnChange={(value) => {
               txInputOnChange(
@@ -196,6 +200,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
       </div>
 
       <TransactionCustomInput
+        name="scriptPubKey"
         label={'scriptPubKey:'}
         showTypes={false}
         txModalOnChange={(value) => {
@@ -235,6 +240,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
       {vm.network === VM_NETWORK.LIQUID && (
         <div>
           <TransactionCustomInput
+            name="assetId"
             label={'Asset ID:'}
             showTypes={false}
             txModalOnChange={(value) => {
