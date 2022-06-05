@@ -44,18 +44,48 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
     return placeholderValue;
   };
 
-  const radioOnChange = (radioValue: ValueType) => {
-    setType(radioValue as types);
+  const radioOnChange = (radioValue: types) => {
+    setType(radioValue);
+
+    showInputValue(radioValue);
+  };
+
+  const showInputValue = (radioValue: types) => {
+    if (customValue) {
+      if (BEResult.inputType === types.BE) {
+        setBEResult({ inputType: types.BE, inputValue: customValue });
+
+        if (radioValue === types.BE) {
+          setCustomValue(BEResult.inputValue);
+        }
+
+        if (radioValue === types.LE) {
+          const le = hexLE(customValue);
+
+          setLEResult({ inputType: types.LE, inputValue: le });
+          setCustomValue(le);
+        }
+
+        if (radioValue === types.DECIMAL) {
+          const decimal = hexLE(customValue);
+          const decimalWizData = WizData.fromHex(decimal);
+          const result = convertion.LE32ToNum(decimalWizData).number?.toString() ?? '';
+
+          setDecimalResult({ inputType: types.DECIMAL, inputValue: result });
+          setCustomValue(result);
+        }
+      }
+    }
   };
 
   useEffect(() => {
     if (showTypes) {
       setCustomValue(value);
-      console.log('BEValue', BEResult);
-      console.log('LEValue', LEResult);
-      console.log('DecimalValue', decimalResult);
+      // console.log('BEValue', BEResult);
+      // console.log('LEValue', LEResult);
+      // console.log('DecimalValue', decimalResult);
     }
-  }, [BEResult, decimalResult, LEResult, showTypes, value]);
+  }, [showTypes, value]);
 
   return (
     <div className="tx-custom-input-item">
@@ -66,7 +96,7 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
             inline
             name="radioList"
             value={type}
-            onChange={(value: ValueType, event: SyntheticEvent<Element, Event>) => radioOnChange(value)}
+            onChange={(value: ValueType, event: SyntheticEvent<Element, Event>) => radioOnChange(value as types)}
           >
             <Radio value={types.BE}>{types.BE}</Radio>
             <Radio value={types.LE}>{types.LE}</Radio>
