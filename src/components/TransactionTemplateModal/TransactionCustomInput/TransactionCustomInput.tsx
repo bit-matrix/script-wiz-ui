@@ -1,4 +1,4 @@
-import React, { FC, SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import React, { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { Input, Radio, RadioGroup } from 'rsuite';
 import { ValueType } from 'rsuite/esm/Checkbox';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
@@ -28,7 +28,7 @@ type RadioInput = {
 
 const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, showTypes, defaultType, txModalOnChange, value }) => {
   const [type, setType] = useState<types | undefined>(defaultType);
-  const [customValue, setCustomValue] = useState<string | undefined>();
+  const [customValue, setCustomValue] = useState<RadioInput>({ inputValue: '', inputType: defaultType as types });
   const [BEResult, setBEResult] = useState<RadioInput>({ inputValue: '', inputType: types.BE });
   const [LEResult, setLEResult] = useState<RadioInput>({ inputValue: '', inputType: types.LE });
   const [decimalResult, setDecimalResult] = useState<RadioInput>({ inputValue: '', inputType: types.DECIMAL });
@@ -51,41 +51,68 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
   };
 
   const showInputValue = (radioValue: types) => {
-    if (customValue) {
-      if (BEResult.inputType === types.BE) {
-        setBEResult({ inputType: types.BE, inputValue: customValue });
+    //secilen deger be
+    if (radioValue === types.BE) {
+      //le(onceki deger) to be
+      if (customValue.inputType === types.LE) {
+        const result = hexLE(customValue.inputValue);
 
-        if (radioValue === types.BE) {
-          setCustomValue(BEResult.inputValue);
-        }
+        setBEResult({ inputType: types.BE, inputValue: result });
+        setCustomValue({ inputType: types.BE, inputValue: result });
+      }
 
-        if (radioValue === types.LE) {
-          const le = hexLE(customValue);
+      //decimal(onceki deger) to be
+      if (customValue.inputType === types.DECIMAL) {
+        setBEResult({ inputType: types.BE, inputValue: 'aaa' });
+        setCustomValue({ inputType: types.BE, inputValue: 'aaa' });
+      }
+    }
 
-          setLEResult({ inputType: types.LE, inputValue: le });
-          setCustomValue(le);
-        }
+    //secilen deger le
+    if (radioValue === types.LE) {
+      //be(onceki deger) to le
+      if (customValue.inputType === types.BE) {
+        const result = hexLE(customValue.inputValue);
 
-        if (radioValue === types.DECIMAL) {
-          const decimal = hexLE(customValue);
-          const decimalWizData = WizData.fromHex(decimal);
-          const result = convertion.LE32ToNum(decimalWizData).number?.toString() ?? '';
+        setLEResult({ inputType: types.LE, inputValue: result });
+        setCustomValue({ inputType: types.LE, inputValue: result });
+      }
 
-          setDecimalResult({ inputType: types.DECIMAL, inputValue: result });
-          setCustomValue(result);
-        }
+      //decimal(onceki deger) to le
+      if (customValue.inputType === types.DECIMAL) {
+        setLEResult({ inputType: types.LE, inputValue: 'bbb' });
+        setCustomValue({ inputType: types.LE, inputValue: 'bbb' });
+      }
+    }
+
+    //secilen deger decimal
+    if (radioValue === types.DECIMAL) {
+      //be(onceki deger) to decimal
+      if (customValue.inputType === types.BE) {
+        const decimal = hexLE(customValue.inputValue);
+        const decimalWizData = WizData.fromHex(decimal);
+        const result = convertion.LE32ToNum(decimalWizData).number?.toString() ?? '';
+
+        setDecimalResult({ inputType: types.DECIMAL, inputValue: result });
+        setCustomValue({ inputType: types.DECIMAL, inputValue: result });
+      }
+
+      //le(onceki deger) to decimal
+      if (customValue.inputType === types.LE) {
+        const decimalWizData = WizData.fromHex(customValue.inputValue);
+        const result = convertion.LE32ToNum(decimalWizData).number?.toString() ?? '';
+
+        setDecimalResult({ inputType: types.DECIMAL, inputValue: result });
+        setCustomValue({ inputType: types.DECIMAL, inputValue: result });
       }
     }
   };
 
   useEffect(() => {
-    if (showTypes) {
-      setCustomValue(value);
-      // console.log('BEValue', BEResult);
-      // console.log('LEValue', LEResult);
-      // console.log('DecimalValue', decimalResult);
+    if (showTypes && value) {
+      setCustomValue({ inputValue: value, inputType: defaultType as types });
     }
-  }, [showTypes, value]);
+  }, [defaultType, showTypes, value]);
 
   return (
     <div className="tx-custom-input-item">
@@ -105,7 +132,7 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
         )}
       </div>
       <Input
-        value={showTypes ? customValue : value}
+        value={showTypes ? customValue.inputValue : value}
         placeholder={placeholderSelector()}
         onChange={(value: string) => {
           txModalOnChange(value);
