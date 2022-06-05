@@ -1,6 +1,8 @@
-import React, { FC, useState } from 'react';
+import React, { FC, SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Input, Radio, RadioGroup } from 'rsuite';
 import { ValueType } from 'rsuite/esm/Checkbox';
+import WizData, { hexLE } from '@script-wiz/wiz-data';
+import { convertion } from '@script-wiz/lib-core';
 import './TransactionCustomInput.scss';
 
 enum types {
@@ -19,8 +21,17 @@ type Props = {
   value: string | undefined;
 };
 
+type RadioInput = {
+  inputValue: string;
+  inputType: types;
+};
+
 const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, showTypes, defaultType, txModalOnChange, value }) => {
   const [type, setType] = useState<types | undefined>(defaultType);
+  const [customValue, setCustomValue] = useState<string | undefined>();
+  const [BEResult, setBEResult] = useState<RadioInput>({ inputValue: '', inputType: types.BE });
+  const [LEResult, setLEResult] = useState<RadioInput>({ inputValue: '', inputType: types.LE });
+  const [decimalResult, setDecimalResult] = useState<RadioInput>({ inputValue: '', inputType: types.DECIMAL });
 
   const placeholderSelector = () => {
     if (type === types.DECIMAL) {
@@ -33,6 +44,19 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
     return placeholderValue;
   };
 
+  const radioOnChange = (radioValue: ValueType) => {
+    setType(radioValue as types);
+  };
+
+  useEffect(() => {
+    if (showTypes) {
+      setCustomValue(value);
+      console.log('BEValue', BEResult);
+      console.log('LEValue', LEResult);
+      console.log('DecimalValue', decimalResult);
+    }
+  }, [BEResult, decimalResult, LEResult, showTypes, value]);
+
   return (
     <div className="tx-custom-input-item">
       <div className="tx-custom-input-label-radio">
@@ -42,9 +66,7 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
             inline
             name="radioList"
             value={type}
-            onChange={(value: ValueType) => {
-              setType(value as types);
-            }}
+            onChange={(value: ValueType, event: SyntheticEvent<Element, Event>) => radioOnChange(value)}
           >
             <Radio value={types.BE}>{types.BE}</Radio>
             <Radio value={types.LE}>{types.LE}</Radio>
@@ -53,7 +75,7 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
         )}
       </div>
       <Input
-        value={value}
+        value={showTypes ? customValue : value}
         placeholder={placeholderSelector()}
         onChange={(value: string) => {
           txModalOnChange(value);
