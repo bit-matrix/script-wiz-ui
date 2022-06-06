@@ -1,10 +1,10 @@
 import React from 'react';
 import { TxOutput } from '@script-wiz/lib-core';
-import { Input } from 'rsuite';
+import { VM, VM_NETWORK } from '@script-wiz/lib';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
-import { VM, VM_NETWORK } from '@script-wiz/lib';
+import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
 import './TransactionOutput.scss';
 
 type Props = {
@@ -13,6 +13,12 @@ type Props = {
   txOutputOnChange: (output: TxOutput, index: number) => void;
   removeOutput: (index: number) => void;
 };
+
+enum types {
+  BE = 'BE',
+  LE = 'LE',
+  DECIMAL = 'Decimal',
+}
 
 const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput }) => {
   // const isValidAmount =
@@ -33,34 +39,42 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
           <CloseIcon width="1rem" height="1rem" />
         </div>
       </div>
-      <div className="tx-output-item">
-        <div className="tx-modal-label">scriptPubkey:</div>
-        <Input
-          value={txOutput.output.scriptPubKey}
-          onChange={(value: string) => {
-            txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index);
-          }}
-        />
-      </div>
-      <div className="tx-output-item">
-        <div className="tx-modal-label">Amount (Decimal):</div>
-        <Input
-          value={txOutput.output.amount}
-          onChange={(value: string) => {
+
+      <TransactionCustomInput
+        name="scriptPubKey"
+        label="scriptPubkey:"
+        showTypes={false}
+        txModalOnChange={(value: string) => {
+          txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index);
+        }}
+        value={txOutput.output.scriptPubKey}
+      />
+
+      <div>
+        <TransactionCustomInput
+          name="amount"
+          label="Amount:"
+          showTypes={true}
+          defaultType={types.DECIMAL}
+          txModalOnChange={(value: string) => {
             txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
           }}
+          value={txOutput.output.amount}
         />
         {/* <div className="tx-error-line">{isValidAmount}</div> */}
       </div>
+
       {vm.network === VM_NETWORK.LIQUID && (
-        <div className="tx-output-item">
-          <div className="tx-modal-label">Asset ID:</div>
-          <Input
-            value={txOutput.output.assetId}
-            placeholder="32-bytes"
-            onChange={(value: string) => {
+        <div>
+          <TransactionCustomInput
+            name="assetId"
+            label={'Asset ID:'}
+            showTypes={false}
+            txModalOnChange={(value: string) => {
               txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
             }}
+            value={txOutput.output.assetId}
+            placeholderValue="32-bytes"
           />
           <div className="tx-error-line">{isValidAssetId}</div>
         </div>
