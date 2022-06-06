@@ -5,6 +5,7 @@ import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
+import { types } from '../../../utils/enum/TYPES';
 import './TransactionOutput.scss';
 
 type Props = {
@@ -13,12 +14,6 @@ type Props = {
   txOutputOnChange: (output: TxOutput, index: number) => void;
   removeOutput: (index: number) => void;
 };
-
-enum types {
-  BE = 'BE',
-  LE = 'LE',
-  DECIMAL = 'Decimal',
-}
 
 const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput }) => {
   // const isValidAmount =

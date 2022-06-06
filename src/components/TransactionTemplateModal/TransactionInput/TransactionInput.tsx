@@ -7,6 +7,7 @@ import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
+import { types } from '../../../utils/enum/TYPES';
 import './TransactionInput.scss';
 
 type Props = {
@@ -17,12 +18,6 @@ type Props = {
   version: string;
   lastBlock?: any;
 };
-
-enum types {
-  BE = 'BE',
-  LE = 'LE',
-  DECIMAL = 'Decimal',
-}
 
 const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput, version, lastBlock }) => {
   const isValidPreviousTxId =

@@ -3,13 +3,8 @@ import { Input, Radio, RadioGroup } from 'rsuite';
 import { ValueType } from 'rsuite/esm/Checkbox';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
 import { convertion } from '@script-wiz/lib-core';
+import { types } from '../../../utils/enum/TYPES';
 import './TransactionCustomInput.scss';
-
-enum types {
-  BE = 'BE',
-  LE = 'LE',
-  DECIMAL = 'Decimal',
-}
 
 type Props = {
   name?: string;
