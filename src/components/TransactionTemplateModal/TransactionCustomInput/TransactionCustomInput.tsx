@@ -80,8 +80,11 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
 
       //decimal(onceki deger) to le
       if (customValue.inputType === types.DECIMAL) {
-        setLEResult({ inputType: types.LE, inputValue: 'bbb' });
-        setCustomValue({ inputType: types.LE, inputValue: 'bbb' });
+        const leWizData = WizData.fromNumber(Number(customValue.inputValue));
+        const result = convertion.numToLE32(leWizData).hex;
+
+        setLEResult({ inputType: types.LE, inputValue: result });
+        setCustomValue({ inputType: types.LE, inputValue: result });
       }
     }
 
