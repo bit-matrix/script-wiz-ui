@@ -110,8 +110,10 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
 
   useEffect(() => {
     if (showTypes && value) {
-      setCustomValue({ inputValue: value, inputType: defaultType as types });
+      setCustomValue({ inputValue: value, inputType: type as types });
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultType, showTypes, value]);
 
   return (
