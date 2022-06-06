@@ -43,19 +43,19 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
   };
 
   const showInputValue = (radioValue: types) => {
-    //selected value be
-    if (radioValue === types.BE) {
-      //le(previous value) to be
-      if (customValue.inputType === types.LE) {
-        const be = hexLE(customValue.inputValue);
+    if (!customValue.inputValue) setCustomValue({ inputType: types.BE, inputValue: '' });
+    else {
+      //selected value be
+      if (radioValue === types.BE) {
+        //le(previous value) to be
+        if (customValue.inputType === types.LE) {
+          const be = hexLE(customValue.inputValue);
 
-        setCustomValue({ inputType: types.BE, inputValue: be });
-      }
+          setCustomValue({ inputType: types.BE, inputValue: be });
+        }
 
-      //decimal(previous value) to be
-      if (customValue.inputType === types.DECIMAL) {
-        if (!customValue.inputValue) setCustomValue({ inputType: types.BE, inputValue: '' });
-        else {
+        //decimal(previous value) to be
+        if (customValue.inputType === types.DECIMAL) {
           const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
           const le = convertion.numToLE32(numberWizData).hex;
           const be = hexLE(le);
@@ -63,43 +63,43 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
           setCustomValue({ inputType: types.BE, inputValue: be });
         }
       }
-    }
 
-    //selected value le
-    if (radioValue === types.LE) {
-      //be(previous value) to le
-      if (customValue.inputType === types.BE) {
-        const le = hexLE(customValue.inputValue);
+      //selected value le
+      if (radioValue === types.LE) {
+        //be(previous value) to le
+        if (customValue.inputType === types.BE) {
+          const le = hexLE(customValue.inputValue);
 
-        setCustomValue({ inputType: types.LE, inputValue: le });
+          setCustomValue({ inputType: types.LE, inputValue: le });
+        }
+
+        //decimal(previous value) to le
+        if (customValue.inputType === types.DECIMAL) {
+          const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
+          const le = convertion.numToLE32(numberWizData).hex;
+
+          setCustomValue({ inputType: types.LE, inputValue: le });
+        }
       }
 
-      //decimal(previous value) to le
-      if (customValue.inputType === types.DECIMAL) {
-        const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
-        const le = convertion.numToLE32(numberWizData).hex;
+      //selected value decimal
+      if (radioValue === types.DECIMAL) {
+        //be(previous value) to decimal
+        if (customValue.inputType === types.BE) {
+          const le = hexLE(customValue.inputValue);
+          const leWizData = WizData.fromHex(le);
+          const decimal = convertion.LE64ToNum(leWizData).number?.toString() ?? '';
 
-        setCustomValue({ inputType: types.LE, inputValue: le });
-      }
-    }
+          setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
+        }
 
-    //selected value decimal
-    if (radioValue === types.DECIMAL) {
-      //be(previous value) to decimal
-      if (customValue.inputType === types.BE) {
-        const le = hexLE(customValue.inputValue);
-        const leWizData = WizData.fromHex(le);
-        const decimal = convertion.LE64ToNum(leWizData).number?.toString() ?? '';
+        //le(previous value) to decimal
+        if (customValue.inputType === types.LE) {
+          const leWizData = WizData.fromHex(customValue.inputValue);
+          const decimal = convertion.LE64ToNum(leWizData).number?.toString() ?? '';
 
-        setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
-      }
-
-      //le(previous value) to decimal
-      if (customValue.inputType === types.LE) {
-        const leWizData = WizData.fromHex(customValue.inputValue);
-        const decimal = convertion.LE64ToNum(leWizData).number?.toString() ?? '';
-
-        setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
+          setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
+        }
       }
     }
   };
