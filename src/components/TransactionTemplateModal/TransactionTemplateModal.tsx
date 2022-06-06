@@ -157,7 +157,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         currentInputIndex,
       },
     };
-
     scriptWiz.parseTxData(txData.txData);
 
     const previousLocalStorageData = getTxLocalData();
@@ -194,7 +193,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         : networkValue === Networks.MAINNET
         ? `https://blockstream.info/liquid/api/tx/${transactionId}`
         : `https://blockstream.info/liquidtestnet/api/tx/${transactionId}`;
-
     axios
       .get(api)
       .then((res) => {
@@ -243,6 +241,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         }
 
         setTxOutputs(newTxOutputs);
+
         setTimeLock(transactionData.locktime);
         setVersion(transactionData.version);
       })
@@ -252,7 +251,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
             Invalid transaction id.
           </Message>
         );
-
         toaster.push(message);
 
         setTxInputs([txInputInitial]);
