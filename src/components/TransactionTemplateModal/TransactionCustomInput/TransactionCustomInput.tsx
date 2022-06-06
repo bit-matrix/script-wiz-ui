@@ -29,9 +29,6 @@ type RadioInput = {
 const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, showTypes, defaultType, txModalOnChange, value }) => {
   const [type, setType] = useState<types | undefined>(defaultType);
   const [customValue, setCustomValue] = useState<RadioInput>({ inputValue: '', inputType: defaultType as types });
-  const [BEResult, setBEResult] = useState<RadioInput>({ inputValue: '', inputType: types.BE });
-  const [LEResult, setLEResult] = useState<RadioInput>({ inputValue: '', inputType: types.LE });
-  const [decimalResult, setDecimalResult] = useState<RadioInput>({ inputValue: '', inputType: types.DECIMAL });
 
   const placeholderSelector = () => {
     if (type === types.DECIMAL) {
@@ -57,13 +54,11 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
       if (customValue.inputType === types.LE) {
         const result = hexLE(customValue.inputValue);
 
-        setBEResult({ inputType: types.BE, inputValue: result });
         setCustomValue({ inputType: types.BE, inputValue: result });
       }
 
       //decimal(onceki deger) to be
       if (customValue.inputType === types.DECIMAL) {
-        setBEResult({ inputType: types.BE, inputValue: 'aaa' });
         setCustomValue({ inputType: types.BE, inputValue: 'aaa' });
       }
     }
@@ -74,7 +69,6 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
       if (customValue.inputType === types.BE) {
         const result = hexLE(customValue.inputValue);
 
-        setLEResult({ inputType: types.LE, inputValue: result });
         setCustomValue({ inputType: types.LE, inputValue: result });
       }
 
@@ -83,7 +77,6 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
         const leWizData = WizData.fromNumber(Number(customValue.inputValue));
         const result = convertion.numToLE32(leWizData).hex;
 
-        setLEResult({ inputType: types.LE, inputValue: result });
         setCustomValue({ inputType: types.LE, inputValue: result });
       }
     }
@@ -96,7 +89,6 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
         const decimalWizData = WizData.fromHex(decimal);
         const result = convertion.LE32ToNum(decimalWizData).number?.toString() ?? '';
 
-        setDecimalResult({ inputType: types.DECIMAL, inputValue: result });
         setCustomValue({ inputType: types.DECIMAL, inputValue: result });
       }
 
@@ -105,7 +97,6 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
         const decimalWizData = WizData.fromHex(customValue.inputValue);
         const result = convertion.LE32ToNum(decimalWizData).number?.toString() ?? '';
 
-        setDecimalResult({ inputType: types.DECIMAL, inputValue: result });
         setCustomValue({ inputType: types.DECIMAL, inputValue: result });
       }
     }
