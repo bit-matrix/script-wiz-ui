@@ -63,7 +63,7 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
         const le = convertion.numToLE32(numberWizData).hex;
         const be = hexLE(le);
 
-        setCustomValue({ inputType: types.LE, inputValue: be });
+        setCustomValue({ inputType: types.BE, inputValue: be });
       }
     }
 
