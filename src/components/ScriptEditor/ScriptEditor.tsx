@@ -439,7 +439,6 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         case 'OP_CHECKSIGVERIFY':
           const name = `signature${functionParamCount}`;
           const type = `sig`;
-          asm.splice(index-1, 0, name);
           functionInputs.push({ name, type });
           functionParamCount++;
           break;
