@@ -48,56 +48,60 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
   };
 
   const showInputValue = (radioValue: types) => {
-    //secilen deger be
+    //selected value be
     if (radioValue === types.BE) {
-      //le(onceki deger) to be
+      //le(previous value) to be
       if (customValue.inputType === types.LE) {
-        const result = hexLE(customValue.inputValue);
+        const be = hexLE(customValue.inputValue);
 
-        setCustomValue({ inputType: types.BE, inputValue: result });
+        setCustomValue({ inputType: types.BE, inputValue: be });
       }
 
-      //decimal(onceki deger) to be
+      //decimal(previous value) to be
       if (customValue.inputType === types.DECIMAL) {
-        setCustomValue({ inputType: types.BE, inputValue: 'aaa' });
+        const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
+        const le = convertion.numToLE32(numberWizData).hex;
+        const be = hexLE(le);
+
+        setCustomValue({ inputType: types.LE, inputValue: be });
       }
     }
 
-    //secilen deger le
+    //selected value le
     if (radioValue === types.LE) {
-      //be(onceki deger) to le
+      //be(previous value) to le
       if (customValue.inputType === types.BE) {
-        const result = hexLE(customValue.inputValue);
+        const le = hexLE(customValue.inputValue);
 
-        setCustomValue({ inputType: types.LE, inputValue: result });
+        setCustomValue({ inputType: types.LE, inputValue: le });
       }
 
-      //decimal(onceki deger) to le
+      //decimal(previous value) to le
       if (customValue.inputType === types.DECIMAL) {
-        const leWizData = WizData.fromNumber(Number(customValue.inputValue));
-        const result = convertion.numToLE32(leWizData).hex;
+        const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
+        const le = convertion.numToLE32(numberWizData).hex;
 
-        setCustomValue({ inputType: types.LE, inputValue: result });
+        setCustomValue({ inputType: types.LE, inputValue: le });
       }
     }
 
-    //secilen deger decimal
+    //selected value decimal
     if (radioValue === types.DECIMAL) {
-      //be(onceki deger) to decimal
+      //be(previous value) to decimal
       if (customValue.inputType === types.BE) {
-        const decimal = hexLE(customValue.inputValue);
-        const decimalWizData = WizData.fromHex(decimal);
-        const result = convertion.LE32ToNum(decimalWizData).number?.toString() ?? '';
+        const le = hexLE(customValue.inputValue);
+        const leWizData = WizData.fromHex(le);
+        const decimal = convertion.LE32ToNum(leWizData).number?.toString() ?? '';
 
-        setCustomValue({ inputType: types.DECIMAL, inputValue: result });
+        setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
       }
 
-      //le(onceki deger) to decimal
+      //le(previous value) to decimal
       if (customValue.inputType === types.LE) {
-        const decimalWizData = WizData.fromHex(customValue.inputValue);
-        const result = convertion.LE32ToNum(decimalWizData).number?.toString() ?? '';
+        const leWizData = WizData.fromHex(customValue.inputValue);
+        const decimal = convertion.LE32ToNum(leWizData).number?.toString() ?? '';
 
-        setCustomValue({ inputType: types.DECIMAL, inputValue: result });
+        setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
       }
     }
   };
