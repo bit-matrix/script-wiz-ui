@@ -59,11 +59,14 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
 
       //decimal(previous value) to be
       if (customValue.inputType === types.DECIMAL) {
-        const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
-        const le = convertion.numToLE32(numberWizData).hex;
-        const be = hexLE(le);
+        if (!customValue.inputValue) setCustomValue({ inputType: types.BE, inputValue: '' });
+        else {
+          const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
+          const le = convertion.numToLE32(numberWizData).hex;
+          const be = hexLE(le);
 
-        setCustomValue({ inputType: types.BE, inputValue: be });
+          setCustomValue({ inputType: types.BE, inputValue: be });
+        }
       }
     }
 
@@ -91,7 +94,7 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
       if (customValue.inputType === types.BE) {
         const le = hexLE(customValue.inputValue);
         const leWizData = WizData.fromHex(le);
-        const decimal = convertion.LE32ToNum(leWizData).number?.toString() ?? '';
+        const decimal = convertion.LE64ToNum(leWizData).number?.toString() ?? '';
 
         setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
       }
@@ -99,7 +102,7 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
       //le(previous value) to decimal
       if (customValue.inputType === types.LE) {
         const leWizData = WizData.fromHex(customValue.inputValue);
-        const decimal = convertion.LE32ToNum(leWizData).number?.toString() ?? '';
+        const decimal = convertion.LE64ToNum(leWizData).number?.toString() ?? '';
 
         setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
       }
