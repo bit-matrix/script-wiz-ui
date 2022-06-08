@@ -1,7 +1,6 @@
 import React, { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { Input, Radio, RadioGroup } from 'rsuite';
 import { ValueType } from 'rsuite/esm/Checkbox';
-import WizData, { hexLE } from '@script-wiz/wiz-data';
 import { convertion } from '@script-wiz/lib-core';
 import { types } from '../../../utils/enum/TYPES';
 import './TransactionCustomInput.scss';
@@ -49,18 +48,27 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
       if (radioValue === types.BE) {
         //le(previous value) to be
         if (customValue.inputType === types.LE) {
-          const be = hexLE(customValue.inputValue);
-
-          setCustomValue({ inputType: types.BE, inputValue: be });
+          if (name === 'amount') {
+            const bytes8Values = convertion.inputConverter(customValue.inputValue, types.LE, '8-bytes');
+            setCustomValue({ inputType: types.BE, inputValue: bytes8Values.be });
+          }
+          if (name === 'sequence') {
+            const bytes4Values = convertion.inputConverter(customValue.inputValue, types.LE, '4-bytes');
+            setCustomValue({ inputType: types.BE, inputValue: bytes4Values.be });
+          }
         }
 
         //decimal(previous value) to be
         if (customValue.inputType === types.DECIMAL) {
-          const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
-          const le = convertion.numToLE32(numberWizData).hex;
-          const be = hexLE(le);
+          if (name === 'amount') {
+            const bytes8Values = convertion.inputConverter(customValue.inputValue, types.DECIMAL, '8-bytes');
+            setCustomValue({ inputType: types.BE, inputValue: bytes8Values.be });
+          }
 
-          setCustomValue({ inputType: types.BE, inputValue: be });
+          if (name === 'sequence') {
+            const bytes4Values = convertion.inputConverter(customValue.inputValue, types.DECIMAL, '4-bytes');
+            setCustomValue({ inputType: types.BE, inputValue: bytes4Values.be });
+          }
         }
       }
 
@@ -68,17 +76,28 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
       if (radioValue === types.LE) {
         //be(previous value) to le
         if (customValue.inputType === types.BE) {
-          const le = hexLE(customValue.inputValue);
+          if (name === 'amount') {
+            const bytes8Values = convertion.inputConverter(customValue.inputValue, types.BE, '8-bytes');
+            setCustomValue({ inputType: types.LE, inputValue: bytes8Values.le });
+          }
 
-          setCustomValue({ inputType: types.LE, inputValue: le });
+          if (name === 'sequence') {
+            const bytes4Values = convertion.inputConverter(customValue.inputValue, types.BE, '4-bytes');
+            setCustomValue({ inputType: types.LE, inputValue: bytes4Values.le });
+          }
         }
 
         //decimal(previous value) to le
         if (customValue.inputType === types.DECIMAL) {
-          const numberWizData = WizData.fromNumber(Number(customValue.inputValue));
-          const le = convertion.numToLE32(numberWizData).hex;
+          if (name === 'amount') {
+            const bytes8Values = convertion.inputConverter(customValue.inputValue, types.DECIMAL, '8-bytes');
+            setCustomValue({ inputType: types.LE, inputValue: bytes8Values.le });
+          }
 
-          setCustomValue({ inputType: types.LE, inputValue: le });
+          if (name === 'sequence') {
+            const bytes4Values = convertion.inputConverter(customValue.inputValue, types.DECIMAL, '4-bytes');
+            setCustomValue({ inputType: types.LE, inputValue: bytes4Values.le });
+          }
         }
       }
 
@@ -86,19 +105,28 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
       if (radioValue === types.DECIMAL) {
         //be(previous value) to decimal
         if (customValue.inputType === types.BE) {
-          const le = hexLE(customValue.inputValue);
-          const leWizData = WizData.fromHex(le);
-          const decimal = convertion.LE64ToNum(leWizData).number?.toString() ?? '';
+          if (name === 'amount') {
+            const bytes8Values = convertion.inputConverter(customValue.inputValue, types.BE, '8-bytes');
+            setCustomValue({ inputType: types.DECIMAL, inputValue: (Number(bytes8Values.decimal) / 100000000).toString() });
+          }
 
-          setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
+          if (name === 'sequence') {
+            const bytes4Values = convertion.inputConverter(customValue.inputValue, types.BE, '4-bytes');
+            setCustomValue({ inputType: types.DECIMAL, inputValue: bytes4Values.decimal });
+          }
         }
 
         //le(previous value) to decimal
         if (customValue.inputType === types.LE) {
-          const leWizData = WizData.fromHex(customValue.inputValue);
-          const decimal = convertion.LE64ToNum(leWizData).number?.toString() ?? '';
+          if (name === 'amount') {
+            const bytes8Values = convertion.inputConverter(customValue.inputValue, types.LE, '8-bytes');
+            setCustomValue({ inputType: types.DECIMAL, inputValue: bytes8Values.decimal });
+          }
 
-          setCustomValue({ inputType: types.DECIMAL, inputValue: decimal });
+          if (name === 'sequence') {
+            const bytes4Values = convertion.inputConverter(customValue.inputValue, types.LE, '4-bytes');
+            setCustomValue({ inputType: types.DECIMAL, inputValue: bytes4Values.decimal });
+          }
         }
       }
     }
