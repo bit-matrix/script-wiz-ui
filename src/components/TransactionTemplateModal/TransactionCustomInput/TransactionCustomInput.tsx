@@ -120,7 +120,7 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
         if (customValue.inputType === types.LE) {
           if (name === 'amount') {
             const bytes8Values = convertion.inputConverter(customValue.inputValue, types.LE, '8-bytes');
-            setCustomValue({ inputType: types.DECIMAL, inputValue: bytes8Values.decimal });
+            setCustomValue({ inputType: types.DECIMAL, inputValue: (Number(bytes8Values.decimal) / 100000000).toString() });
           }
 
           if (name === 'sequence') {
