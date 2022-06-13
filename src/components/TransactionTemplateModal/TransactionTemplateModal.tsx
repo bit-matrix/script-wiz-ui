@@ -38,6 +38,8 @@ const txOutputInitial = {
   scriptPubKey: '',
   amount: '',
   assetId: '',
+  assetCommitment: '',
+  valueCommitment: '',
 };
 
 enum Networks {
@@ -56,6 +58,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [lastBlock, setLastBlock] = useState<any>();
   const [transactionId, setTransactionId] = useState<string>('');
   const [networkValue, setNetworkValue] = useState<Networks>(Networks.MAINNET);
+  const [disableInput, setDisableInput] = useState<boolean>(false);
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
@@ -111,6 +114,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       scriptPubKey: output.scriptPubKey,
       amount: output.amount,
       assetId: output.assetId,
+      assetCommitment: output.assetCommitment,
+      valueCommitment: output.valueCommitment,
     };
     newTxOutputs[relatedOutputIndex] = newOutput;
     setTxOutputs(newTxOutputs);
@@ -236,6 +241,8 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
               scriptPubKey: transactionDataOutputs[i].scriptpubkey ? transactionDataOutputs[i].scriptpubkey : '',
               amount: transactionDataOutputs[i].value !== undefined ? transactionDataOutputs[i].value : '',
               assetId: transactionDataOutputs[i].asset ? transactionDataOutputs[i].asset : '',
+              assetCommitment: transactionDataOutputs[i].assetcommitment ? transactionDataOutputs[i].assetcommitment : '',
+              valueCommitment: transactionDataOutputs[i].valuecommitment ? transactionDataOutputs[i].valuecommitment : '',
             };
 
             newTxOutputs.push(txOutput);
@@ -245,6 +252,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         setTxOutputs(newTxOutputs);
         setTimeLock(transactionData.locktime);
         setVersion(transactionData.version);
+        setDisableInput(true);
       })
       .catch((err) => {
         message = (
@@ -377,6 +385,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
                         setTxOutputs(newTxOutputs);
                       }
                     }}
+                    disableInput={disableInput}
                   />
                 );
               })}

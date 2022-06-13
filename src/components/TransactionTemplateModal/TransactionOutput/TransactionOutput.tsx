@@ -13,9 +13,10 @@ type Props = {
   vm: VM;
   txOutputOnChange: (output: TxOutput, index: number) => void;
   removeOutput: (index: number) => void;
+  disableInput: boolean;
 };
 
-const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput }) => {
+const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput, disableInput }) => {
   // const isValidAmount =
   //   (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
   //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
@@ -61,17 +62,43 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
 
       {vm.network === VM_NETWORK.LIQUID && (
         <div>
-          <TransactionCustomInput
-            name="assetId"
-            label={'Asset ID:'}
-            showTypes={false}
-            txModalOnChange={(value: string) => {
-              txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
-            }}
-            value={txOutput.output.assetId}
-            placeholderValue="32-bytes"
-          />
-          <div className="tx-error-line">{isValidAssetId}</div>
+          <div>
+            <TransactionCustomInput
+              name="assetId"
+              label={'Asset ID:'}
+              showTypes={false}
+              txModalOnChange={(value: string) => {
+                txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
+              }}
+              value={txOutput.output.assetId}
+              placeholderValue="32-bytes"
+            />
+            <div className="tx-error-line">{isValidAssetId}</div>
+          </div>
+          {disableInput && (
+            <div>
+              <TransactionCustomInput
+                name="assetCommitment"
+                label={'Asset Commitment:'}
+                showTypes={false}
+                txModalOnChange={(value: string) => {
+                  txOutputOnChange({ ...txOutput.output, assetCommitment: value }, txOutput.index);
+                }}
+                value={txOutput.output.assetCommitment}
+                disableInput={true}
+              />
+              <TransactionCustomInput
+                name="valueCommitment"
+                label={'Value Commitment:'}
+                showTypes={false}
+                txModalOnChange={(value: string) => {
+                  txOutputOnChange({ ...txOutput.output, valueCommitment: value }, txOutput.index);
+                }}
+                value={txOutput.output.valueCommitment}
+                disableInput={true}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
