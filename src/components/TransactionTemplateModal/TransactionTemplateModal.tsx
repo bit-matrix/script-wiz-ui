@@ -58,7 +58,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [lastBlock, setLastBlock] = useState<any>();
   const [transactionId, setTransactionId] = useState<string>('');
   const [networkValue, setNetworkValue] = useState<Networks>(Networks.MAINNET);
-  const [disableInput, setDisableInput] = useState<boolean>(false);
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
@@ -251,7 +250,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
 
         setTimeLock(transactionData.locktime);
         setVersion(transactionData.version);
-        setDisableInput(true);
       })
       .catch((err) => {
         message = (
@@ -383,7 +381,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
                         setTxOutputs(newTxOutputs);
                       }
                     }}
-                    disableInput={disableInput}
                   />
                 );
               })}
