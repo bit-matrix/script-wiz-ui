@@ -1,6 +1,6 @@
 import React from 'react';
 import { TxOutput } from '@script-wiz/lib-core';
-import { Input } from 'rsuite';
+import { Input, Radio } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
@@ -34,6 +34,22 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
           <CloseIcon width="1rem" height="1rem" />
         </div>
       </div>
+
+      <Radio
+        onChange={(value: any, checked: boolean) => {
+          txOutputOnChange(
+            {
+              ...txOutput.output,
+              confidental: value,
+            },
+            txOutput.index,
+          );
+        }}
+        checked={txOutput.output.confidental}
+        value={txOutput.output.confidental ? 'true' : 'false'}
+      >
+        Confidental
+      </Radio>
       <div className="tx-output-item">
         <div className="tx-modal-label">scriptPubkey:</div>
         <Input
