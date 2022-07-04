@@ -360,10 +360,18 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const compileScripts = () => {
     try {
       const compileScript = scriptWiz.compile();
-      const artifact = compileIonioArtifact();
+
+      let artifact;
+
+      try {
+        artifact = compileIonioArtifact();
+      } catch {
+        artifact = undefined;
+      }
+
       setCompileModalData({ show: true, data: compileScript, artifact });
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
   };
 
@@ -373,17 +381,17 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     } else if (typeof line === 'number' || !isNaN(Number(line))) {
       return Number(line);
     } else {
+      console.log(line);
       throw new Error('Invalid input value, expected number');
     }
-  }
+  };
   const compileIonioArtifact = () => {
-
     // asm
     let asm: string[] = [];
-    let constructorInputs: { name: string, type: string }[] = [];
-    let functionInputs: { name: string, type: string }[] = [];
+    let constructorInputs: { name: string; type: string }[] = [];
+    let functionInputs: { name: string; type: string }[] = [];
     let constructorInputsValues: Map<string, string> = new Map();
-    let require: { type: string, expected: any, atIndex?: number }[] = [];
+    let require: { type: string; expected: any; atIndex?: number }[] = [];
 
     const inputHexes = scriptWiz.stackDataList.inputHexes;
     const cleanInputHexes = inputHexes.filter((hex: string) => hex && hex.length > 0);
@@ -392,7 +400,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     for (let i = 0; i < cleanInputHexes.length; i++) {
       const hex = cleanInputHexes[i];
       const nextHex = cleanInputHexes[i + 1];
-      console.log(hex, nextHex)
+      console.log(hex, nextHex);
       const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
       const nextOpcode = scriptWiz.opCodes.codeData(Number(`0x${nextHex}`));
       if (!opcode) {
@@ -402,9 +410,9 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         let type = 'bytes';
         // we skip adding param if is a signature check, will be replaced by function input later
         if (nextOpcode && (nextOpcode.word === 'OP_CHECKSIGVERIFY' || nextOpcode.word === 'OP_CHECKSIG')) {
-          type = 'xonlypubkey'
+          type = 'xonlypubkey';
         }
- 
+
         // collect the actual value of template if not present already
         if (!Array.from(constructorInputsValues.keys()).includes(hex)) {
           constructorInputs.push({ name, type });
@@ -421,9 +429,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         }
       }
       asm.push(opcode.word);
-    };
-
-
+    }
 
     let functionParamCount = 0;
     cleanInputHexes.forEach((hex: string, index: number) => {
@@ -433,7 +439,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
         throw new Error(`opcode not found for ${hex}`);
       }
 
-      // let's understand if this script needs parameters 
+      // let's understand if this script needs parameters
       switch (opcode.word) {
         case 'OP_CHECKSIG':
         case 'OP_CHECKSIGVERIFY':
@@ -480,7 +486,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
           const nextNextStackElm = cleanInputHexes[index + 3];
           const asset = constructorInputsValues.has(nextNextStackElm) ? `$${constructorInputsValues.get(nextNextStackElm)}` : nextNextStackElm;
-          
+
           require.push({ type: 'outputasset', expected: asset, atIndex });
           break;
         }
@@ -530,14 +536,14 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
           functionInputs,
           require,
           asm,
-        }
+        },
       ],
     };
 
     console.log(JSON.stringify(artifact, null, 2));
 
     return artifact;
-  }
+  };
 
   const getWhispers = useCallback(
     (stackDataArray: WizData[]) =>
