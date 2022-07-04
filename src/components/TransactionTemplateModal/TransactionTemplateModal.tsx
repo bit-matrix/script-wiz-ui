@@ -32,6 +32,7 @@ const txInputInitial = {
   assetId: '',
   blockHeight: '',
   blockTimestamp: '',
+  confidental: false,
 };
 
 const txOutputInitial = {
@@ -40,6 +41,7 @@ const txOutputInitial = {
   assetId: '',
   assetCommitment: '',
   valueCommitment: '',
+  confidental: false,
 };
 
 enum Networks {
@@ -98,6 +100,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       assetId: input.assetId,
       blockHeight: input.blockHeight,
       blockTimestamp: input.blockTimestamp,
+      confidental: input.confidental,
     };
 
     newTxInputs[relatedInputIndex] = newInput;
@@ -115,6 +118,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       assetId: output.assetId,
       assetCommitment: output.assetCommitment,
       valueCommitment: output.valueCommitment,
+      confidental: output.confidental,
     };
     newTxOutputs[relatedOutputIndex] = newOutput;
     setTxOutputs(newTxOutputs);
@@ -225,6 +229,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
             assetId: transactionDataInputs[i].issuance?.asset_id ? transactionDataInputs[i].issuance.asset_id : '',
             blockHeight: transactionDataInputBlockHeight,
             blockTimestamp: transactionDataInputBlockTime,
+            confidental: transactionDataInputs[i].prevout.assetcommitment ? true : false,
           };
 
           newTxInputs.push(txInput);
@@ -240,6 +245,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
               assetId: transactionDataOutputs[i].asset ? transactionDataOutputs[i].asset : '',
               assetCommitment: transactionDataOutputs[i].assetcommitment ? transactionDataOutputs[i].assetcommitment : '',
               valueCommitment: transactionDataOutputs[i].valuecommitment ? transactionDataOutputs[i].valuecommitment : '',
+              confidental: transactionDataOutputs[i].assetcommitment ? true : false,
             };
 
             newTxOutputs.push(txOutput);
