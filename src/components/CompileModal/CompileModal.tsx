@@ -10,7 +10,7 @@ import { Address } from '@script-wiz/lib-core/taproot/model';
 
 type Props = {
   scriptWiz: ScriptWiz;
-  compileModalData: { show: boolean; data?: string };
+  compileModalData: { show: boolean; data?: string, artifact?: Record<string, any> };
   showCompileModal: (show: boolean) => void;
 };
 
@@ -97,7 +97,7 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
     } else {
       setTweakedResult({ tweak: '', scriptPubkey: '', address: { mainnet: '', testnet: '' } });
     }
-  }, [compileModalData.data, keyPath, pubKeyInput, scriptWiz, tapleafInput, tapleafVersion]);
+  }, [compileModalData.data, compileModalData.artifact, keyPath, pubKeyInput, scriptWiz, tapleafInput, tapleafVersion]);
 
   return (
     <Modal size="sm" open={compileModalData.show} backdrop={false} onClose={() => showCompileModal(false)}>
@@ -229,6 +229,21 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
                   <Input value={tweakedResult.address.testnet} />
                   <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
                     <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakedResult.address.testnet)}>
+                      <CopyIcon width="1rem" height="1rem" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
+            </Form.Group>
+
+            <Form.Group>
+              <h6>Ionio Artifact</h6>
+              <div className="compile-modal-item">
+                <div className="compile-modal-label">Artifact JSON:</div>
+                <InputGroup className="compile-modal-input-group">
+                  <Input value={JSON.stringify(compileModalData.artifact) || ''} />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(JSON.stringify(compileModalData.artifact, undefined, 2))}>
                       <CopyIcon width="1rem" height="1rem" />
                     </InputGroup.Button>
                   </Whisper>

@@ -1,11 +1,11 @@
 import React from 'react';
 import { TxOutput } from '@script-wiz/lib-core';
-import { VM, VM_NETWORK } from '@script-wiz/lib';
+import { Input } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
+import { VM, VM_NETWORK } from '@script-wiz/lib';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
-import { types } from '../../../utils/enum/TYPES';
 import './TransactionOutput.scss';
 
 type Props = {
@@ -35,31 +35,25 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
           <CloseIcon width="1rem" height="1rem" />
         </div>
       </div>
-
-      <TransactionCustomInput
-        name="scriptPubKey"
-        label="scriptPubkey:"
-        showTypes={false}
-        txModalOnChange={(value: string) => {
-          txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index);
-        }}
-        value={txOutput.output.scriptPubKey}
-      />
-
-      <div>
-        <TransactionCustomInput
-          name="amount"
-          label="Amount:"
-          showTypes={true}
-          defaultType={types.DECIMAL}
-          txModalOnChange={(value: string) => {
+      <div className="tx-output-item">
+        <div className="tx-modal-label">scriptPubkey:</div>
+        <Input
+          value={txOutput.output.scriptPubKey}
+          onChange={(value: string) => {
+            txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index);
+          }}
+        />
+      </div>
+      <div className="tx-output-item">
+        <div className="tx-modal-label">Amount (Decimal):</div>
+        <Input
+          value={txOutput.output.amount}
+          onChange={(value: string) => {
             txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
           }}
-          value={txOutput.output.amount}
         />
         {/* <div className="tx-error-line">{isValidAmount}</div> */}
       </div>
-
       {vm.network === VM_NETWORK.LIQUID && (
         <div>
           <div>

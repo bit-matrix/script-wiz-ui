@@ -59,6 +59,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [compileModalData, setCompileModalData] = useState<{
     show: boolean;
     data?: string;
+    artifact?: Record<string, any>;
   }>({ show: false });
 
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
@@ -357,8 +358,191 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   }, [witnessScriptLines, stackElementsLines, parseInput, scriptWiz, scriptWiz.stackDataList.txData]);
 
   const compileScripts = () => {
-    const compileScript = scriptWiz.compile();
-    setCompileModalData({ show: true, data: compileScript });
+    try {
+      const compileScript = scriptWiz.compile();
+
+      let artifact;
+
+      try {
+        artifact = compileIonioArtifact();
+      } catch {
+        artifact = undefined;
+      }
+
+      setCompileModalData({ show: true, data: compileScript, artifact });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const numberOrOpCode = (line: string): number => {
+    if (line.startsWith('OP_')) {
+      return parseInt(line.replace('OP_', ''));
+    } else if (typeof line === 'number' || !isNaN(Number(line))) {
+      return Number(line);
+    } else {
+      console.log(line);
+      throw new Error('Invalid input value, expected number');
+    }
+  };
+  const compileIonioArtifact = () => {
+    // asm
+    let asm: string[] = [];
+    let constructorInputs: { name: string; type: string }[] = [];
+    let functionInputs: { name: string; type: string }[] = [];
+    let constructorInputsValues: Map<string, string> = new Map();
+    let require: { type: string; expected: any; atIndex?: number }[] = [];
+
+    const inputHexes = scriptWiz.stackDataList.inputHexes;
+    const cleanInputHexes = inputHexes.filter((hex: string) => hex && hex.length > 0);
+
+    let paramCount = 0;
+    for (let i = 0; i < cleanInputHexes.length; i++) {
+      const hex = cleanInputHexes[i];
+      const nextHex = cleanInputHexes[i + 1];
+      console.log(hex, nextHex);
+      const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
+      const nextOpcode = scriptWiz.opCodes.codeData(Number(`0x${nextHex}`));
+      if (!opcode) {
+        // assign random name as template
+        const name = `param${paramCount}`;
+        // we defualt to bytes for now
+        let type = 'bytes';
+        // we skip adding param if is a signature check, will be replaced by function input later
+        if (nextOpcode && (nextOpcode.word === 'OP_CHECKSIGVERIFY' || nextOpcode.word === 'OP_CHECKSIG')) {
+          type = 'xonlypubkey';
+        }
+
+        // collect the actual value of template if not present already
+        if (!Array.from(constructorInputsValues.keys()).includes(hex)) {
+          constructorInputs.push({ name, type });
+          constructorInputsValues.set(hex, name);
+          // increment the count
+          paramCount++;
+          // push the template name to the asm
+          asm.push(`$${name}`);
+          continue;
+        } else {
+          // this means we have a duplicated value, let's use the one already present
+          asm.push(`$${constructorInputsValues.get(hex)}`);
+          continue;
+        }
+      }
+      asm.push(opcode.word);
+    }
+
+    let functionParamCount = 0;
+    cleanInputHexes.forEach((hex: string, index: number) => {
+      const opcode = scriptWiz.opCodes.codeData(Number(`0x${hex}`));
+      if (!opcode) return;
+      if (!opcode.word) {
+        throw new Error(`opcode not found for ${hex}`);
+      }
+
+      // let's understand if this script needs parameters
+      switch (opcode.word) {
+        case 'OP_CHECKSIG':
+        case 'OP_CHECKSIGVERIFY':
+          const name = `signature${functionParamCount}`;
+          const type = `sig`;
+          functionInputs.push({ name, type });
+          functionParamCount++;
+          break;
+        case 'OP_CHECKSIGFROMSTACK':
+        case 'OP_CHECKSIGFROMSTACKVERIFY':
+          functionInputs.push({ name: `datasignature${functionParamCount}`, type: 'datasig' });
+          functionParamCount++;
+          break;
+
+        case 'OP_INSPECTOUTPUTSCRIPTPUBKEY': {
+          const prevStackElm = cleanInputHexes[index - 1];
+          const atIndex = numberOrOpCode(prevStackElm);
+
+          const nextStackElm = cleanInputHexes[index + 1];
+          let version = numberOrOpCode(nextStackElm);
+
+          const nextNextStackElm = cleanInputHexes[index + 3];
+          const program = constructorInputsValues.has(nextNextStackElm) ? `$${constructorInputsValues.get(nextNextStackElm)}` : nextNextStackElm;
+
+          require.push({ type: 'outputscript', expected: { version, program }, atIndex });
+          break;
+        }
+        case 'OP_INSPECTOUTPUTVALUE': {
+          const prevStackElm = cleanInputHexes[index - 1];
+          const atIndex = numberOrOpCode(prevStackElm);
+
+          //const nextStackElm = cleanInputHexes[index + 1];
+          //let prefix = numberOrOpCode(nextStackElm);
+
+          const nextNextStackElm = cleanInputHexes[index + 3];
+          const value = constructorInputsValues.has(nextNextStackElm) ? `$${constructorInputsValues.get(nextNextStackElm)}` : nextNextStackElm;
+
+          require.push({ type: 'outputvalue', expected: value, atIndex });
+          break;
+        }
+        case 'OP_INSPECTOUTPUTASSET': {
+          const prevStackElm = cleanInputHexes[index - 1];
+          const atIndex = numberOrOpCode(prevStackElm);
+
+          const nextNextStackElm = cleanInputHexes[index + 3];
+          const asset = constructorInputsValues.has(nextNextStackElm) ? `$${constructorInputsValues.get(nextNextStackElm)}` : nextNextStackElm;
+
+          require.push({ type: 'outputasset', expected: asset, atIndex });
+          break;
+        }
+        case 'OP_INSPECTOUTPUTNONCE': {
+          const prevStackElm = cleanInputHexes[index - 1];
+          const atIndex = numberOrOpCode(prevStackElm);
+
+          const nextStackElm = cleanInputHexes[index + 1];
+          const nonce = constructorInputsValues.has(nextStackElm) ? constructorInputsValues.get(nextStackElm) : nextStackElm;
+          const cleanedNonce = nonce === '00' ? '' : nonce;
+          require.push({ type: 'outputnonce', expected: cleanedNonce, atIndex });
+          break;
+        }
+        default:
+          break;
+      }
+    });
+
+    // optmize the requirement type
+    /* const inspectOutByIndex: Record<number, string[]> = {};
+    for (const { atIndex, type } of require) {
+      if (!atIndex) return;
+      if (!inspectOutByIndex[atIndex]) {
+        inspectOutByIndex[atIndex] = [];
+      }
+      inspectOutByIndex[atIndex].push(type);
+    }
+
+    for (const [atIndexString, types] of Object.entries(inspectOutByIndex)) {
+      const atIndex = parseInt(atIndexString);
+      const fullCovenantOutput = types.includes('outputscript') && types.includes('outputvalue') && types.includes('outputasset') && types.includes('outputnonce');
+      if (fullCovenantOutput) {
+        require = require.filter((req: { type: string, expected: any, atIndex?: number }) => {
+          if (!req.atIndex) return false;
+          const toBeRemoved = req.atIndex === atIndex && req.type.startsWith('output')
+          return !toBeRemoved;
+        });
+      }
+    } */
+
+    const artifact: Record<string, any> = {
+      contractName: 'myContract',
+      constructorInputs,
+      functions: [
+        {
+          name: 'myFunction',
+          functionInputs,
+          require,
+          asm,
+        },
+      ],
+    };
+
+    console.log(JSON.stringify(artifact, null, 2));
+
+    return artifact;
   };
 
   const getWhispers = useCallback(
