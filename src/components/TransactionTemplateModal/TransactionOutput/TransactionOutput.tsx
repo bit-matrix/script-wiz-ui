@@ -6,7 +6,7 @@ import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
 import { types } from '../../../utils/enum/TYPES';
-import { Radio } from 'rsuite';
+import { Checkbox } from 'rsuite';
 import './TransactionOutput.scss';
 
 type Props = {
@@ -36,12 +36,12 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         </div>
       </div>
 
-      <Radio
+      <Checkbox
         onChange={(value: any, checked: boolean) => {
           txOutputOnChange(
             {
               ...txOutput.output,
-              confidental: value,
+              confidental: checked,
             },
             txOutput.index,
           );
@@ -50,7 +50,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         value={txOutput.output.confidental ? 'true' : 'false'}
       >
         Confidental
-      </Radio>
+      </Checkbox>
 
       <TransactionCustomInput
         name="scriptPubKey"

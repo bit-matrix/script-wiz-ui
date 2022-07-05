@@ -2,7 +2,7 @@ import React from 'react';
 import { TxInput } from '@script-wiz/lib-core';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
-import { Radio } from 'rsuite';
+import { Checkbox, Radio } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
@@ -97,12 +97,12 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         </div>
       </div>
 
-      <Radio
+      <Checkbox
         onChange={(value: any, checked: boolean) => {
           txInputOnChange(
             {
               ...txInput.input,
-              confidental: value,
+              confidental: checked,
             },
             txInput.index,
             txInput.checked,
@@ -112,7 +112,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         value={txInput.input.confidental ? 'true' : 'false'}
       >
         Confidental
-      </Radio>
+      </Checkbox>
 
       <div>
         <TransactionCustomInput
