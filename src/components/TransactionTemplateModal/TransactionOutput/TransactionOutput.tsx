@@ -10,11 +10,12 @@ import './TransactionOutput.scss';
 type Props = {
   txOutput: { output: TxOutput; index: number };
   vm: VM;
-  txOutputOnChange: (output: TxOutput, index: number) => void;
+  txOutputOnChange: (output: TxOutput, index: number, errorMessage: string[]) => void;
+  errorMessages: string[];
   removeOutput: (index: number) => void;
 };
 
-const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput }) => {
+const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, errorMessages, removeOutput }) => {
   // const isValidAmount =
   //   (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
   //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
@@ -22,7 +23,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
 
   const isValidAssetId =
     (txOutput.output.assetId?.length !== 64 && txOutput.output.assetId?.length !== 0) || !validHex(txOutput.output.assetId)
-      ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR
+      ? TX_TEMPLATE_ERROR_MESSAGE.OUTPUT_ASSET_ID_ERROR
       : '';
 
   return (
@@ -38,7 +39,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         <Input
           value={txOutput.output.scriptPubKey}
           onChange={(value: string) => {
-            txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index);
+            txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index, []);
           }}
         />
       </div>
@@ -47,7 +48,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         <Input
           value={txOutput.output.amount}
           onChange={(value: string) => {
-            txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
+            txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index, []);
           }}
         />
         {/* <div className="tx-error-line">{isValidAmount}</div> */}
@@ -56,10 +57,16 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         <div className="tx-output-item">
           <div className="tx-modal-label">Asset ID:</div>
           <Input
-            value={txOutput.output.assetId}
+            // value={txOutput.output.assetId}
             placeholder="32-bytes"
-            onChange={(value: string) => {
-              txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
+            // onChange={(value: string) => {
+            //   txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index, TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR);
+            // }}
+            onBlur={(e: React.FocusEvent<HTMLInputElement, Element>) => {
+              txOutputOnChange({ ...txOutput.output, assetId: e.target.value }, txOutput.index, [
+                ...errorMessages,
+                TX_TEMPLATE_ERROR_MESSAGE.OUTPUT_ASSET_ID_ERROR,
+              ]);
             }}
           />
           <div className="tx-error-line">{isValidAssetId}</div>
