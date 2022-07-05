@@ -13,7 +13,6 @@ type Props = {
   defaultType?: types;
   txModalOnChange: (value: string) => void;
   value: string | undefined;
-  disableInput?: boolean;
 };
 
 type RadioInput = {
@@ -21,7 +20,7 @@ type RadioInput = {
   inputType: types;
 };
 
-const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, showTypes, defaultType, txModalOnChange, value, disableInput }) => {
+const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, showTypes, defaultType, txModalOnChange, value }) => {
   const [type, setType] = useState<types | undefined>(defaultType);
   const [customValue, setCustomValue] = useState<RadioInput>({ inputValue: '', inputType: defaultType as types });
 
@@ -164,7 +163,6 @@ const TransactionCustomInput: FC<Props> = ({ name, label, placeholderValue, show
         onChange={(value: string) => {
           txModalOnChange(value);
         }}
-        style={disableInput ? { color: '#979797' } : { color: 'none' }}
       />
     </div>
   );

@@ -112,6 +112,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const txOutputOnChange = (output: TxOutput, index: number) => {
     const newTxOutputs = [...txOutputs];
     const relatedOutputIndex = txOutputs.findIndex((output, i) => i === index);
+
     const newOutput = {
       scriptPubKey: output.scriptPubKey,
       amount: output.amount,
@@ -120,6 +121,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       valueCommitment: output.valueCommitment,
       confidental: output.confidental,
     };
+
     newTxOutputs[relatedOutputIndex] = newOutput;
     setTxOutputs(newTxOutputs);
   };
@@ -165,10 +167,12 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
         currentInputIndex,
       },
     };
+
     scriptWiz.parseTxData(txData.txData);
 
     const previousLocalStorageData = getTxLocalData();
     const newLocalStorageData = upsertVM(txData, previousLocalStorageData);
+
     setTxLocalData(newLocalStorageData);
     showModalCallBack(false);
   };
@@ -217,6 +221,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
 
         for (let i = 0; i < transactionDataInputs.length; i++) {
           const transactionDataInputsSequenceHex = WizData.fromNumber(transactionDataInputs[i].sequence).hex;
+          //remove first 00 values
           const transactionDataInputsSequence = transactionDataInputsSequenceHex.substring(0, transactionDataInputsSequenceHex.length - 2);
           const transactionDataInputsSequenceHexLE = hexLE(transactionDataInputsSequence);
 
