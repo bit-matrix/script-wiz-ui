@@ -56,6 +56,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
   const [lastBlock, setLastBlock] = useState<any>();
   const [transactionId, setTransactionId] = useState<string>('');
   const [networkValue, setNetworkValue] = useState<Networks>(Networks.MAINNET);
+  const [errorMessages, setErrorMessages] = useState<{ index: number; error: string[] }[]>([{ index: 0, error: [] }]);
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('txData2');
@@ -83,9 +84,32 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showModal, scriptWiz]);
 
-  const txInputOnChange = (input: TxInput, index: number, checked: boolean) => {
+  const txInputOnChange = (input: TxInput, index: number, checked: boolean, currentErrorMessages: string[]) => {
     const newTxInputs = [...txInputs];
     const relatedInputIndex = txInputs.findIndex((input, i) => i === index);
+
+    const newErrorMessages = [...currentErrorMessages];
+    const stateLastErrorMessages = [...errorMessages];
+    console.log('currentErrorMessages', currentErrorMessages);
+    console.log('stateLastErrorMessages', stateLastErrorMessages);
+
+    if (newErrorMessages.length > 0) {
+      newErrorMessages.forEach((nem, i) => {
+        const findIndex = stateLastErrorMessages[relatedInputIndex].error.findIndex((lem) => lem === nem);
+        if (findIndex > -1) {
+          newErrorMessages.splice(i, 1);
+          console.log('newErrorMessages 1', newErrorMessages);
+
+          const lastErrorMessage = [{ index: relatedInputIndex, error: [...newErrorMessages] }];
+          setErrorMessages(lastErrorMessage);
+        } else {
+          newErrorMessages.concat(stateLastErrorMessages[index].error);
+          console.log('newErrorMessages 2', newErrorMessages);
+          const lastErrorMessage = [{ index: relatedInputIndex, error: [...newErrorMessages] }];
+          setErrorMessages(lastErrorMessage);
+        }
+      });
+    }
 
     const newInput = {
       previousTxId: input.previousTxId,
@@ -104,14 +128,34 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     if (checked) setCurrentInputIndex(index);
   };
 
-  const txOutputOnChange = (output: TxOutput, index: number) => {
+  const txOutputOnChange = (output: TxOutput, index: number, currentErrorMessages: string[]) => {
     const newTxOutputs = [...txOutputs];
     const relatedOutputIndex = txOutputs.findIndex((output, i) => i === index);
+
+    const newErrorMessages = [...currentErrorMessages];
+    const stateLastErrorMessages = [...errorMessages];
+
+    if (newErrorMessages.length > 0) {
+      newErrorMessages.forEach((nem, i) => {
+        const findIndex = stateLastErrorMessages[index].error.findIndex((lem) => lem === nem);
+        if (findIndex > -1) {
+          newErrorMessages.splice(i, 1);
+          const lastErrorMessage = [{ index, error: [...newErrorMessages] }];
+          setErrorMessages(lastErrorMessage);
+        } else {
+          newErrorMessages.concat(stateLastErrorMessages[index].error);
+          const lastErrorMessage = [{ index, error: [...newErrorMessages] }];
+          setErrorMessages(lastErrorMessage);
+        }
+      });
+    }
+
     const newOutput = {
       scriptPubKey: output.scriptPubKey,
       amount: output.amount,
       assetId: output.assetId,
     };
+
     newTxOutputs[relatedOutputIndex] = newOutput;
     setTxOutputs(newTxOutputs);
   };
@@ -332,6 +376,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
                   <TransactionInput
                     key={index}
                     txInput={txInput}
+                    errorMessages={errorMessages[index].error ? errorMessages[index].error : []}
                     txInputOnChange={txInputOnChange}
                     vm={scriptWiz.vm}
                     removeInput={(index: number) => {
@@ -366,6 +411,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
                   <TransactionOutput
                     key={index}
                     txOutput={txOutput}
+                    errorMessages={errorMessages[index].error ? errorMessages[index].error : []}
                     txOutputOnChange={txOutputOnChange}
                     vm={scriptWiz.vm}
                     removeOutput={(index: number) => {
@@ -405,7 +451,11 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
             <Input
               value={timelock}
               onChange={(value: string) => {
-                setTimeLock(value);
+                if (timelockValidation() === undefined) {
+                  setTimeLock(value);
+                } else {
+                  setTimeLock('');
+                }
               }}
             />
             {timelockValidation() && <div className="tx-error-line">{timelockValidation()}</div>}
