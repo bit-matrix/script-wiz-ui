@@ -11,13 +11,14 @@ import './TransactionInput.scss';
 type Props = {
   vm: VM;
   txInput: { input: TxInput; index: number; checked: boolean };
-  txInputOnChange: (input: TxInput, index: number, checked: boolean) => void;
+  txInputOnChange: (input: TxInput, index: number, checked: boolean, erorMessages: string[]) => void;
+  errorMessages: string[];
   removeInput: (index: number) => void;
   version: string;
   lastBlock?: any;
 };
 
-const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput, version, lastBlock }) => {
+const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, errorMessages = [], removeInput, version, lastBlock }) => {
   const isValidPreviousTxId =
     (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
@@ -25,7 +26,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
 
   const isValidAssetId =
     (txInput.input.assetId?.length !== 64 && txInput.input.assetId?.length !== 0) || !validHex(txInput.input.assetId)
-      ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR
+      ? TX_TEMPLATE_ERROR_MESSAGE.INPUT_ASSET_ID_ERROR
       : '';
 
   // const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VOUT_ERROR : '';
@@ -39,14 +40,14 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
     if (lastBlock) {
       const sequence = txInput.input.sequence;
 
-      if (sequence.length && (sequence.length !== 8 || !validHex(sequence))) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR;
+      if (sequence.length && (sequence.length !== 8 || !validHex(sequence))) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR.INVALID;
 
       if (sequence) {
-        if (Number(version) < 2) return 'Version must be greater than 1';
+        if (Number(version) < 2) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR.VERSION;
 
         const sequenceHexLE = WizData.fromHex(hexLE(sequence));
 
-        if (Number(sequenceHexLE.bin[0]) !== 0) return 'Disable flag must be 0';
+        if (Number(sequenceHexLE.bin[0]) !== 0) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR.FLAG;
 
         if (Number(sequenceHexLE.bin[0]) === 0) {
           if (Number(sequenceHexLE.bin[9]) === 1) {
@@ -57,7 +58,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               const blockTimestamp = Number(txInput.input.blockTimestamp);
               const timestampDifference = lastBlock.timestamp - blockTimestamp;
 
-              if (timestampDifference > secondUnitValue) return 'Age must not be bigger than block timestamp';
+              if (timestampDifference > secondUnitValue) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR.AGE_TIMESTAMP;
             }
           } else if (Number(sequenceHexLE.bin[9]) === 0) {
             const blockUnitValue = parseInt(sequenceHexLE.bin.slice(16, 33), 2);
@@ -68,7 +69,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               if (blockHeight) {
                 const blockDifference = lastBlock.height - blockHeight;
 
-                if (blockDifference > blockUnitValue) return 'Age must not be bigger than block height';
+                if (blockDifference > blockUnitValue) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR.AGE_HEIGHT;
               }
             }
           }
@@ -83,7 +84,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         <div className="tx-input-index">Index #{txInput.index}</div>
         <Radio
           onChange={(value: any, checked: boolean) => {
-            txInputOnChange(txInput.input, txInput.index, checked);
+            txInputOnChange(txInput.input, txInput.index, checked, []);
           }}
           value={txInput.index}
           checked={txInput.checked}
@@ -97,16 +98,28 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
       <div className="tx-input-modal-item">
         <div className="tx-modal-label">Previous TX ID:</div>
         <Input
-          value={txInput.input.previousTxId}
+          // value={txInput.input.previousTxId}
           placeholder="32-bytes"
-          onChange={(value: string) => {
+          // onChange={(value: string) => {
+          //   txInputOnChange(
+          //     {
+          //       ...txInput.input,
+          //       previousTxId: value,
+          //     },
+          //     txInput.index,
+          //     txInput.checked,
+          //     TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR,
+          //   );
+          // }}
+          onBlur={(e: React.FocusEvent<HTMLInputElement, Element>) => {
             txInputOnChange(
               {
                 ...txInput.input,
-                previousTxId: value,
+                previousTxId: e.target.value,
               },
               txInput.index,
               txInput.checked,
+              [...errorMessages, TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR],
             );
           }}
         />
@@ -125,6 +138,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
                 },
                 txInput.index,
                 txInput.checked,
+                [],
               );
             }}
           />
@@ -133,14 +147,26 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           <div className="tx-input-item">Sequence:</div>
           <Input
             value={txInput.input.sequence}
-            onChange={(value: string) => {
+            // onChange={(value: string) => {
+            //   txInputOnChange(
+            //     {
+            //       ...txInput.input,
+            //       sequence: value,
+            //     },
+            //     txInput.index,
+            //     txInput.checked,
+            //     sequenceValidation(),
+            //   );
+            // }}
+            onBlur={(e: React.FocusEvent<HTMLInputElement, Element>) => {
               txInputOnChange(
                 {
                   ...txInput.input,
-                  sequence: value,
+                  sequence: e.target.value,
                 },
                 txInput.index,
                 txInput.checked,
+                [...errorMessages, sequenceValidation() || ''],
               );
             }}
           />
@@ -160,6 +186,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
                 },
                 txInput.index,
                 txInput.checked,
+                [],
               );
             }}
           />
@@ -176,6 +203,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
                 },
                 txInput.index,
                 txInput.checked,
+                [],
               );
             }}
           />
@@ -194,6 +222,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               },
               txInput.index,
               txInput.checked,
+              [],
             );
           }}
         />
@@ -210,6 +239,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
               },
               txInput.index,
               txInput.checked,
+              [],
             );
           }}
         />
@@ -219,16 +249,28 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         <div className="tx-input-item">
           <div className="tx-modal-label">Asset ID:</div>
           <Input
-            value={txInput.input.assetId}
+            // value={txInput.input.assetId}
             placeholder="32-bytes"
-            onChange={(value: string) => {
+            // onChange={(value: string) => {
+            //   txInputOnChange(
+            //     {
+            //       ...txInput.input,
+            //       assetId: value,
+            //     },
+            //     txInput.index,
+            //     txInput.checked,
+            //     TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR,
+            //   );
+            // }}
+            onBlur={(e: React.FocusEvent<HTMLInputElement, Element>) => {
               txInputOnChange(
                 {
                   ...txInput.input,
-                  assetId: value,
+                  assetId: e.target.value,
                 },
                 txInput.index,
                 txInput.checked,
+                [...errorMessages, TX_TEMPLATE_ERROR_MESSAGE.INPUT_ASSET_ID_ERROR],
               );
             }}
           />
