@@ -1,0 +1,15 @@
+.tx-custom-input-item {
+  margin: 0.5rem 0;
+
+  .tx-custom-input-label-radio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .tx-custom-input-label {
+      margin-bottom: 0.25rem;
+      color: #292d33;
+      text-align: start;
+    }
+  }
+}
