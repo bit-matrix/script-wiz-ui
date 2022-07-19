@@ -6,6 +6,8 @@ import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
+import TransactionCustomInput from '../../TransactionTemplateModalV2/TransactionCustomInput/TransactionCustomInput';
+import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
 import './TransactionInput.scss';
 
 type Props = {
@@ -112,40 +114,41 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         />
         <div className="tx-error-line">{isValidPreviousTxId}</div>
       </div>
-      <div className="tx-input-item-double">
-        <div className="tx-input-label">
-          <div className="tx-input-item">Vout:</div>
-          <Input
-            value={txInput.input.vout}
-            onChange={(value: string) => {
-              txInputOnChange(
-                {
-                  ...txInput.input,
-                  vout: value,
-                },
-                txInput.index,
-                txInput.checked,
-              );
-            }}
-          />
-        </div>
-        <div className="tx-input-label">
-          <div className="tx-input-item">Sequence:</div>
-          <Input
-            value={txInput.input.sequence}
-            onChange={(value: string) => {
-              txInputOnChange(
-                {
-                  ...txInput.input,
-                  sequence: value,
-                },
-                txInput.index,
-                txInput.checked,
-              );
-            }}
-          />
-          {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
-        </div>
+      <div className="tx-input-modal-item">
+        <div className="tx-modal-label">Vout:</div>
+        <Input
+          value={txInput.input.vout}
+          onChange={(value: string) => {
+            txInputOnChange(
+              {
+                ...txInput.input,
+                vout: value,
+              },
+              txInput.index,
+              txInput.checked,
+            );
+          }}
+        />
+      </div>
+      <div>
+        <TransactionCustomInput
+          name="sequence"
+          label="Sequence:"
+          defaultValueType={VALUE_TYPES.BE}
+          valueOnChange={(value) => {
+            txInputOnChange(
+              {
+                ...txInput.input,
+                sequence: value,
+              },
+              txInput.index,
+              txInput.checked,
+            );
+          }}
+          value={txInput.input.sequence}
+        />
+
+        {sequenceValidation() && <div className="tx-error-line">{sequenceValidation()}</div>}
       </div>
       <div className="tx-input-item-double">
         <div className="tx-input-label">
