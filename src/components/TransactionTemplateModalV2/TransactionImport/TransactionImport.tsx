@@ -35,7 +35,7 @@ const txOutputInitial = {
   scriptPubKey: '',
   amount: '',
   assetId: '',
-  assetommitment: '',
+  assetCommitment: '',
   valueCommitment: '',
   confidental: false,
 };
