@@ -48,7 +48,7 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         checked={txOutput.output.confidental}
         value={txOutput.output.confidental ? 'true' : 'false'}
       >
-        Confidental
+        <span className="tx-output-confidental">Confidental</span>
       </Checkbox>
 
       <div className="tx-output-item">

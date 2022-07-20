@@ -111,7 +111,7 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
         checked={txInput.input.confidental}
         value={txInput.input.confidental ? 'true' : 'false'}
       >
-        Confidental
+        <span className="tx-input-confidental">Confidental</span>
       </Checkbox>
 
       <div className="tx-input-modal-item">
