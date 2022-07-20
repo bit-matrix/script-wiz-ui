@@ -1,6 +1,6 @@
 import React from 'react';
 import { TxInput } from '@script-wiz/lib-core';
-import { Input, Radio } from 'rsuite';
+import { Checkbox, Input, Radio } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
@@ -96,6 +96,24 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
           <CloseIcon width="1rem" height="1rem" />
         </div>
       </div>
+
+      <Checkbox
+        onChange={(value: any, checked: boolean) => {
+          txInputOnChange(
+            {
+              ...txInput.input,
+              confidental: checked,
+            },
+            txInput.index,
+            txInput.checked,
+          );
+        }}
+        checked={txInput.input.confidental}
+        value={txInput.input.confidental ? 'true' : 'false'}
+      >
+        Confidental
+      </Checkbox>
+
       <div className="tx-input-modal-item">
         <div className="tx-modal-label">Previous TX ID:</div>
         <Input

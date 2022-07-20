@@ -29,12 +29,16 @@ const txInputInitial = {
   assetId: '',
   blockHeight: '',
   blockTimestamp: '',
+  confidental: false,
 };
 
 const txOutputInitial = {
   scriptPubKey: '',
   amount: '',
   assetId: '',
+  assetommitment: '',
+  valueCommitment: '',
+  confidental: false,
 };
 
 const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
@@ -84,6 +88,7 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       assetId: input.assetId,
       blockHeight: input.blockHeight,
       blockTimestamp: input.blockTimestamp,
+      confidental: input.confidental,
     };
 
     newTxInputs[relatedInputIndex] = newInput;
@@ -99,7 +104,11 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       scriptPubKey: output.scriptPubKey,
       amount: output.amount,
       assetId: output.assetId,
+      assetCommitment: output.assetCommitment,
+      valueCommitment: output.valueCommitment,
+      confidental: output.confidental,
     };
+
     newTxOutputs[relatedOutputIndex] = newOutput;
     setTxOutputs(newTxOutputs);
   };

@@ -28,12 +28,16 @@ const txInputInitial = {
   assetId: '',
   blockHeight: '',
   blockTimestamp: '',
+  confidental: false,
 };
 
 const txOutputInitial = {
   scriptPubKey: '',
   amount: '',
   assetId: '',
+  assetommitment: '',
+  valueCommitment: '',
+  confidental: false,
 };
 
 const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, lastBlock }) => {
@@ -78,6 +82,7 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, lastBlock }) =>
             assetId: transactionDataInputs[i].issuance?.asset_id ? transactionDataInputs[i].issuance.asset_id : '',
             blockHeight: transactionDataInputBlockHeight,
             blockTimestamp: transactionDataInputBlockTime,
+            confidental: transactionDataInputs[i].prevout.assetcommitment ? true : false,
           };
 
           newTxInputs.push(txInput);
@@ -89,6 +94,9 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, lastBlock }) =>
               scriptPubKey: transactionDataOutputs[i].scriptpubkey ? transactionDataOutputs[i].scriptpubkey : '',
               amount: transactionDataOutputs[i].value !== undefined ? transactionDataOutputs[i].value : '',
               assetId: transactionDataOutputs[i].asset ? transactionDataOutputs[i].asset : '',
+              assetCommitment: transactionDataOutputs[i].assetcommitment ? transactionDataOutputs[i].assetcommitment : '',
+              valueCommitment: transactionDataOutputs[i].valuecommitment ? transactionDataOutputs[i].valuecommitment : '',
+              confidental: transactionDataOutputs[i].assetcommitment ? true : false,
             };
 
             newTxOutputs.push(txOutput);

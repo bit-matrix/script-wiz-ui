@@ -1,10 +1,11 @@
 import React from 'react';
 import { TxOutput } from '@script-wiz/lib-core';
-import { Input } from 'rsuite';
+import { Checkbox, Input } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
 import CloseIcon from '../../Svg/Icons/Close';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
+import TransactionCustomInput from '../../TransactionTemplateModalV2/TransactionCustomInput/TransactionCustomInput';
 import './TransactionOutput.scss';
 
 type Props = {
@@ -33,6 +34,23 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
           <CloseIcon width="1rem" height="1rem" />
         </div>
       </div>
+
+      <Checkbox
+        onChange={(value: any, checked: boolean) => {
+          txOutputOnChange(
+            {
+              ...txOutput.output,
+              confidental: checked,
+            },
+            txOutput.index,
+          );
+        }}
+        checked={txOutput.output.confidental}
+        value={txOutput.output.confidental ? 'true' : 'false'}
+      >
+        Confidental
+      </Checkbox>
+
       <div className="tx-output-item">
         <div className="tx-modal-label">scriptPubkey:</div>
         <Input
@@ -53,16 +71,34 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
         {/* <div className="tx-error-line">{isValidAmount}</div> */}
       </div>
       {vm.network === VM_NETWORK.LIQUID && (
-        <div className="tx-output-item">
-          <div className="tx-modal-label">Asset ID:</div>
-          <Input
-            value={txOutput.output.assetId}
-            placeholder="32-bytes"
-            onChange={(value: string) => {
-              txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
+        <div>
+          <div className="tx-output-item">
+            <div className="tx-modal-label">Asset ID:</div>
+            <Input
+              value={txOutput.output.assetId}
+              placeholder="32-bytes"
+              onChange={(value: string) => {
+                txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
+              }}
+            />
+            <div className="tx-error-line">{isValidAssetId}</div>
+          </div>
+          <TransactionCustomInput
+            name="assetCommitment"
+            label={'Asset Commitment:'}
+            valueOnChange={(value: string) => {
+              txOutputOnChange({ ...txOutput.output, assetCommitment: value }, txOutput.index);
             }}
+            value={txOutput.output.assetCommitment as string}
           />
-          <div className="tx-error-line">{isValidAssetId}</div>
+          <TransactionCustomInput
+            name="valueCommitment"
+            label={'Value Commitment:'}
+            valueOnChange={(value: string) => {
+              txOutputOnChange({ ...txOutput.output, valueCommitment: value }, txOutput.index);
+            }}
+            value={txOutput.output.valueCommitment as string}
+          />
         </div>
       )}
     </div>
