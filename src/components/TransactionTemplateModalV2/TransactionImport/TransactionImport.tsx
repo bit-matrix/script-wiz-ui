@@ -21,6 +21,23 @@ enum Networks {
   TESTNET = 'Testnet',
 }
 
+const txInputInitial = {
+  previousTxId: '',
+  vout: '',
+  sequence: '',
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+  blockHeight: '',
+  blockTimestamp: '',
+};
+
+const txOutputInitial = {
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+};
+
 const TransactionImport: React.FC<Props> = ({ txInputs, txOutputs, txData, scriptWiz, lastBlock }) => {
   const [network, setNetwork] = useState<Networks>(Networks.MAINNET);
   const [transactionId, setTransactionId] = useState<string>('');
@@ -100,11 +117,11 @@ const TransactionImport: React.FC<Props> = ({ txInputs, txOutputs, txData, scrip
         );
         toaster.push(message);
 
-        txInputs([]);
-        txOutputs([]);
+        txInputs([txInputInitial]);
+        txOutputs([txOutputInitial]);
         txData({
-          inputs: [],
-          outputs: [],
+          inputs: [txInputInitial],
+          outputs: [txOutputInitial],
           version: '',
           timelock: '',
           currentInputIndex: 0,
@@ -126,7 +143,7 @@ const TransactionImport: React.FC<Props> = ({ txInputs, txOutputs, txData, scrip
     axios(api).then((res) => {
       lastBlock(res.data[0]);
     });
-  }, [scriptWiz.vm.network, network]);
+  }, [scriptWiz.vm.network, network, lastBlock]);
 
   useEffect(() => {
     fetchBlocks();
