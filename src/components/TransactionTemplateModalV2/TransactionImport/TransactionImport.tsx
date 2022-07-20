@@ -9,8 +9,6 @@ import CloseIcon from '../../Svg/Icons/Close';
 import './TransactionImport.scss';
 
 type Props = {
-  txInputs: (value: TxInput[]) => void;
-  txOutputs: (value: TxOutput[]) => void;
   txData: (value: TxData) => void;
   scriptWiz: ScriptWiz;
   lastBlock: (value: string) => void;
@@ -38,7 +36,7 @@ const txOutputInitial = {
   assetId: '',
 };
 
-const TransactionImport: React.FC<Props> = ({ txInputs, txOutputs, txData, scriptWiz, lastBlock }) => {
+const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, lastBlock }) => {
   const [network, setNetwork] = useState<Networks>(Networks.MAINNET);
   const [transactionId, setTransactionId] = useState<string>('');
 
@@ -85,8 +83,6 @@ const TransactionImport: React.FC<Props> = ({ txInputs, txOutputs, txData, scrip
           newTxInputs.push(txInput);
         }
 
-        txInputs(newTxInputs);
-
         for (let i = 0; i < transactionDataOutputs.length; i++) {
           if (transactionDataOutputs[i].scriptpubkey_type !== 'fee') {
             txOutput = {
@@ -98,8 +94,6 @@ const TransactionImport: React.FC<Props> = ({ txInputs, txOutputs, txData, scrip
             newTxOutputs.push(txOutput);
           }
         }
-
-        txOutputs(newTxOutputs);
 
         txData({
           inputs: newTxInputs,
@@ -117,8 +111,6 @@ const TransactionImport: React.FC<Props> = ({ txInputs, txOutputs, txData, scrip
         );
         toaster.push(message);
 
-        txInputs([txInputInitial]);
-        txOutputs([txOutputInitial]);
         txData({
           inputs: [txInputInitial],
           outputs: [txOutputInitial],

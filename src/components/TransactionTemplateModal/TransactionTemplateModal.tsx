@@ -184,13 +184,9 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     >
       <Modal.Header>
         <TransactionImport
-          txInputs={(value) => {
-            setTxInputs(value);
-          }}
-          txOutputs={(value) => {
-            setTxOutputs(value);
-          }}
           txData={(value) => {
+            setTxInputs(value.inputs);
+            setTxOutputs(value.outputs);
             setTimeLock(value.timelock);
             setVersion(value.version);
           }}
