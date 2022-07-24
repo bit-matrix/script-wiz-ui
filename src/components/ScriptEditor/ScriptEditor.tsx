@@ -14,11 +14,11 @@ import {
   initialLiquidTaprootEditorValue2,
 } from './ScriptEditorInput/initialEditorValue';
 import CompileModal from '../CompileModal/CompileModal';
-import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
 import CustomWhisper from './CustomWhisper';
 import { Mosaic } from 'react-mosaic-component';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import './ScriptEditor.scss';
+import TransactionTemplateModal from '../TransactionTemplateModalV2/TransactionTemplateModal/TransactionTemplateModal';
 
 type Props = {
   scriptWiz: ScriptWiz;
@@ -655,7 +655,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
   return (
     <>
-      <TransactionTemplateModal showModal={showTemplateModal} showModalCallBack={(show) => setShowTemplateModal(show)} scriptWiz={scriptWiz} />
+      <TransactionTemplateModal showModal={showTemplateModal} showModalCallback={(show) => setShowTemplateModal(show)} scriptWiz={scriptWiz} />
       <CompileModal scriptWiz={scriptWiz} compileModalData={compileModalData} showCompileModal={(show) => setCompileModalData({ show })} />
       <ScriptEditorHeader
         compileButtonClick={compileScripts}
