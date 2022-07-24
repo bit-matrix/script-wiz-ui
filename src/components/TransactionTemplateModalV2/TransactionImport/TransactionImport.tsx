@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
 import { ScriptWiz, VM_NETWORK } from '@script-wiz/lib';
@@ -6,18 +6,14 @@ import axios from 'axios';
 import { Button, Divider, Input, InputGroup, Message, RadioGroup, toaster } from 'rsuite';
 import Radio, { ValueType } from 'rsuite/esm/Radio';
 import CloseIcon from '../../Svg/Icons/Close';
+import { NETWORKS } from '../../../utils/enum/NETWORKS';
 import './TransactionImport.scss';
 
 type Props = {
   txData: (value: TxData) => void;
   scriptWiz: ScriptWiz;
-  lastBlock: (value: string) => void;
+  networkCallback: (value: NETWORKS) => void;
 };
-
-enum Networks {
-  MAINNET = 'Mainnet',
-  TESTNET = 'Testnet',
-}
 
 const txInputInitial = {
   previousTxId: '',
@@ -40,17 +36,17 @@ const txOutputInitial = {
   confidental: false,
 };
 
-const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, lastBlock }) => {
-  const [network, setNetwork] = useState<Networks>(Networks.MAINNET);
+const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback }) => {
+  const [network, setNetwork] = useState<NETWORKS>(NETWORKS.MAINNET);
   const [transactionId, setTransactionId] = useState<string>('');
 
   const fetchTransaction = () => {
     const api: string =
       scriptWiz.vm.network === VM_NETWORK.BTC
-        ? network === Networks.MAINNET
+        ? network === NETWORKS.MAINNET
           ? `https://blockstream.info/api/tx/${transactionId}`
           : `https://blockstream.info/testnet/api/tx/${transactionId}`
-        : network === Networks.MAINNET
+        : network === NETWORKS.MAINNET
         ? `https://blockstream.info/liquid/api/tx/${transactionId}`
         : `https://blockstream.info/liquidtestnet/api/tx/${transactionId}`;
 
@@ -130,25 +126,6 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, lastBlock }) =>
       });
   };
 
-  const fetchBlocks = useCallback(() => {
-    const api: string =
-      scriptWiz.vm.network === VM_NETWORK.BTC
-        ? network === Networks.MAINNET
-          ? 'https://blockstream.info/api/blocks/'
-          : 'https://blockstream.info/testnet/api/blocks/'
-        : network === Networks.MAINNET
-        ? 'https://blockstream.info/liquid/api/blocks'
-        : 'https://blockstream.info/liquidtestnet/api/blocks/';
-
-    axios(api).then((res) => {
-      lastBlock(res.data[0]);
-    });
-  }, [scriptWiz.vm.network, network, lastBlock]);
-
-  useEffect(() => {
-    fetchBlocks();
-  }, [fetchBlocks]);
-
   return (
     <div>
       <div className="tx-import-content">
@@ -158,11 +135,12 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, lastBlock }) =>
             name="radioList"
             value={network}
             onChange={(value: ValueType) => {
-              setNetwork(value as Networks);
+              networkCallback(value as NETWORKS);
+              setNetwork(value as NETWORKS);
             }}
           >
-            <Radio value={Networks.MAINNET}>{Networks.MAINNET}</Radio>
-            <Radio value={Networks.TESTNET}>{Networks.TESTNET}</Radio>
+            <Radio value={NETWORKS.MAINNET}>{NETWORKS.MAINNET}</Radio>
+            <Radio value={NETWORKS.TESTNET}>{NETWORKS.TESTNET}</Radio>
           </RadioGroup>
         </div>
         <InputGroup className="tx-import-input-group">
