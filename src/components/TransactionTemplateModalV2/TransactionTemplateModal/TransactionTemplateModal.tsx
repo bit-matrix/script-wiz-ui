@@ -5,6 +5,8 @@ import axios from 'axios';
 import TransactionImport from '../TransactionImport/TransactionImport';
 import { NETWORKS } from '../../../utils/enum/NETWORKS';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
+import TransactionInputsContainer from '../TransactionInputsContainer/TransactionInputsContainer';
+import TransactionOutputsContainer from '../TransactionOutputsContainer/TransactionOutputsContainer';
 import './TransactionTemplateModal.scss';
 
 type Props = {
@@ -80,7 +82,12 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
           networkCallback={(value) => setNetwork(value)}
         />
       </Modal.Header>
-      <Modal.Body></Modal.Body>
+      <Modal.Body>
+        <div className="tx-template-main">
+          <TransactionInputsContainer lastBlock={lastBlock} version={version} />
+          <TransactionOutputsContainer />
+        </div>
+      </Modal.Body>
       <Modal.Footer>
         <div className="tx-template-modal-footer">
           <div>
