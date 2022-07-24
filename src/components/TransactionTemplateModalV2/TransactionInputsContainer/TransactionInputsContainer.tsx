@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { TxInput } from '@script-wiz/lib-core';
 import { Button } from 'rsuite';
 import TransactionInput from '../TransactionInput/TransactionInput';
 import './TransactionInputsContainer.scss';
@@ -15,7 +16,7 @@ const TransactionInputsContainer: FC<Props> = ({ lastBlock, version }) => {
         <p>Inputs</p>
       </div>
 
-      <TransactionInput lastBlock={lastBlock} version={version} />
+      <TransactionInput lastBlock={lastBlock} version={version} txInputOnChange={(value: TxInput) => console.log(value)} />
 
       <Button className="tx-inputs-container-button" onClick={() => {}}>
         + Add New Input
