@@ -1,0 +1,27 @@
+.tx-template-modal {
+  .rs-modal-content {
+    background-color: #eee !important;
+    height: 42rem;
+
+    .rs-modal-body {
+      margin-top: unset;
+      min-height: 23rem;
+    }
+  }
+
+  .tx-template-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 0.25rem #d6d6d6 solid !important;
+    padding-top: 1rem;
+  }
+
+  .tx-error-line {
+    color: red;
+  }
+
+  .tx-modal-save-button {
+    border: 1px solid;
+  }
+}
