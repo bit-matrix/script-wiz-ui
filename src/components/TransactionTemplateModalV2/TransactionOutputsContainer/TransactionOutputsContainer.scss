@@ -1,0 +1,25 @@
+.tx-outputs-container {
+  .tx-outputs-container-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #292d33 !important;
+  }
+
+  .tx-outputs-container-button {
+    width: 100% !important;
+    margin: 1rem 0;
+    background-color: #ccc !important;
+    color: #292d33 !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+
+    &:hover {
+      color: #e9ebf0 !important;
+      background-color: #3c3f43 !important;
+    }
+  }
+}
