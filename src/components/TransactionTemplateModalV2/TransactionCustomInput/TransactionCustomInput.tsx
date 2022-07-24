@@ -28,7 +28,7 @@ const TransactionCustomInput: React.FC<Props> = ({ name, label, value, valueOnCh
     showInputValue(value);
   };
 
-  const placeholderOnChnage = () => {
+  const placeholderOnChange = () => {
     if (typeValue === VALUE_TYPES.DECIMAL) {
       return '0';
     } else if (typeValue === VALUE_TYPES.BE || typeValue === VALUE_TYPES.LE) {
@@ -158,7 +158,7 @@ const TransactionCustomInput: React.FC<Props> = ({ name, label, value, valueOnCh
       </div>
       <Input
         value={defaultValueType ? customValue.value : value}
-        placeholder={placeholderOnChnage()}
+        placeholder={placeholderOnChange()}
         onChange={(value: string) => {
           valueOnChange(value);
         }}
