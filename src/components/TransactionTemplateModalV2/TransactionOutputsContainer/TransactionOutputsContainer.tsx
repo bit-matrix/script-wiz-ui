@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { TxOutput } from '@script-wiz/lib-core';
 import { Button } from 'rsuite';
 import TransactionOutput from '../TransactionOutput/TransactionOutput';
 import './TransactionOutputsContainer.scss';
@@ -10,7 +11,7 @@ const TransactionOutputsContainer: FC = () => {
         <p>Outputs</p>
       </div>
 
-      <TransactionOutput />
+      <TransactionOutput txOutputOnChange={(value: TxOutput) => console.log(value)} />
 
       <Button className="tx-outputs-container-button" onClick={() => {}}>
         + Add New Output
