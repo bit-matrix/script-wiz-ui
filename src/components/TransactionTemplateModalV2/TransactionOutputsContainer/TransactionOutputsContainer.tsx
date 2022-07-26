@@ -1,23 +1,63 @@
-import { FC } from 'react';
-import { TxOutput } from '@script-wiz/lib-core';
+import { FC, useState } from 'react';
+import { TxOutput, TxOutputLiquid } from '@script-wiz/lib-core';
 import { Button } from 'rsuite';
 import TransactionOutput from '../TransactionOutput/TransactionOutput';
+import CloseIcon from '../../Svg/Icons/Close';
 import './TransactionOutputsContainer.scss';
 
 type Props = {
   txOutputOnChange: (value: TxOutput) => void;
 };
 
+const txOutputInitial = {
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+  assetommitment: '',
+  valueCommitment: '',
+  confidental: false,
+};
+
 const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange }) => {
+  const [txOutputs, setTxOutputs] = useState<TxOutputLiquid[]>([txOutputInitial]);
   return (
     <div className="tx-outputs-container">
       <div className="tx-outputs-container-header">
         <p>Outputs</p>
       </div>
+      {txOutputs.map((output: TxOutputLiquid, index: number) => {
+        const txOutput = { output, index };
+        return (
+          <div className="tx-outputs-container-box">
+            <div className="tx-outputs-container-index">Index #{txOutput.index}</div>
 
-      <TransactionOutput txOutputOnChange={(value: TxOutput) => txOutputOnChange(value)} />
+            <div
+              className="tx-outputs-container-close-icon"
+              onClick={() => {
+                const newTxOutputs = [...txOutputs];
+                if (txOutputs.length > 1) {
+                  newTxOutputs.splice(txOutput.index, 1);
+                  setTxOutputs(newTxOutputs);
+                }
+              }}
+            >
+              <CloseIcon width="1rem" height="1rem" />
+            </div>
 
-      <Button className="tx-outputs-container-button" onClick={() => {}}>
+            <TransactionOutput txOutputOnChange={(value: TxOutputLiquid) => txOutputOnChange(value)} txOutput={txOutput} />
+          </div>
+        );
+      })}
+
+      <Button
+        className="tx-outputs-container-button"
+        onClick={() => {
+          const newTxOutput = txOutputInitial;
+          const newTxOutputs = [...txOutputs];
+          newTxOutputs.push(newTxOutput);
+          setTxOutputs(newTxOutputs);
+        }}
+      >
         + Add New Output
       </Button>
     </div>

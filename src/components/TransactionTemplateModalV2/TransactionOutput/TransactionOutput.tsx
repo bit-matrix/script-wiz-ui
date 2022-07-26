@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import { TxOutputLiquid } from '@script-wiz/lib-core';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
@@ -7,63 +7,40 @@ import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomI
 import './TransactionOutput.scss';
 
 type Props = {
-  txOutputOnChange: (value: TxOutputLiquid) => void;
+  txOutputOnChange: (value: TxOutputLiquid, index: number) => void;
+  txOutput: { output: TxOutputLiquid; index: number };
 };
 
-const txOutputInitial = {
-  scriptPubKey: '',
-  amount: '',
-  assetId: '',
-  assetCommitment: '',
-  valueCommitment: '',
-  confidental: false,
-};
-
-const TransactionOutput: FC<Props> = ({ txOutputOnChange }) => {
-  const [scriptPubKey, setScriptPubKey] = useState<string>('');
-  const [amount, setAmount] = useState<string>('');
-  const [assetId, setAssetId] = useState<string | undefined>('');
-  const [assetCommitment, setAssetCommitment] = useState<string | undefined>('');
-  const [valueCommitment, setValueCommitment] = useState<string | undefined>('');
-  const [txOutput, setTxOutput] = useState<TxOutputLiquid>(txOutputInitial);
-
-  useEffect(() => {
-    setTxOutput({
-      scriptPubKey: scriptPubKey,
-      amount: amount,
-      assetId: assetId,
-      assetCommitment: assetCommitment,
-      valueCommitment: valueCommitment,
-      confidental: false,
-    });
-
-    txOutputOnChange(txOutput);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amount, assetCommitment, assetId, scriptPubKey, valueCommitment]);
-
+const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput }) => {
   // const isValidAmount =
   //   (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
   //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
   //     : '';
 
-  const isValidAssetId = (assetId?.length !== 64 && assetId?.length !== 0) || !validHex(assetId) ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR : '';
+  const isValidAssetId =
+    (txOutput.output.assetId?.length !== 64 && txOutput.output.assetId?.length !== 0) || !validHex(txOutput.output.assetId)
+      ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR
+      : '';
 
   return (
     <div className="tx-output">
       <TransactionCustomInput
         name="scriptPubKey"
         label="ScriptPubKey:"
-        value={scriptPubKey}
-        valueOnChange={(value) => setScriptPubKey(value)}
+        value={txOutput.output.scriptPubKey}
+        valueOnChange={(value: string) => {
+          txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index);
+        }}
         placeholder="32-bytes"
       />
 
       <TransactionCustomInput
         name="amount"
         label="Amount:"
-        value={amount}
-        valueOnChange={(value) => setAmount(value)}
+        value={txOutput.output.amount}
+        valueOnChange={(value: string) => {
+          txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
+        }}
         defaultValueType={VALUE_TYPES.DECIMAL}
       />
 
@@ -71,8 +48,10 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange }) => {
         <TransactionCustomInput
           name="assetId"
           label="Asset Id:"
-          value={assetId as string}
-          valueOnChange={(value) => setAssetId(value)}
+          value={txOutput.output.assetId as string}
+          valueOnChange={(value: string) => {
+            txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
+          }}
           placeholder="32-bytes"
         />
         <div className="tx-output-error-line">{isValidAssetId}</div>
@@ -81,15 +60,19 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange }) => {
       <TransactionCustomInput
         name="assetCommitment"
         label={'Asset Commitment:'}
-        value={assetCommitment as string}
-        valueOnChange={(value) => setAssetCommitment(value)}
+        value={txOutput.output.assetCommitment as string}
+        valueOnChange={(value: string) => {
+          txOutputOnChange({ ...txOutput.output, assetCommitment: value }, txOutput.index);
+        }}
       />
 
       <TransactionCustomInput
         name="valueCommitment"
         label={'Value Commitment:'}
-        value={valueCommitment as string}
-        valueOnChange={(value: string) => setValueCommitment(value)}
+        value={txOutput.output.valueCommitment as string}
+        valueOnChange={(value: string) => {
+          txOutputOnChange({ ...txOutput.output, valueCommitment: value }, txOutput.index);
+        }}
       />
     </div>
   );
