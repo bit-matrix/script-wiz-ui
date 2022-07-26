@@ -7,6 +7,24 @@
     font-size: 1rem;
     font-weight: 600;
     color: #292d33 !important;
+
+    .tx-inputs-container-box {
+      .tx-inputs-container-index {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .tx-inputs-container-close-icon {
+        color: #e9ebf0;
+        background: #292d33;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 6px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+      }
+    }
   }
 
   .tx-inputs-container-button {
