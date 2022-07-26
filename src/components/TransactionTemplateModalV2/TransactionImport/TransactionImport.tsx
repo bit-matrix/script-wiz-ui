@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
+import { TxData, TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
 import { ScriptWiz, VM_NETWORK } from '@script-wiz/lib';
 import axios from 'axios';
@@ -7,7 +7,6 @@ import { Button, Divider, Input, InputGroup, Message, RadioGroup, toaster } from
 import Radio, { ValueType } from 'rsuite/esm/Radio';
 import CloseIcon from '../../Svg/Icons/Close';
 import { NETWORKS } from '../../../utils/enum/NETWORKS';
-import { TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core/model/TxData';
 import './TransactionImport.scss';
 
 type Props = {

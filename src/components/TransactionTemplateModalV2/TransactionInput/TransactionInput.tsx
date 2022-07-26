@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
+import { TxInputLiquid } from '@script-wiz/lib-core';
+import { Checkbox } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
 import { validHex } from '../../../utils/helper';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
-import { TxInputLiquid } from '@script-wiz/lib-core';
 import './TransactionInput.scss';
-import { Checkbox } from 'rsuite';
 
 type Props = {
   lastBlock: any;

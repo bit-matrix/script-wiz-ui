@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import { ScriptWiz, VM_NETWORK } from '@script-wiz/lib';
+import { TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core';
 import { Button, Modal } from 'rsuite';
 import axios from 'axios';
 import TransactionImport from '../TransactionImport/TransactionImport';
@@ -8,7 +9,6 @@ import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomI
 import TransactionInputsContainer from '../TransactionInputsContainer/TransactionInputsContainer';
 import TransactionOutputsContainer from '../TransactionOutputsContainer/TransactionOutputsContainer';
 import './TransactionTemplateModal.scss';
-import { TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core';
 
 type Props = {
   showModal: boolean; //modal acma icin

@@ -2,8 +2,8 @@ import { FC, useState } from 'react';
 import { TxInputLiquid } from '@script-wiz/lib-core';
 import { Button, Radio } from 'rsuite';
 import TransactionInput from '../TransactionInput/TransactionInput';
-import './TransactionInputsContainer.scss';
 import CloseIcon from '../../Svg/Icons/Close';
+import './TransactionInputsContainer.scss';
 
 type Props = {
   lastBlock: any;
@@ -61,7 +61,7 @@ const TransactionInputsContainer: FC<Props> = ({ lastBlock, version, blockHeight
       {inputValues.map((input: TxInputLiquid, index: number) => {
         const txInput = { input, index, checked: currentInputIndex === index };
         return (
-          <div className="tx-inputs-container-box">
+          <div className="tx-inputs-container-box" key={index}>
             <div className="tx-inputs-container-index">Index #{txInput.index}</div>
 
             <Radio

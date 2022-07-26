@@ -32,7 +32,7 @@ const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsVal
       {outputValues.map((output: TxOutputLiquid, index: number) => {
         const txOutput = { output, index };
         return (
-          <div className="tx-outputs-container-box">
+          <div className="tx-outputs-container-box" key={index}>
             <div className="tx-outputs-container-index">Index #{txOutput.index}</div>
 
             <div
