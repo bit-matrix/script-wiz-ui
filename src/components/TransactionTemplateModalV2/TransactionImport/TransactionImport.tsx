@@ -75,7 +75,7 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
             previousTxId: transactionDataInputs[i].txid,
             scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey,
             amount: transactionDataInputs[i].prevout.value !== undefined ? transactionDataInputs[i].prevout.value : '',
-            assetId: transactionDataInputs[i].issuance?.asset_id ? transactionDataInputs[i].issuance.asset_id : '',
+            assetId: transactionDataInputs[i].prevout.asset ? transactionDataInputs[i].prevout.asset : '',
             blockHeight: transactionDataInputBlockHeight,
             blockTimestamp: transactionDataInputBlockTime,
             confidental: transactionDataInputs[i].prevout.assetcommitment ? true : false,
