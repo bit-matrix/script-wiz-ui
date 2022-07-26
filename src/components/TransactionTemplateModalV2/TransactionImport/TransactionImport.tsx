@@ -7,6 +7,7 @@ import { Button, Divider, Input, InputGroup, Message, RadioGroup, toaster } from
 import Radio, { ValueType } from 'rsuite/esm/Radio';
 import CloseIcon from '../../Svg/Icons/Close';
 import { NETWORKS } from '../../../utils/enum/NETWORKS';
+import { TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core/model/TxData';
 import './TransactionImport.scss';
 
 type Props = {
@@ -53,14 +54,15 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
     axios
       .get(api)
       .then((res) => {
-        const transactionData = res.data;
         const transactionDataInputs = res.data.vin;
         const transactionDataOutputs = res.data.vout;
-        const transactionDataInputBlockHeight = res.data.status.block_height;
-        const transactionDataInputBlockTime = res.data.status.block_time;
+        const transactionDataVersion = res.data.version;
+        const transactionDataTimelock = res.data.locktime;
+        const transactionDataBlockHeight = res.data.status.block_height;
+        const transactionDataBlockTimestamp = res.data.status.block_time;
 
-        let txOutput: TxOutput;
-        let txInput: TxInput;
+        let txOutput: TxOutputLiquid;
+        let txInput: TxInputLiquid;
         let newTxOutputs = [];
         let newTxInputs = [];
 
@@ -76,8 +78,6 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
             scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey,
             amount: transactionDataInputs[i].prevout.value !== undefined ? transactionDataInputs[i].prevout.value : '',
             assetId: transactionDataInputs[i].prevout.asset ? transactionDataInputs[i].prevout.asset : '',
-            blockHeight: transactionDataInputBlockHeight,
-            blockTimestamp: transactionDataInputBlockTime,
             confidental: transactionDataInputs[i].prevout.assetcommitment ? true : false,
           };
 
@@ -102,8 +102,10 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
         txData({
           inputs: newTxInputs,
           outputs: newTxOutputs,
-          version: transactionData.version,
-          timelock: transactionData.locktime,
+          version: transactionDataVersion,
+          timelock: transactionDataTimelock,
+          blockHeight: transactionDataBlockHeight,
+          blockTimestamp: transactionDataBlockTimestamp,
           currentInputIndex: 0,
         });
       })
@@ -120,6 +122,8 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
           outputs: [txOutputInitial],
           version: '',
           timelock: '',
+          blockHeight: '',
+          blockTimestamp: '',
           currentInputIndex: 0,
         });
         setTransactionId('');
