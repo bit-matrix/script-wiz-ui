@@ -1,12 +1,12 @@
 import { FC, useState } from 'react';
-import { TxOutput, TxOutputLiquid } from '@script-wiz/lib-core';
+import { TxOutputLiquid } from '@script-wiz/lib-core';
 import { Button } from 'rsuite';
 import TransactionOutput from '../TransactionOutput/TransactionOutput';
 import CloseIcon from '../../Svg/Icons/Close';
 import './TransactionOutputsContainer.scss';
 
 type Props = {
-  txOutputOnChange: (value: TxOutput) => void;
+  txOutputOnChange: (value: TxOutputLiquid) => void;
 };
 
 const txOutputInitial = {
