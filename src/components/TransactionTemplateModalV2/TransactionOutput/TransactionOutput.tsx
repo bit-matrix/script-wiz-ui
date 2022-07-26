@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { TxOutput } from '@script-wiz/lib-core';
+import { TxOutputLiquid } from '@script-wiz/lib-core';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
 import { validHex } from '../../../utils/helper';
@@ -7,7 +7,7 @@ import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomI
 import './TransactionOutput.scss';
 
 type Props = {
-  txOutputOnChange: (value: TxOutput) => void;
+  txOutputOnChange: (value: TxOutputLiquid) => void;
 };
 
 const txOutputInitial = {
@@ -25,7 +25,7 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange }) => {
   const [assetId, setAssetId] = useState<string | undefined>('');
   const [assetCommitment, setAssetCommitment] = useState<string | undefined>('');
   const [valueCommitment, setValueCommitment] = useState<string | undefined>('');
-  const [txOutput, setTxOutput] = useState<TxOutput>(txOutputInitial);
+  const [txOutput, setTxOutput] = useState<TxOutputLiquid>(txOutputInitial);
 
   useEffect(() => {
     setTxOutput({
