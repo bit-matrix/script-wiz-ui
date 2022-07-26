@@ -1,63 +1,31 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
-import { TxInput } from '@script-wiz/lib-core';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
 import { validHex } from '../../../utils/helper';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
+import { TxInputLiquid } from '@script-wiz/lib-core';
 import './TransactionInput.scss';
 
 type Props = {
   lastBlock: any;
   version: string;
-  txInputOnChange: (value: TxInput) => void;
+  blockHeight: string;
+  blockTimestamp: string;
+  txInputOnChange: (input: TxInputLiquid, index: number, checked: boolean) => void;
+  txInput: { input: TxInputLiquid; index: number; isCurrentInputIndex: boolean };
 };
 
-const txInputInitial = {
-  previousTxId: '',
-  vout: '',
-  sequence: '',
-  scriptPubKey: '',
-  amount: '',
-  assetId: '',
-  blockHeight: '',
-  blockTimestamp: '',
-  confidental: false,
-};
-
-const TransactionInput: FC<Props> = ({ lastBlock, version, txInputOnChange }) => {
-  const [previousTxId, setPreviousTxId] = useState<string>('');
-  const [vout, setVout] = useState<string>('');
-  const [sequence, setSequence] = useState<string>('');
-  const [blockHeight, setBlockHeight] = useState<string | undefined>('');
-  const [blockTimestamp, setBlockTimestamp] = useState<string | undefined>('');
-  const [scriptPubKey, setScriptPubKey] = useState<string>('');
-  const [amount, setAmount] = useState<string>('');
-  const [assetId, setAssetId] = useState<string | undefined>('');
-  const [txInput, setTxInput] = useState<TxInput>(txInputInitial);
-
-  useEffect(() => {
-    setTxInput({
-      previousTxId: previousTxId,
-      vout: vout,
-      sequence: sequence,
-      blockHeight: blockHeight,
-      blockTimestamp: blockTimestamp,
-      scriptPubKey: scriptPubKey,
-      amount: amount,
-      assetId: assetId,
-      confidental: false,
-    });
-
-    txInputOnChange(txInput);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amount, assetId, blockHeight, blockTimestamp, previousTxId, scriptPubKey, sequence, vout]);
-
+const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTimestamp, txInputOnChange, txInput }) => {
   const isValidPreviousTxId =
-    (previousTxId.length !== 64 && previousTxId.length !== 0) || !validHex(previousTxId) ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR : '';
+    (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
+      ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
+      : '';
 
-  const isValidAssetId = (assetId?.length !== 64 && assetId?.length !== 0) || !validHex(assetId) ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR : '';
+  const isValidAssetId =
+    (txInput.input.assetId?.length !== 64 && txInput.input.assetId?.length !== 0) || !validHex(txInput.input.assetId)
+      ? TX_TEMPLATE_ERROR_MESSAGE.ASSET_ID_ERROR
+      : '';
 
   // const isValidVout = txInput.input.vout.length !== 8 && txInput.input.vout.length !== 0 ? TX_TEMPLATE_ERROR_MESSAGE.VOUT_ERROR : '';
 
@@ -68,14 +36,14 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, txInputOnChange }) =>
 
   const isValidSequence = (): string | undefined => {
     if (lastBlock) {
-      const sequenceValue = sequence;
+      const sequenceValue = txInput.input.sequence;
 
       if (sequenceValue.length && (sequenceValue.length !== 8 || !validHex(sequenceValue))) return TX_TEMPLATE_ERROR_MESSAGE.SEQUENCE_ERROR;
 
       if (sequenceValue) {
         if (Number(version) < 2) return 'Version must be greater than 1';
 
-        const sequenceHexLE = WizData.fromHex(hexLE(sequence));
+        const sequenceHexLE = WizData.fromHex(hexLE(sequenceValue));
 
         if (Number(sequenceHexLE.bin[0]) !== 0) return 'Disable flag must be 0';
 
@@ -114,47 +82,88 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, txInputOnChange }) =>
         <TransactionCustomInput
           name="previousTxId"
           label="Previous Tx Id:"
-          value={previousTxId}
-          valueOnChange={(value) => setPreviousTxId(value)}
+          value={txInput.input.previousTxId}
+          valueOnChange={(value: string) => {
+            txInputOnChange(
+              {
+                ...txInput.input,
+                previousTxId: value,
+              },
+              txInput.index,
+              txInput.isCurrentInputIndex,
+            );
+          }}
           placeholder="32-bytes"
         />
         <div className="tx-input-error-line">{isValidPreviousTxId}</div>
       </div>
 
-      <TransactionCustomInput name="vout" label="Vout:" value={vout} valueOnChange={(value) => setVout(value)} />
+      <TransactionCustomInput
+        name="vout"
+        label="Vout:"
+        value={txInput.input.vout}
+        valueOnChange={(value: string) => {
+          txInputOnChange(
+            {
+              ...txInput.input,
+              vout: value,
+            },
+            txInput.index,
+            txInput.isCurrentInputIndex,
+          );
+        }}
+      />
 
       <div>
         <TransactionCustomInput
           name="sequence"
           label="Sequence:"
-          value={sequence}
-          valueOnChange={(value) => setSequence(value)}
+          value={txInput.input.sequence}
+          valueOnChange={(value) => {
+            txInputOnChange(
+              {
+                ...txInput.input,
+                sequence: value,
+              },
+              txInput.index,
+              txInput.isCurrentInputIndex,
+            );
+          }}
           defaultValueType={VALUE_TYPES.BE}
         />
         {isValidSequence() && <div className="tx-input-error-line">{isValidSequence()}</div>}
       </div>
 
       <TransactionCustomInput
-        name="blockHeight"
-        label="Block Height:"
-        value={blockHeight as string}
-        valueOnChange={(value) => setBlockHeight(value)}
+        name="scriptPubKey"
+        label="ScriptPubKey:"
+        value={txInput.input.scriptPubKey}
+        valueOnChange={(value: string) => {
+          txInputOnChange(
+            {
+              ...txInput.input,
+              scriptPubKey: value,
+            },
+            txInput.index,
+            txInput.isCurrentInputIndex,
+          );
+        }}
       />
-
-      <TransactionCustomInput
-        name="blockTimestamp"
-        label="Block Timestamp:"
-        value={blockTimestamp as string}
-        valueOnChange={(value) => setBlockTimestamp(value)}
-      />
-
-      <TransactionCustomInput name="scriptPubKey" label="ScriptPubKey:" value={scriptPubKey} valueOnChange={(value) => setScriptPubKey(value)} />
 
       <TransactionCustomInput
         name="amount"
         label="Amount:"
-        value={amount}
-        valueOnChange={(value) => setAmount(value)}
+        value={txInput.input.amount}
+        valueOnChange={(value: string) => {
+          txInputOnChange(
+            {
+              ...txInput.input,
+              amount: value,
+            },
+            txInput.index,
+            txInput.isCurrentInputIndex,
+          );
+        }}
         defaultValueType={VALUE_TYPES.DECIMAL}
       />
 
@@ -162,8 +171,17 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, txInputOnChange }) =>
         <TransactionCustomInput
           name="assetId"
           label="Asset Id:"
-          value={assetId as string}
-          valueOnChange={(value) => setAssetId(value)}
+          value={txInput.input.assetId as string}
+          valueOnChange={(value: string) => {
+            txInputOnChange(
+              {
+                ...txInput.input,
+                assetId: value,
+              },
+              txInput.index,
+              txInput.isCurrentInputIndex,
+            );
+          }}
           placeholder="32-bytes"
         />
         <div className="tx-input-error-line">{isValidAssetId}</div>
