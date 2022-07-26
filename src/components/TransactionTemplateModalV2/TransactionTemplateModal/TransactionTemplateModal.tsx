@@ -20,6 +20,8 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
   const [lastBlock, setLastBlock] = useState<any>();
   const [version, setVersion] = useState<string>('');
   const [timelock, setTimelock] = useState<string>('');
+  const [blockHeight, setBlockHeight] = useState<string>('');
+  const [blockTimestamp, setBlockTimestamp] = useState<string>('');
 
   const fetchBlocks = useCallback(() => {
     const api: string =
@@ -77,6 +79,8 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
             //setTxOutputs(value.outputs);
             setTimelock(value.timelock);
             setVersion(value.version);
+            setBlockHeight(value.blockHeight);
+            setBlockTimestamp(value.blockTimestamp);
           }}
           scriptWiz={scriptWiz}
           networkCallback={(value) => setNetwork(value)}
@@ -84,8 +88,15 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
       </Modal.Header>
       <Modal.Body>
         <div className="tx-template-main">
-          <TransactionInputsContainer lastBlock={lastBlock} version={version} />
-          <TransactionOutputsContainer />
+          <TransactionInputsContainer
+            lastBlock={lastBlock}
+            version={version}
+            blockHeight={blockHeight}
+            blockTimestamp={blockTimestamp}
+            txInputOnChange={(value) => console.log(value)}
+          />
+
+          <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} />
         </div>
       </Modal.Body>
       <Modal.Footer>
@@ -98,6 +109,20 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
             <TransactionCustomInput name="timelock" label="Tx Timelock:" value={timelock} valueOnChange={(value) => setTimelock(value)} />
             {timelockValidation() && <div className="tx-error-line">{timelockValidation()}</div>}
           </div>
+
+          <TransactionCustomInput
+            name="blockHeight"
+            label="Block Height:"
+            value={blockHeight as string}
+            valueOnChange={(value) => setBlockHeight(value)}
+          />
+
+          <TransactionCustomInput
+            name="blockTimestamp"
+            label="Block Timestamp:"
+            value={blockTimestamp as string}
+            valueOnChange={(value) => setBlockTimestamp(value)}
+          />
         </div>
         <Button onClick={() => showModalCallback(false)}>Clear</Button>
         <Button className="tx-modal-save-button" appearance="subtle" onClick={() => showModalCallback(false)}>
