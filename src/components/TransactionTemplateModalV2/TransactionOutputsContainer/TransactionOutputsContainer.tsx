@@ -7,6 +7,7 @@ import './TransactionOutputsContainer.scss';
 
 type Props = {
   txOutputOnChange: (value: TxOutputLiquid) => void;
+  txOutputsValue: TxOutputLiquid[];
 };
 
 const txOutputInitial = {
@@ -18,14 +19,17 @@ const txOutputInitial = {
   confidental: false,
 };
 
-const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange }) => {
+const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsValue }) => {
   const [txOutputs, setTxOutputs] = useState<TxOutputLiquid[]>([txOutputInitial]);
+
+  const outputValues = txOutputsValue ? txOutputsValue : txOutputs;
+
   return (
     <div className="tx-outputs-container">
       <div className="tx-outputs-container-header">
         <p>Outputs</p>
       </div>
-      {txOutputs.map((output: TxOutputLiquid, index: number) => {
+      {outputValues.map((output: TxOutputLiquid, index: number) => {
         const txOutput = { output, index };
         return (
           <div className="tx-outputs-container-box">

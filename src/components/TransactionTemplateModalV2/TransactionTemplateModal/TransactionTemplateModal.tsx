@@ -8,6 +8,7 @@ import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomI
 import TransactionInputsContainer from '../TransactionInputsContainer/TransactionInputsContainer';
 import TransactionOutputsContainer from '../TransactionOutputsContainer/TransactionOutputsContainer';
 import './TransactionTemplateModal.scss';
+import { TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core';
 
 type Props = {
   showModal: boolean; //modal acma icin
@@ -15,7 +16,30 @@ type Props = {
   scriptWiz: ScriptWiz;
 };
 
+const txInputInitial = {
+  previousTxId: '',
+  vout: '',
+  sequence: '',
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+  blockHeight: '',
+  blockTimestamp: '',
+  confidental: false,
+};
+
+const txOutputInitial = {
+  scriptPubKey: '',
+  amount: '',
+  assetId: '',
+  assetommitment: '',
+  valueCommitment: '',
+  confidental: false,
+};
+
 const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scriptWiz }) => {
+  const [txInputs, setTxInputs] = useState<TxInputLiquid[]>([txInputInitial]);
+  const [txOutputs, setTxOutputs] = useState<TxOutputLiquid[]>([txOutputInitial]);
   const [network, setNetwork] = useState<NETWORKS>(NETWORKS.MAINNET);
   const [lastBlock, setLastBlock] = useState<any>();
   const [version, setVersion] = useState<string>('');
@@ -75,8 +99,8 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
       <Modal.Header>
         <TransactionImport
           txData={(value) => {
-            //setTxInputs(value.inputs);
-            //setTxOutputs(value.outputs);
+            setTxInputs(value.inputs as TxInputLiquid[]);
+            setTxOutputs(value.outputs as TxInputLiquid[]);
             setTimelock(value.timelock);
             setVersion(value.version);
             setBlockHeight(value.blockHeight);
@@ -94,9 +118,10 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
             blockHeight={blockHeight}
             blockTimestamp={blockTimestamp}
             txInputOnChange={(value) => console.log(value)}
+            txInputsValue={txInputs}
           />
 
-          <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} />
+          <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} txOutputsValue={txOutputs} />
         </div>
       </Modal.Body>
       <Modal.Footer>
