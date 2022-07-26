@@ -25,34 +25,36 @@ const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsVal
   const outputValues = txOutputsValue ? txOutputsValue : txOutputs;
 
   return (
-    <div className="tx-outputs-container">
+    <div className="tx-outputs-container-main">
       <div className="tx-outputs-container-header">
         <p>Outputs</p>
       </div>
-      {outputValues.map((output: TxOutputLiquid, index: number) => {
-        const txOutput = { output, index };
-        return (
-          <div className="tx-outputs-container-box" key={index}>
-            <div className="tx-outputs-container-index">Index #{txOutput.index}</div>
 
-            <div
-              className="tx-outputs-container-close-icon"
-              onClick={() => {
-                const newTxOutputs = [...txOutputs];
-                if (txOutputs.length > 1) {
-                  newTxOutputs.splice(txOutput.index, 1);
-                  setTxOutputs(newTxOutputs);
-                }
-              }}
-            >
-              <CloseIcon width="1rem" height="1rem" />
+      <div className="tx-outputs-container">
+        {outputValues.map((output: TxOutputLiquid, index: number) => {
+          const txOutput = { output, index };
+          return (
+            <div className="tx-outputs-container-box" key={index}>
+              <div className="tx-outputs-container-index">Index #{txOutput.index}</div>
+
+              <div
+                className="tx-outputs-container-close-icon"
+                onClick={() => {
+                  const newTxOutputs = [...txOutputs];
+                  if (txOutputs.length > 1) {
+                    newTxOutputs.splice(txOutput.index, 1);
+                    setTxOutputs(newTxOutputs);
+                  }
+                }}
+              >
+                <CloseIcon width="1rem" height="1rem" />
+              </div>
+
+              <TransactionOutput txOutputOnChange={(value: TxOutputLiquid) => txOutputOnChange(value)} txOutput={txOutput} />
             </div>
-
-            <TransactionOutput txOutputOnChange={(value: TxOutputLiquid) => txOutputOnChange(value)} txOutput={txOutput} />
-          </div>
-        );
-      })}
-
+          );
+        })}
+      </div>
       <Button
         className="tx-outputs-container-button"
         onClick={() => {

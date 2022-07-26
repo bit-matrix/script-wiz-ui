@@ -121,33 +121,40 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
             txInputsValue={txInputs}
           />
 
+          <div className="vertical-line"></div>
+
           <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} txOutputsValue={txOutputs} />
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <div className="tx-template-modal-footer">
-          <div>
+        <div className="tx-template-footer">
+          <div className="tx-template-items">
             <TransactionCustomInput name="version" label="Tx Version:" value={version} valueOnChange={(value) => setVersion(value)} />
             {/* <div className="tx-error-line">{isValidVersion}</div> */}
           </div>
-          <div>
+
+          <div className="tx-template-items">
             <TransactionCustomInput name="timelock" label="Tx Timelock:" value={timelock} valueOnChange={(value) => setTimelock(value)} />
             {timelockValidation() && <div className="tx-error-line">{timelockValidation()}</div>}
           </div>
 
-          <TransactionCustomInput
-            name="blockHeight"
-            label="Block Height:"
-            value={blockHeight as string}
-            valueOnChange={(value) => setBlockHeight(value)}
-          />
+          <div className="tx-template-items">
+            <TransactionCustomInput
+              name="blockHeight"
+              label="Block Height:"
+              value={blockHeight as string}
+              valueOnChange={(value) => setBlockHeight(value)}
+            />
+          </div>
 
-          <TransactionCustomInput
-            name="blockTimestamp"
-            label="Block Timestamp:"
-            value={blockTimestamp as string}
-            valueOnChange={(value) => setBlockTimestamp(value)}
-          />
+          <div className="tx-template-items">
+            <TransactionCustomInput
+              name="blockTimestamp"
+              label="Block Timestamp:"
+              value={blockTimestamp as string}
+              valueOnChange={(value) => setBlockTimestamp(value)}
+            />
+          </div>
         </div>
         <Button onClick={() => showModalCallback(false)}>Clear</Button>
         <Button className="tx-modal-save-button" appearance="subtle" onClick={() => showModalCallback(false)}>

@@ -78,7 +78,7 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
   };
 
   return (
-    <div className="tx-input">
+    <div className="tx-input-main">
       <div>
         <Checkbox
           onChange={(value: any, checked: boolean) => {

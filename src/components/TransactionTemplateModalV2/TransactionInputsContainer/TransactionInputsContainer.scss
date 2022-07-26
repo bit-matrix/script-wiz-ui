@@ -1,4 +1,9 @@
-.tx-inputs-container {
+.tx-inputs-container-main {
+  background-color: #ccc;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  margin-top: 0.5rem;
+
   .tx-inputs-container-header {
     display: flex;
     align-items: center;
@@ -25,6 +30,14 @@
         display: flex;
       }
     }
+  }
+
+  .tx-inputs-container {
+    display: block;
+    align-self: start;
+    width: 100%;
+    height: 100%;
+    margin-right: 1rem;
   }
 
   .tx-inputs-container-button {
