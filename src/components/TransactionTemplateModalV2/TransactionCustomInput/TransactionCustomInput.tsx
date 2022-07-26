@@ -1,8 +1,8 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
+import { inputConverter } from '@script-wiz/lib-core/convertion';
 import { Input, Radio, RadioGroup } from 'rsuite';
 import { ValueType } from 'rsuite/esm/Checkbox';
 import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
-import { inputConverter } from '../convertion';
 import './TransactionCustomInput.scss';
 
 type Props = {
