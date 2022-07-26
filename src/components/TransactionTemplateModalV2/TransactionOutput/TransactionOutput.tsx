@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { TxOutputLiquid } from '@script-wiz/lib-core';
+import { Checkbox } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
 import { validHex } from '../../../utils/helper';
@@ -24,6 +25,22 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput }) => {
 
   return (
     <div className="tx-output">
+      <Checkbox
+        onChange={(value: any, checked: boolean) => {
+          txOutputOnChange(
+            {
+              ...txOutput.output,
+              confidental: checked,
+            },
+            txOutput.index,
+          );
+        }}
+        checked={txOutput.output.confidental}
+        value={txOutput.output.confidental ? 'true' : 'false'}
+      >
+        <span className="tx-output-confidental">Confidental</span>
+      </Checkbox>
+
       <TransactionCustomInput
         name="scriptPubKey"
         label="ScriptPubKey:"

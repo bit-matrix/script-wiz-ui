@@ -6,6 +6,7 @@ import { validHex } from '../../../utils/helper';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
 import { TxInputLiquid } from '@script-wiz/lib-core';
 import './TransactionInput.scss';
+import { Checkbox } from 'rsuite';
 
 type Props = {
   lastBlock: any;
@@ -79,6 +80,23 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
   return (
     <div className="tx-input">
       <div>
+        <Checkbox
+          onChange={(value: any, checked: boolean) => {
+            txInputOnChange(
+              {
+                ...txInput.input,
+                confidental: checked,
+              },
+              txInput.index,
+              txInput.isCurrentInputIndex,
+            );
+          }}
+          checked={txInput.input.confidental}
+          value={txInput.input.confidental ? 'true' : 'false'}
+        >
+          <span className="tx-input-confidental">Confidental</span>
+        </Checkbox>
+
         <TransactionCustomInput
           name="previousTxId"
           label="Previous Tx Id:"

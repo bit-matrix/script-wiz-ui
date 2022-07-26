@@ -2,4 +2,18 @@
   .tx-input-error-line {
     color: red;
   }
+
+  .rs-checkbox-checker {
+    padding-left: 0 !important;
+
+    label {
+      .rs-checkbox-wrapper {
+        left: 0 !important;
+      }
+
+      .tx-input-confidental {
+        padding-left: 1.5rem !important;
+      }
+    }
+  }
 }
