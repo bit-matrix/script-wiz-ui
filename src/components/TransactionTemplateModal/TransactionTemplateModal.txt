@@ -6,7 +6,6 @@ import TransactionOutput from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import { ScriptWiz, VM } from '@script-wiz/lib';
 import { upsertVM } from '../../helper';
-import TransactionImport from '../TransactionTemplateModalV2/TransactionImport/TransactionImport';
 import './TransactionTemplateModal.scss';
 
 type Props = {
@@ -192,18 +191,6 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
       }}
     >
       <Modal.Header>
-        <TransactionImport
-          txData={(value) => {
-            setTxInputs(value.inputs);
-            setTxOutputs(value.outputs);
-            setTimeLock(value.timelock);
-            setVersion(value.version);
-          }}
-          scriptWiz={scriptWiz}
-          lastBlock={(value) => {
-            setLastBlock(value);
-          }}
-        />
         <div className="tx-template-header">
           <p>Inputs</p>
           <p>Outputs</p>
