@@ -48,25 +48,6 @@
     }
   }
 
-  .tx-template-footer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-top: 0.25rem #d6d6d6 solid !important;
-    padding-top: 1rem;
-
-    .tx-template-items {
-      margin: 0 0.5rem;
-      width: 25%;
-
-      .rs-input {
-        background-color: #fff !important;
-        color: #292d33 !important;
-        border: 1px solid #ccc;
-      }
-    }
-  }
-
   .tx-error-line {
     color: red;
   }

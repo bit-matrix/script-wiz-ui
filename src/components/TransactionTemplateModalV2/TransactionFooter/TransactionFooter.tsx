@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
+import './TransactionFooter.scss';
 
 type Props = {
   lastBlock: any;
@@ -58,7 +59,7 @@ const TransactionFooter: FC<Props> = ({
 
   return (
     <div className="tx-template-footer">
-      <div className="tx-template-items">
+      <div className="tx-template-footer-items">
         <TransactionCustomInput
           name="version"
           label="Tx Version:"
@@ -71,7 +72,7 @@ const TransactionFooter: FC<Props> = ({
         {/* <div className="tx-error-line">{isValidVersion}</div> */}
       </div>
 
-      <div className="tx-template-items">
+      <div className="tx-template-footer-items">
         <TransactionCustomInput
           name="timelock"
           label="Tx Timelock:"
@@ -84,7 +85,7 @@ const TransactionFooter: FC<Props> = ({
         {timelockValidation() && <div className="tx-error-line">{timelockValidation()}</div>}
       </div>
 
-      <div className="tx-template-items">
+      <div className="tx-template-footer-items">
         <TransactionCustomInput
           name="blockHeight"
           label="Block Height:"
@@ -96,7 +97,7 @@ const TransactionFooter: FC<Props> = ({
         />
       </div>
 
-      <div className="tx-template-items">
+      <div className="tx-template-footer-items">
         <TransactionCustomInput
           name="blockTimestamp"
           label="Block Timestamp:"
