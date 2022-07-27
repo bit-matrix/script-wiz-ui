@@ -3,13 +3,13 @@ import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { TxData, TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core';
 import { Button, Modal } from 'rsuite';
 import axios from 'axios';
-import TransactionImport from '../TransactionImport/TransactionImport';
-import { NETWORKS } from '../../../utils/enum/NETWORKS';
-import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
-import TransactionInputsContainer from '../TransactionInputsContainer/TransactionInputsContainer';
-import TransactionOutputsContainer from '../TransactionOutputsContainer/TransactionOutputsContainer';
-import { useLocalStorageData } from '../../../hooks/useLocalStorage';
-import { upsertVM } from '../../../helper';
+import { NETWORKS } from '../../utils/enum/NETWORKS';
+import { useLocalStorageData } from '../../hooks/useLocalStorage';
+import { upsertVM } from '../../helper';
+import TransactionImport from './TransactionImport/TransactionImport';
+import TransactionInputsContainer from './Input/TransactionInputsContainer/TransactionInputsContainer';
+import TransactionOutputsContainer from './Output/TransactionOutputsContainer/TransactionOutputsContainer';
+import TransactionCustomInput from './TransactionCustomInput/TransactionCustomInput';
 import './TransactionTemplateModal.scss';
 
 type Props = {

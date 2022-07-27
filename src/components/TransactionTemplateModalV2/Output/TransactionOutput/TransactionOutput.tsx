@@ -2,10 +2,10 @@ import { FC } from 'react';
 import { TxOutputLiquid } from '@script-wiz/lib-core';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
 import { Checkbox } from 'rsuite';
-import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
-import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
-import { validHex } from '../../../utils/helper';
-import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
+import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
+import { VALUE_TYPES } from '../../../../utils/enum/VALUE_TYPES';
+import { validHex } from '../../../../utils/helper';
+import TransactionCustomInput from '../../TransactionCustomInput/TransactionCustomInput';
 import './TransactionOutput.scss';
 
 type Props = {

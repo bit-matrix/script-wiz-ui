@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
-import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
-import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
-import { convertEditorLines, LOCAL_STORAGE_KEY, LOCAL_STORAGE_OLD_KEY } from '../../helper';
 import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import WizData from '@script-wiz/wiz-data';
+import { Mosaic } from 'react-mosaic-component';
 import {
   initialBitcoinEditorValue,
   initialBitcoinEditorValue2,
@@ -15,10 +12,13 @@ import {
 } from './ScriptEditorInput/initialEditorValue';
 import CompileModal from '../CompileModal/CompileModal';
 import CustomWhisper from './CustomWhisper';
-import { Mosaic } from 'react-mosaic-component';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
+import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
+import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
+import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
+import { convertEditorLines, LOCAL_STORAGE_KEY, LOCAL_STORAGE_OLD_KEY } from '../../helper';
+import TransactionTemplateModal from '../TransactionTemplateModalV2/TransactionTemplateModal';
 import './ScriptEditor.scss';
-import TransactionTemplateModal from '../TransactionTemplateModalV2/TransactionTemplateModal/TransactionTemplateModal';
 
 type Props = {
   scriptWiz: ScriptWiz;

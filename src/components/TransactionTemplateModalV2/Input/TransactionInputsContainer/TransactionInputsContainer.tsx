@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { TxInputLiquid } from '@script-wiz/lib-core';
 import { VM } from '@script-wiz/lib';
 import { Button, Radio } from 'rsuite';
+import CloseIcon from '../../../Svg/Icons/Close';
 import TransactionInput from '../TransactionInput/TransactionInput';
-import CloseIcon from '../../Svg/Icons/Close';
 import './TransactionInputsContainer.scss';
 
 type Props = {
