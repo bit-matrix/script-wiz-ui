@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { TxOutputLiquid } from '@script-wiz/lib-core';
 import { Button } from 'rsuite';
 import TransactionOutput from '../TransactionOutput/TransactionOutput';
@@ -22,7 +22,9 @@ const txOutputInitial = {
 const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsValue }) => {
   const [txOutputs, setTxOutputs] = useState<TxOutputLiquid[]>([txOutputInitial]);
 
-  const outputValues = txOutputsValue ? txOutputsValue : txOutputs;
+  useEffect(() => {
+    setTxOutputs(txOutputsValue);
+  }, [txOutputsValue]);
 
   return (
     <div className="tx-outputs-container-main">
@@ -31,7 +33,7 @@ const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsVal
       </div>
 
       <div className="tx-outputs-container">
-        {outputValues.map((output: TxOutputLiquid, index: number) => {
+        {txOutputs.map((output: TxOutputLiquid, index: number) => {
           const txOutput = { output, index };
           return (
             <div className="tx-outputs-container-box" key={index}>

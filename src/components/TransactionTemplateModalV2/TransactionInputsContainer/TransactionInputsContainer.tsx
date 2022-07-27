@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { TxInputLiquid } from '@script-wiz/lib-core';
 import { Button, Radio } from 'rsuite';
 import TransactionInput from '../TransactionInput/TransactionInput';
@@ -30,10 +30,7 @@ const TransactionInputsContainer: FC<Props> = ({ lastBlock, version, blockHeight
   const [txInputs, setTxInputs] = useState<TxInputLiquid[]>([txInputInitial]);
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
 
-  const inputValues = txInputsValue ? txInputsValue : txInputs;
-
   const txInputsOnChange = (input: TxInputLiquid, index: number, isCurrentInputIndex: boolean) => {
-    setTxInputs(txInputsValue);
     const newTxInputs = [...txInputs];
     const relatedInputIndex = txInputs.findIndex((input, i) => i === index);
 
@@ -53,13 +50,17 @@ const TransactionInputsContainer: FC<Props> = ({ lastBlock, version, blockHeight
     if (isCurrentInputIndex) setCurrentInputIndex(index);
   };
 
+  useEffect(() => {
+    setTxInputs(txInputsValue);
+  }, [txInputsValue]);
+
   return (
     <div className="tx-inputs-container-main">
       <div className="tx-inputs-container-header">
         <p>Inputs</p>
       </div>
       <div className="tx-inputs-container">
-        {inputValues.map((input: TxInputLiquid, index: number) => {
+        {txInputs.map((input: TxInputLiquid, index: number) => {
           const txInput = { input, index, checked: currentInputIndex === index };
           return (
             <div className="tx-inputs-container-box" key={index}>
