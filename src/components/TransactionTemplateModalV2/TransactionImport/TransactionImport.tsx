@@ -103,8 +103,8 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
           outputs: newTxOutputs,
           version: transactionDataVersion,
           timelock: transactionDataTimelock,
-          blockHeight: transactionDataBlockHeight,
-          blockTimestamp: transactionDataBlockTimestamp,
+          blockHeight: transactionDataBlockHeight.toString(),
+          blockTimestamp: transactionDataBlockTimestamp.toString(),
           currentInputIndex: 0,
         });
       })
