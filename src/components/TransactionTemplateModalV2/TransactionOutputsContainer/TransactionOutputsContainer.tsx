@@ -7,7 +7,7 @@ import CloseIcon from '../../Svg/Icons/Close';
 import './TransactionOutputsContainer.scss';
 
 type Props = {
-  txOutputOnChange: (value: TxOutputLiquid) => void;
+  txOutputOnChange: (value: TxOutputLiquid, index: number) => void;
   txOutputsValue: TxOutputLiquid[];
   vm: VM;
 };
@@ -23,22 +23,6 @@ const txOutputInitial = {
 
 const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsValue, vm }) => {
   const [txOutputs, setTxOutputs] = useState<TxOutputLiquid[]>([txOutputInitial]);
-
-  const txOutputsOnChange = (output: TxOutputLiquid, index: number) => {
-    const newTxOutputs = [...txOutputs];
-    const relatedOutputIndex = txOutputs.findIndex((output, i) => i === index);
-    const newOutput = {
-      scriptPubKey: output.scriptPubKey,
-      amount: output.amount,
-      assetId: output.assetId,
-      assetCommitment: output.assetCommitment,
-      valueCommitment: output.valueCommitment,
-      confidental: output.confidental,
-    };
-
-    newTxOutputs[relatedOutputIndex] = newOutput;
-    setTxOutputs(newTxOutputs);
-  };
 
   useEffect(() => {
     setTxOutputs(txOutputsValue);
@@ -69,7 +53,7 @@ const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsVal
                   </div>
                 </div>
 
-                <TransactionOutput txOutputOnChange={txOutputsOnChange} txOutput={txOutput} vm={vm} />
+                <TransactionOutput txOutputOnChange={txOutputOnChange} txOutput={txOutput} vm={vm} />
               </div>
             );
           })}

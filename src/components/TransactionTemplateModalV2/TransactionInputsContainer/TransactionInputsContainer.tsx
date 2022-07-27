@@ -11,7 +11,7 @@ type Props = {
   version: string;
   blockHeight: string;
   blockTimestamp: string;
-  txInputOnChange: (value: any) => void;
+  txInputOnChange: (input: TxInputLiquid, index: number, checked: boolean) => void;
   txInputsValue: TxInputLiquid[];
   currentInputIndexOnChange: (value: number) => void;
   currentInputIndexValue: number;
@@ -44,29 +44,6 @@ const TransactionInputsContainer: FC<Props> = ({
   const [txInputs, setTxInputs] = useState<TxInputLiquid[]>([txInputInitial]);
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
 
-  const txInputsOnChange = (input: TxInputLiquid, index: number, isCurrentInputIndex: boolean) => {
-    const newTxInputs = [...txInputs];
-    const relatedInputIndex = txInputs.findIndex((input, i) => i === index);
-
-    const newInput = {
-      previousTxId: input.previousTxId,
-      vout: input.vout,
-      sequence: input.sequence,
-      scriptPubKey: input.scriptPubKey,
-      amount: input.amount,
-      assetId: input.assetId,
-      confidental: input.confidental,
-    };
-
-    newTxInputs[relatedInputIndex] = newInput;
-    setTxInputs(newTxInputs);
-
-    if (isCurrentInputIndex) {
-      setCurrentInputIndex(index);
-      currentInputIndexOnChange(index);
-    }
-  };
-
   useEffect(() => {
     setTxInputs(txInputsValue);
     setCurrentInputIndex(currentInputIndexValue);
@@ -85,7 +62,7 @@ const TransactionInputsContainer: FC<Props> = ({
 
                   <Radio
                     onChange={(value: any, checked: boolean) => {
-                      txInputsOnChange(txInput.input, txInput.index, checked);
+                      txInputOnChange(txInput.input, txInput.index, checked);
                       currentInputIndexOnChange(value);
                     }}
                     value={txInput.index}
@@ -113,7 +90,7 @@ const TransactionInputsContainer: FC<Props> = ({
                   version={version}
                   blockHeight={blockHeight}
                   blockTimestamp={blockTimestamp}
-                  txInputOnChange={txInputsOnChange}
+                  txInputOnChange={txInputOnChange}
                   txInput={{ input: txInput.input, index: txInput.index, isCurrentInputIndex: txInput.checked }}
                   vm={vm}
                 />

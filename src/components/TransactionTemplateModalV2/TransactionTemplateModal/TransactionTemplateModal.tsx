@@ -83,6 +83,50 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showModal, scriptWiz]);
 
+  const txInputsOnChange = (input: TxInputLiquid, index: number, isCurrentInputIndex: boolean) => {
+    const newTxInputs = [...txInputs];
+    console.log('newTxInputs', newTxInputs);
+
+    const relatedInputIndex = txInputs.findIndex((input, i) => i === index);
+    console.log('relatedInputIndex', relatedInputIndex);
+
+    const newInput = {
+      previousTxId: input.previousTxId,
+      vout: input.vout,
+      sequence: input.sequence,
+      scriptPubKey: input.scriptPubKey,
+      amount: input.amount,
+      assetId: input.assetId,
+      confidental: input.confidental,
+    };
+
+    newTxInputs[relatedInputIndex] = newInput;
+    console.log('newInputs2', newTxInputs);
+
+    setTxInputs(newTxInputs);
+    console.log('txInputs', txInputs);
+
+    if (isCurrentInputIndex) {
+      setCurrentInputIndex(index);
+    }
+  };
+
+  const txOutputsOnChange = (output: TxOutputLiquid, index: number) => {
+    const newTxOutputs = [...txOutputs];
+    const relatedOutputIndex = txOutputs.findIndex((output, i) => i === index);
+    const newOutput = {
+      scriptPubKey: output.scriptPubKey,
+      amount: output.amount,
+      assetId: output.assetId,
+      assetCommitment: output.assetCommitment,
+      valueCommitment: output.valueCommitment,
+      confidental: output.confidental,
+    };
+
+    newTxOutputs[relatedOutputIndex] = newOutput;
+    setTxOutputs(newTxOutputs);
+  };
+
   const fetchBlocks = useCallback(() => {
     const api: string =
       scriptWiz.vm.network === VM_NETWORK.BTC
@@ -147,8 +191,6 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
       },
     };
 
-    console.log(txData);
-
     scriptWiz.parseTxData(txData.txData);
 
     const previousLocalStorageData = getTxLocalData();
@@ -206,7 +248,7 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
               version={version}
               blockHeight={blockHeight}
               blockTimestamp={blockTimestamp}
-              txInputOnChange={(value) => console.log(value)}
+              txInputOnChange={txInputsOnChange}
               txInputsValue={txInputs}
               currentInputIndexOnChange={(value) => setCurrentInputIndex(value)}
               currentInputIndexValue={currentInputIndex}
@@ -215,7 +257,7 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
 
             <div className="vertical-line"></div>
 
-            <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} txOutputsValue={txOutputs} vm={scriptWiz.vm} />
+            <TransactionOutputsContainer txOutputOnChange={txOutputsOnChange} txOutputsValue={txOutputs} vm={scriptWiz.vm} />
           </div>
         </div>
       </Modal.Body>
