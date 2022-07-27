@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { TxOutputLiquid } from '@script-wiz/lib-core';
+import { VM } from '@script-wiz/lib';
 import { Button } from 'rsuite';
 import TransactionOutput from '../TransactionOutput/TransactionOutput';
 import CloseIcon from '../../Svg/Icons/Close';
@@ -8,6 +9,7 @@ import './TransactionOutputsContainer.scss';
 type Props = {
   txOutputOnChange: (value: TxOutputLiquid) => void;
   txOutputsValue: TxOutputLiquid[];
+  vm: VM;
 };
 
 const txOutputInitial = {
@@ -19,8 +21,24 @@ const txOutputInitial = {
   confidental: false,
 };
 
-const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsValue }) => {
+const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsValue, vm }) => {
   const [txOutputs, setTxOutputs] = useState<TxOutputLiquid[]>([txOutputInitial]);
+
+  const txOutputsOnChange = (output: TxOutputLiquid, index: number) => {
+    const newTxOutputs = [...txOutputs];
+    const relatedOutputIndex = txOutputs.findIndex((output, i) => i === index);
+    const newOutput = {
+      scriptPubKey: output.scriptPubKey,
+      amount: output.amount,
+      assetId: output.assetId,
+      assetCommitment: output.assetCommitment,
+      valueCommitment: output.valueCommitment,
+      confidental: output.confidental,
+    };
+
+    newTxOutputs[relatedOutputIndex] = newOutput;
+    setTxOutputs(newTxOutputs);
+  };
 
   useEffect(() => {
     setTxOutputs(txOutputsValue);
@@ -52,7 +70,7 @@ const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsVal
                 <CloseIcon width="1rem" height="1rem" />
               </div>
 
-              <TransactionOutput txOutputOnChange={(value: TxOutputLiquid) => txOutputOnChange(value)} txOutput={txOutput} />
+              <TransactionOutput txOutputOnChange={txOutputsOnChange} txOutput={txOutput} vm={vm} />
             </div>
           );
         })}
