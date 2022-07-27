@@ -9,8 +9,8 @@ import { upsertVM } from '../../helper';
 import TransactionImport from './TransactionImport/TransactionImport';
 import TransactionInputsContainer from './Input/TransactionInputsContainer/TransactionInputsContainer';
 import TransactionOutputsContainer from './Output/TransactionOutputsContainer/TransactionOutputsContainer';
-import TransactionCustomInput from './TransactionCustomInput/TransactionCustomInput';
 import './TransactionTemplateModal.scss';
+import TransactionFooter from './TransactionFooter/TransactionFooter';
 
 type Props = {
   showModal: boolean; //modal acma icin
@@ -49,11 +49,11 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
   const [txOutputs, setTxOutputs] = useState<TxOutputLiquid[]>([txOutputInitial]);
   const [network, setNetwork] = useState<NETWORKS>(NETWORKS.MAINNET);
   const [lastBlock, setLastBlock] = useState<any>();
+  const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
   const [version, setVersion] = useState<string>('');
   const [timelock, setTimelock] = useState<string>('');
   const [blockHeight, setBlockHeight] = useState<string>('');
   const [blockTimestamp, setBlockTimestamp] = useState<string>('');
-  const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
 
   const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData2');
   const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('tx-template-modal');
@@ -199,26 +199,6 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
     showModalCallback(false);
   };
 
-  const timelockValidation = (): string | undefined => {
-    if (lastBlock) {
-      const LOCKTIME_THRESHOLD: number = 500000000;
-      const timelockNumber = Number(timelock);
-      let lastBlockHeight: number = 0;
-      let lastBlockTimestamp: number = 0;
-
-      if (isNaN(timelockNumber)) return 'must be a number';
-
-      lastBlockHeight = lastBlock.height;
-      lastBlockTimestamp = lastBlock.timestamp;
-
-      if (timelockNumber < LOCKTIME_THRESHOLD) {
-        if (timelockNumber > lastBlockHeight) return 'must be less than last block height';
-      } else {
-        if (timelockNumber > lastBlockTimestamp) return 'must be less than last block timestamp';
-      }
-    }
-  };
-
   return (
     <Modal className="tx-template-modal" size="lg" open={showModal} backdrop={false} onClose={() => closeModal}>
       <Modal.Header>
@@ -262,35 +242,18 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <div className="tx-template-footer">
-          <div className="tx-template-items">
-            <TransactionCustomInput name="version" label="Tx Version:" value={version} valueOnChange={(value) => setVersion(value)} />
-            {/* <div className="tx-error-line">{isValidVersion}</div> */}
-          </div>
+        <TransactionFooter
+          lastBlock={lastBlock}
+          versionOnChange={(value) => setVersion(value)}
+          timelockOnChange={(value) => setTimelock(value)}
+          blockHeightOnChange={(value) => setBlockHeight(value)}
+          blockTimestampOnChange={(value) => setBlockTimestamp(value)}
+          versionValue={version}
+          timelockValue={timelock}
+          blockHeightValue={blockHeight}
+          blockTimestampValue={blockTimestamp}
+        />
 
-          <div className="tx-template-items">
-            <TransactionCustomInput name="timelock" label="Tx Timelock:" value={timelock} valueOnChange={(value) => setTimelock(value)} />
-            {timelockValidation() && <div className="tx-error-line">{timelockValidation()}</div>}
-          </div>
-
-          <div className="tx-template-items">
-            <TransactionCustomInput
-              name="blockHeight"
-              label="Block Height:"
-              value={blockHeight as string}
-              valueOnChange={(value) => setBlockHeight(value)}
-            />
-          </div>
-
-          <div className="tx-template-items">
-            <TransactionCustomInput
-              name="blockTimestamp"
-              label="Block Timestamp:"
-              value={blockTimestamp as string}
-              valueOnChange={(value) => setBlockTimestamp(value)}
-            />
-          </div>
-        </div>
         <Button onClick={clearButtonClick}>Clear</Button>
         <Button className="tx-modal-save-button" appearance="subtle" onClick={saveButtonClick}>
           Save
