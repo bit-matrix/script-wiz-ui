@@ -12,6 +12,8 @@ type Props = {
   blockTimestamp: string;
   txInputOnChange: (value: any) => void;
   txInputsValue: TxInputLiquid[];
+  currentInputIndexOnChange: (value: number) => void;
+  currentInputIndexValue: number;
 };
 
 const txInputInitial = {
@@ -26,7 +28,16 @@ const txInputInitial = {
   confidental: false,
 };
 
-const TransactionInputsContainer: FC<Props> = ({ lastBlock, version, blockHeight, blockTimestamp, txInputOnChange, txInputsValue }) => {
+const TransactionInputsContainer: FC<Props> = ({
+  lastBlock,
+  version,
+  blockHeight,
+  blockTimestamp,
+  txInputOnChange,
+  txInputsValue,
+  currentInputIndexOnChange,
+  currentInputIndexValue,
+}) => {
   const [txInputs, setTxInputs] = useState<TxInputLiquid[]>([txInputInitial]);
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
 
@@ -47,12 +58,16 @@ const TransactionInputsContainer: FC<Props> = ({ lastBlock, version, blockHeight
     newTxInputs[relatedInputIndex] = newInput;
     setTxInputs(newTxInputs);
 
-    if (isCurrentInputIndex) setCurrentInputIndex(index);
+    if (isCurrentInputIndex) {
+      setCurrentInputIndex(index);
+      currentInputIndexOnChange(index);
+    }
   };
 
   useEffect(() => {
     setTxInputs(txInputsValue);
-  }, [txInputsValue]);
+    setCurrentInputIndex(currentInputIndexValue);
+  }, [currentInputIndexValue, txInputsValue]);
 
   return (
     <div className="tx-inputs-container-main">
@@ -82,6 +97,7 @@ const TransactionInputsContainer: FC<Props> = ({ lastBlock, version, blockHeight
               <Radio
                 onChange={(value: any, checked: boolean) => {
                   txInputsOnChange(txInput.input, txInput.index, checked);
+                  currentInputIndexOnChange(value);
                 }}
                 value={txInput.index}
                 checked={txInput.checked}

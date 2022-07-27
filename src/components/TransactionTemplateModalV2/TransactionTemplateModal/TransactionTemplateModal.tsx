@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import { ScriptWiz, VM_NETWORK } from '@script-wiz/lib';
-import { TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core';
+import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
+import { TxData, TxInputLiquid, TxOutputLiquid } from '@script-wiz/lib-core';
 import { Button, Modal } from 'rsuite';
 import axios from 'axios';
 import TransactionImport from '../TransactionImport/TransactionImport';
@@ -8,12 +8,19 @@ import { NETWORKS } from '../../../utils/enum/NETWORKS';
 import TransactionCustomInput from '../TransactionCustomInput/TransactionCustomInput';
 import TransactionInputsContainer from '../TransactionInputsContainer/TransactionInputsContainer';
 import TransactionOutputsContainer from '../TransactionOutputsContainer/TransactionOutputsContainer';
+import { useLocalStorageData } from '../../../hooks/useLocalStorage';
+import { upsertVM } from '../../../helper';
 import './TransactionTemplateModal.scss';
 
 type Props = {
   showModal: boolean; //modal acma icin
   showModalCallback: (show: boolean) => void; // modal kapatma icin
   scriptWiz: ScriptWiz;
+};
+
+type TxDataWithVersion = {
+  vm: VM;
+  txData: TxData;
 };
 
 const txInputInitial = {
@@ -46,6 +53,35 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
   const [timelock, setTimelock] = useState<string>('');
   const [blockHeight, setBlockHeight] = useState<string>('');
   const [blockTimestamp, setBlockTimestamp] = useState<string>('');
+  const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
+
+  const { clearTxLocalData: clearTxLocalDataEx } = useLocalStorageData<TxDataWithVersion[]>('txData2');
+  const { getTxLocalData, setTxLocalData, clearTxLocalData } = useLocalStorageData<TxDataWithVersion[]>('tx-template-modal');
+
+  useEffect(() => {
+    clearTxLocalDataEx();
+
+    const localStorageData = getTxLocalData();
+
+    if (localStorageData) {
+      const currentDataVersion = localStorageData.find((lsd) => lsd.vm.ver === scriptWiz.vm.ver && lsd.vm.network === scriptWiz.vm.network);
+
+      if (currentDataVersion) {
+        if (showModal) {
+          setTxInputs(currentDataVersion.txData.inputs as TxInputLiquid[]);
+          setTxOutputs(currentDataVersion.txData.outputs as TxOutputLiquid[]);
+          setVersion(currentDataVersion.txData.version);
+          setTimelock(currentDataVersion.txData.timelock);
+          setBlockHeight(currentDataVersion.txData.blockHeight);
+          setBlockTimestamp(currentDataVersion.txData.blockTimestamp);
+          setCurrentInputIndex(currentDataVersion.txData.currentInputIndex);
+        } else {
+          scriptWiz.parseTxData(currentDataVersion.txData);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showModal, scriptWiz]);
 
   const fetchBlocks = useCallback(() => {
     const api: string =
@@ -65,6 +101,61 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
   useEffect(() => {
     fetchBlocks();
   }, [fetchBlocks]);
+
+  const closeModal = () => {
+    setTxInputs([txInputInitial]);
+    setTxOutputs([txOutputInitial]);
+    setVersion('');
+    setTimelock('');
+    setBlockHeight('');
+    setBlockTimestamp('');
+    setCurrentInputIndex(0);
+
+    showModalCallback(false);
+  };
+
+  const clearButtonClick = () => {
+    scriptWiz.parseTxData();
+
+    const localStorageData = getTxLocalData();
+
+    if (localStorageData) {
+      if (localStorageData.length === 1) clearTxLocalData();
+      else {
+        const newLocalStorageData = [...localStorageData];
+        const currentIndex = newLocalStorageData.findIndex((cd) => cd.vm.ver === scriptWiz.vm.ver && cd.vm.network === scriptWiz.vm.network);
+
+        newLocalStorageData.splice(currentIndex, 1);
+
+        setTxLocalData(newLocalStorageData);
+      }
+    }
+    closeModal();
+  };
+
+  const saveButtonClick = () => {
+    const txData: TxDataWithVersion = {
+      vm: scriptWiz.vm,
+      txData: {
+        inputs: txInputs,
+        outputs: txOutputs,
+        version: version,
+        timelock: timelock,
+        blockHeight: blockHeight,
+        blockTimestamp: blockTimestamp,
+        currentInputIndex: currentInputIndex,
+      },
+    };
+
+    console.log(txData);
+
+    scriptWiz.parseTxData(txData.txData);
+
+    const previousLocalStorageData = getTxLocalData();
+    const newLocalStorageData = upsertVM(txData, previousLocalStorageData);
+    setTxLocalData(newLocalStorageData);
+    showModalCallback(false);
+  };
 
   const timelockValidation = (): string | undefined => {
     if (lastBlock) {
@@ -87,15 +178,7 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
   };
 
   return (
-    <Modal
-      className="tx-template-modal"
-      size="lg"
-      open={showModal}
-      backdrop={false}
-      onClose={() => {
-        showModalCallback(false);
-      }}
-    >
+    <Modal className="tx-template-modal" size="lg" open={showModal} backdrop={false} onClose={() => closeModal}>
       <Modal.Header>
         <TransactionImport
           txData={(value) => {
@@ -119,6 +202,10 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
             blockTimestamp={blockTimestamp}
             txInputOnChange={(value) => console.log(value)}
             txInputsValue={txInputs}
+            currentInputIndexOnChange={(value) => {
+              setCurrentInputIndex(value);
+            }}
+            currentInputIndexValue={currentInputIndex}
           />
 
           <div className="vertical-line"></div>
@@ -156,8 +243,8 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
             />
           </div>
         </div>
-        <Button onClick={() => showModalCallback(false)}>Clear</Button>
-        <Button className="tx-modal-save-button" appearance="subtle" onClick={() => showModalCallback(false)}>
+        <Button onClick={clearButtonClick}>Clear</Button>
+        <Button className="tx-modal-save-button" appearance="subtle" onClick={saveButtonClick}>
           Save
         </Button>
       </Modal.Footer>
