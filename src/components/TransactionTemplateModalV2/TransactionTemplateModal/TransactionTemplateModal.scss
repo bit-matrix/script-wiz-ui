@@ -9,28 +9,42 @@
     }
   }
 
-  .tx-template-main {
+  .tx-template-header {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    width: 100%;
-    color: #000;
-    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #292d33 !important;
+  }
 
-    .rs-input {
-      background-color: #fff !important;
-      color: #292d33 !important;
-      border: 1px solid #ccc;
-    }
+  .tx-template-modal-body {
+    margin-right: 1rem;
 
-    .vertical-line {
-      width: 0.25rem;
-      background-color: #d6d6d6;
+    .tx-template-main {
       display: flex;
-      height: 100%;
-      align-self: start;
-      top: 2.85rem;
-      position: absolute;
+      align-items: center;
+      justify-content: space-around;
+      width: 100%;
+      color: #000;
+      font-size: 0.875rem;
+
+      .rs-input {
+        background-color: #fff !important;
+        color: #292d33 !important;
+        border: 1px solid #ccc;
+      }
+
+      .vertical-line {
+        width: 0.25rem;
+        background-color: #d6d6d6;
+        display: flex;
+        height: 100%;
+        align-self: start;
+        top: 2.85rem;
+        position: absolute;
+      }
     }
   }
 

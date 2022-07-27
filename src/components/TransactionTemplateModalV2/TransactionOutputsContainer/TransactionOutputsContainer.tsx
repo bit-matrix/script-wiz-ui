@@ -45,35 +45,35 @@ const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsVal
   }, [txOutputsValue]);
 
   return (
-    <div className="tx-outputs-container-main">
-      <div className="tx-outputs-container-header">
-        <p>Outputs</p>
-      </div>
+    <div className="tx-outputs">
+      <div className="tx-outputs-container-main">
+        <div className="tx-outputs-container">
+          {txOutputs.map((output: TxOutputLiquid, index: number) => {
+            const txOutput = { output, index };
+            return (
+              <div className="tx-outputs-container-box" key={index}>
+                <div className="tx-outputs-header">
+                  <div className="tx-outputs-container-index">Index #{txOutput.index}</div>
 
-      <div className="tx-outputs-container">
-        {txOutputs.map((output: TxOutputLiquid, index: number) => {
-          const txOutput = { output, index };
-          return (
-            <div className="tx-outputs-container-box" key={index}>
-              <div className="tx-outputs-container-index">Index #{txOutput.index}</div>
+                  <div
+                    className="tx-outputs-container-close-icon"
+                    onClick={() => {
+                      const newTxOutputs = [...txOutputs];
+                      if (txOutputs.length > 1) {
+                        newTxOutputs.splice(txOutput.index, 1);
+                        setTxOutputs(newTxOutputs);
+                      }
+                    }}
+                  >
+                    <CloseIcon width="1rem" height="1rem" />
+                  </div>
+                </div>
 
-              <div
-                className="tx-outputs-container-close-icon"
-                onClick={() => {
-                  const newTxOutputs = [...txOutputs];
-                  if (txOutputs.length > 1) {
-                    newTxOutputs.splice(txOutput.index, 1);
-                    setTxOutputs(newTxOutputs);
-                  }
-                }}
-              >
-                <CloseIcon width="1rem" height="1rem" />
+                <TransactionOutput txOutputOnChange={txOutputsOnChange} txOutput={txOutput} vm={vm} />
               </div>
-
-              <TransactionOutput txOutputOnChange={txOutputsOnChange} txOutput={txOutput} vm={vm} />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
       <Button
         className="tx-outputs-container-button"

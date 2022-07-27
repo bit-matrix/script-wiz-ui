@@ -73,53 +73,54 @@ const TransactionInputsContainer: FC<Props> = ({
   }, [currentInputIndexValue, txInputsValue]);
 
   return (
-    <div className="tx-inputs-container-main">
-      <div className="tx-inputs-container-header">
-        <p>Inputs</p>
-      </div>
-      <div className="tx-inputs-container">
-        {txInputs.map((input: TxInputLiquid, index: number) => {
-          const txInput = { input, index, checked: currentInputIndex === index };
-          return (
-            <div className="tx-inputs-container-box" key={index}>
-              <div className="tx-inputs-container-index">Index #{txInput.index}</div>
+    <div className="tx-inputs">
+      <div className="tx-inputs-container-main">
+        <div className="tx-inputs-container">
+          {txInputs.map((input: TxInputLiquid, index: number) => {
+            const txInput = { input, index, checked: currentInputIndex === index };
+            return (
+              <div className="tx-inputs-container-box" key={index}>
+                <div className="tx-inputs-header">
+                  <div className="tx-inputs-container-index">Index #{txInput.index}</div>
 
-              <div
-                className="tx-inputs-container-close-icon "
-                onClick={() => {
-                  const newTxInputs = [...txInputs];
-                  if (txInputs.length > 1) {
-                    newTxInputs.splice(txInput.index, 1);
-                    setTxInputs(newTxInputs);
-                  }
-                }}
-              >
-                <CloseIcon width="1rem" height="1rem" />
+                  <Radio
+                    onChange={(value: any, checked: boolean) => {
+                      txInputsOnChange(txInput.input, txInput.index, checked);
+                      currentInputIndexOnChange(value);
+                    }}
+                    value={txInput.index}
+                    checked={txInput.checked}
+                  >
+                    Current Input Index
+                  </Radio>
+
+                  <div
+                    className="tx-inputs-container-close-icon "
+                    onClick={() => {
+                      const newTxInputs = [...txInputs];
+                      if (txInputs.length > 1) {
+                        newTxInputs.splice(txInput.index, 1);
+                        setTxInputs(newTxInputs);
+                      }
+                    }}
+                  >
+                    <CloseIcon width="1rem" height="1rem" />
+                  </div>
+                </div>
+
+                <TransactionInput
+                  lastBlock={lastBlock}
+                  version={version}
+                  blockHeight={blockHeight}
+                  blockTimestamp={blockTimestamp}
+                  txInputOnChange={txInputsOnChange}
+                  txInput={{ input: txInput.input, index: txInput.index, isCurrentInputIndex: txInput.checked }}
+                  vm={vm}
+                />
               </div>
-
-              <Radio
-                onChange={(value: any, checked: boolean) => {
-                  txInputsOnChange(txInput.input, txInput.index, checked);
-                  currentInputIndexOnChange(value);
-                }}
-                value={txInput.index}
-                checked={txInput.checked}
-              >
-                Current Input Index
-              </Radio>
-
-              <TransactionInput
-                lastBlock={lastBlock}
-                version={version}
-                blockHeight={blockHeight}
-                blockTimestamp={blockTimestamp}
-                txInputOnChange={txInputsOnChange}
-                txInput={{ input: txInput.input, index: txInput.index, isCurrentInputIndex: txInput.checked }}
-                vm={vm}
-              />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
       <Button
         className="tx-inputs-container-button"

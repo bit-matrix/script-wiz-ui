@@ -192,24 +192,31 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
           scriptWiz={scriptWiz}
           networkCallback={(value) => setNetwork(value)}
         />
+
+        <div className="tx-template-header">
+          <p>Inputs</p>
+          <p>Outputs</p>
+        </div>
       </Modal.Header>
       <Modal.Body>
-        <div className="tx-template-main">
-          <TransactionInputsContainer
-            lastBlock={lastBlock}
-            version={version}
-            blockHeight={blockHeight}
-            blockTimestamp={blockTimestamp}
-            txInputOnChange={(value) => console.log(value)}
-            txInputsValue={txInputs}
-            currentInputIndexOnChange={(value) => setCurrentInputIndex(value)}
-            currentInputIndexValue={currentInputIndex}
-            vm={scriptWiz.vm}
-          />
+        <div className="tx-template-modal-body">
+          <div className="tx-template-main">
+            <TransactionInputsContainer
+              lastBlock={lastBlock}
+              version={version}
+              blockHeight={blockHeight}
+              blockTimestamp={blockTimestamp}
+              txInputOnChange={(value) => console.log(value)}
+              txInputsValue={txInputs}
+              currentInputIndexOnChange={(value) => setCurrentInputIndex(value)}
+              currentInputIndexValue={currentInputIndex}
+              vm={scriptWiz.vm}
+            />
 
-          <div className="vertical-line"></div>
+            <div className="vertical-line"></div>
 
-          <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} txOutputsValue={txOutputs} vm={scriptWiz.vm} />
+            <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} txOutputsValue={txOutputs} vm={scriptWiz.vm} />
+          </div>
         </div>
       </Modal.Body>
       <Modal.Footer>
