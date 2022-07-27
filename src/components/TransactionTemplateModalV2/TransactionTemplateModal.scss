@@ -1,4 +1,13 @@
 .tx-template-modal {
+  .tx-header-for-close {
+    .rs-modal-header-close {
+      color: #292d33 !important;
+      font-size: 1rem !important;
+      font-weight: 600;
+      top: 0;
+    }
+  }
+
   .rs-modal-content {
     background-color: #eee !important;
     height: 42rem;

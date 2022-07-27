@@ -200,26 +200,28 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
   };
 
   return (
-    <Modal className="tx-template-modal" size="lg" open={showModal} backdrop={false} onClose={() => closeModal}>
-      <Modal.Header>
-        <TransactionImport
-          txData={(value) => {
-            setTxInputs(value.inputs as TxInputLiquid[]);
-            setTxOutputs(value.outputs as TxInputLiquid[]);
-            setTimelock(value.timelock);
-            setVersion(value.version);
-            setBlockHeight(value.blockHeight);
-            setBlockTimestamp(value.blockTimestamp);
-          }}
-          scriptWiz={scriptWiz}
-          networkCallback={(value) => setNetwork(value)}
-        />
+    <Modal className="tx-template-modal" size="lg" open={showModal} backdrop={false} onClose={closeModal}>
+      <div className="tx-header-for-close">
+        <Modal.Header>
+          <TransactionImport
+            txData={(value) => {
+              setTxInputs(value.inputs as TxInputLiquid[]);
+              setTxOutputs(value.outputs as TxInputLiquid[]);
+              setTimelock(value.timelock);
+              setVersion(value.version);
+              setBlockHeight(value.blockHeight);
+              setBlockTimestamp(value.blockTimestamp);
+            }}
+            scriptWiz={scriptWiz}
+            networkCallback={(value) => setNetwork(value)}
+          />
 
-        <div className="tx-template-header">
-          <p>Inputs</p>
-          <p>Outputs</p>
-        </div>
-      </Modal.Header>
+          <div className="tx-template-header">
+            <p>Inputs</p>
+            <p>Outputs</p>
+          </div>
+        </Modal.Header>
+      </div>
       <Modal.Body>
         <div className="tx-template-modal-body">
           <div className="tx-template-main">
