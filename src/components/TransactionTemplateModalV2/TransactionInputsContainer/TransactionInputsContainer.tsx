@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { TxInputLiquid } from '@script-wiz/lib-core';
+import { VM } from '@script-wiz/lib';
 import { Button, Radio } from 'rsuite';
 import TransactionInput from '../TransactionInput/TransactionInput';
 import CloseIcon from '../../Svg/Icons/Close';
@@ -14,6 +15,7 @@ type Props = {
   txInputsValue: TxInputLiquid[];
   currentInputIndexOnChange: (value: number) => void;
   currentInputIndexValue: number;
+  vm: VM;
 };
 
 const txInputInitial = {
@@ -37,6 +39,7 @@ const TransactionInputsContainer: FC<Props> = ({
   txInputsValue,
   currentInputIndexOnChange,
   currentInputIndexValue,
+  vm,
 }) => {
   const [txInputs, setTxInputs] = useState<TxInputLiquid[]>([txInputInitial]);
   const [currentInputIndex, setCurrentInputIndex] = useState<number>(0);
@@ -112,6 +115,7 @@ const TransactionInputsContainer: FC<Props> = ({
                 blockTimestamp={blockTimestamp}
                 txInputOnChange={txInputsOnChange}
                 txInput={{ input: txInput.input, index: txInput.index, isCurrentInputIndex: txInput.checked }}
+                vm={vm}
               />
             </div>
           );

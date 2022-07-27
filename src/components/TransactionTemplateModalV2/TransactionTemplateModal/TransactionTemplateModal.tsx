@@ -202,15 +202,14 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
             blockTimestamp={blockTimestamp}
             txInputOnChange={(value) => console.log(value)}
             txInputsValue={txInputs}
-            currentInputIndexOnChange={(value) => {
-              setCurrentInputIndex(value);
-            }}
+            currentInputIndexOnChange={(value) => setCurrentInputIndex(value)}
             currentInputIndexValue={currentInputIndex}
+            vm={scriptWiz.vm}
           />
 
           <div className="vertical-line"></div>
 
-          <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} txOutputsValue={txOutputs} />
+          <TransactionOutputsContainer txOutputOnChange={(value) => console.log(value)} txOutputsValue={txOutputs} vm={scriptWiz.vm} />
         </div>
       </Modal.Body>
       <Modal.Footer>

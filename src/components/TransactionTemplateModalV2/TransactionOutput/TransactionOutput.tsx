@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { TxOutputLiquid } from '@script-wiz/lib-core';
+import { VM, VM_NETWORK } from '@script-wiz/lib';
 import { Checkbox } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
@@ -10,9 +11,10 @@ import './TransactionOutput.scss';
 type Props = {
   txOutputOnChange: (value: TxOutputLiquid, index: number) => void;
   txOutput: { output: TxOutputLiquid; index: number };
+  vm: VM;
 };
 
-const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput }) => {
+const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput, vm }) => {
   // const isValidAmount =
   //   (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
   //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
@@ -25,21 +27,23 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput }) => {
 
   return (
     <div className="tx-output">
-      <Checkbox
-        onChange={(value: any, checked: boolean) => {
-          txOutputOnChange(
-            {
-              ...txOutput.output,
-              confidental: checked,
-            },
-            txOutput.index,
-          );
-        }}
-        checked={txOutput.output.confidental}
-        value={txOutput.output.confidental ? 'true' : 'false'}
-      >
-        <span className="tx-output-confidental">Confidental</span>
-      </Checkbox>
+      {vm.network === VM_NETWORK.LIQUID && (
+        <Checkbox
+          onChange={(value: any, checked: boolean) => {
+            txOutputOnChange(
+              {
+                ...txOutput.output,
+                confidental: checked,
+              },
+              txOutput.index,
+            );
+          }}
+          checked={txOutput.output.confidental}
+          value={txOutput.output.confidental ? 'true' : 'false'}
+        >
+          <span className="tx-output-confidental">Confidental</span>
+        </Checkbox>
+      )}
 
       <TransactionCustomInput
         name="scriptPubKey"
@@ -51,46 +55,58 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput }) => {
         placeholder="32-bytes"
       />
 
-      <TransactionCustomInput
-        name="amount"
-        label="Amount:"
-        value={txOutput.output.amount}
-        valueOnChange={(value: string) => {
-          txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
-        }}
-        defaultValueType={VALUE_TYPES.DECIMAL}
-      />
-
-      <div>
+      {!txOutput.output.confidental && (
         <TransactionCustomInput
-          name="assetId"
-          label="Asset Id:"
-          value={txOutput.output.assetId as string}
+          name="amount"
+          label="Amount:"
+          value={txOutput.output.amount}
           valueOnChange={(value: string) => {
-            txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
+            txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
           }}
-          placeholder="32-bytes"
+          defaultValueType={VALUE_TYPES.DECIMAL}
         />
-        <div className="tx-output-error-line">{isValidAssetId}</div>
-      </div>
+      )}
 
-      <TransactionCustomInput
-        name="assetCommitment"
-        label={'Asset Commitment:'}
-        value={txOutput.output.assetCommitment as string}
-        valueOnChange={(value: string) => {
-          txOutputOnChange({ ...txOutput.output, assetCommitment: value }, txOutput.index);
-        }}
-      />
+      {vm.network === VM_NETWORK.LIQUID && (
+        <div>
+          {!txOutput.output.confidental && (
+            <div>
+              <TransactionCustomInput
+                name="assetId"
+                label="Asset Id:"
+                value={txOutput.output.assetId as string}
+                valueOnChange={(value: string) => {
+                  txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
+                }}
+                placeholder="32-bytes"
+              />
+              <div className="tx-output-error-line">{isValidAssetId}</div>
+            </div>
+          )}
 
-      <TransactionCustomInput
-        name="valueCommitment"
-        label={'Value Commitment:'}
-        value={txOutput.output.valueCommitment as string}
-        valueOnChange={(value: string) => {
-          txOutputOnChange({ ...txOutput.output, valueCommitment: value }, txOutput.index);
-        }}
-      />
+          {txOutput.output.confidental && (
+            <div>
+              <TransactionCustomInput
+                name="assetCommitment"
+                label={'Asset Commitment:'}
+                value={txOutput.output.assetCommitment as string}
+                valueOnChange={(value: string) => {
+                  txOutputOnChange({ ...txOutput.output, assetCommitment: value }, txOutput.index);
+                }}
+              />
+
+              <TransactionCustomInput
+                name="valueCommitment"
+                label={'Value Commitment:'}
+                value={txOutput.output.valueCommitment as string}
+                valueOnChange={(value: string) => {
+                  txOutputOnChange({ ...txOutput.output, valueCommitment: value }, txOutput.index);
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

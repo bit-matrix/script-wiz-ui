@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
 import { TxInputLiquid } from '@script-wiz/lib-core';
+import { VM, VM_NETWORK } from '@script-wiz/lib';
 import { Checkbox } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { VALUE_TYPES } from '../../../utils/enum/VALUE_TYPES';
@@ -15,9 +16,10 @@ type Props = {
   blockTimestamp: string;
   txInputOnChange: (input: TxInputLiquid, index: number, checked: boolean) => void;
   txInput: { input: TxInputLiquid; index: number; isCurrentInputIndex: boolean };
+  vm: VM;
 };
 
-const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTimestamp, txInputOnChange, txInput }) => {
+const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTimestamp, txInputOnChange, txInput, vm }) => {
   const isValidPreviousTxId =
     (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
@@ -80,22 +82,24 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
   return (
     <div className="tx-input-main">
       <div>
-        <Checkbox
-          onChange={(value: any, checked: boolean) => {
-            txInputOnChange(
-              {
-                ...txInput.input,
-                confidental: checked,
-              },
-              txInput.index,
-              txInput.isCurrentInputIndex,
-            );
-          }}
-          checked={txInput.input.confidental}
-          value={txInput.input.confidental ? 'true' : 'false'}
-        >
-          <span className="tx-input-confidental">Confidental</span>
-        </Checkbox>
+        {vm.network === VM_NETWORK.LIQUID && (
+          <Checkbox
+            onChange={(value: any, checked: boolean) => {
+              txInputOnChange(
+                {
+                  ...txInput.input,
+                  confidental: checked,
+                },
+                txInput.index,
+                txInput.isCurrentInputIndex,
+              );
+            }}
+            checked={txInput.input.confidental}
+            value={txInput.input.confidental ? 'true' : 'false'}
+          >
+            <span className="tx-input-confidental">Confidental</span>
+          </Checkbox>
+        )}
 
         <TransactionCustomInput
           name="previousTxId"
@@ -168,42 +172,72 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
         }}
       />
 
-      <TransactionCustomInput
-        name="amount"
-        label="Amount:"
-        value={txInput.input.amount}
-        valueOnChange={(value: string) => {
-          txInputOnChange(
-            {
-              ...txInput.input,
-              amount: value,
-            },
-            txInput.index,
-            txInput.isCurrentInputIndex,
-          );
-        }}
-        defaultValueType={VALUE_TYPES.DECIMAL}
-      />
-
-      <div>
+      {!txInput.input.confidental && (
         <TransactionCustomInput
-          name="assetId"
-          label="Asset Id:"
-          value={txInput.input.assetId as string}
+          name="amount"
+          label="Amount:"
+          value={txInput.input.amount}
           valueOnChange={(value: string) => {
             txInputOnChange(
               {
                 ...txInput.input,
-                assetId: value,
+                amount: value,
               },
               txInput.index,
               txInput.isCurrentInputIndex,
             );
           }}
-          placeholder="32-bytes"
+          defaultValueType={VALUE_TYPES.DECIMAL}
         />
-        <div className="tx-input-error-line">{isValidAssetId}</div>
-      </div>
+      )}
+
+      {vm.network === VM_NETWORK.LIQUID && (
+        <div>
+          {!txInput.input.confidental && (
+            <div>
+              <TransactionCustomInput
+                name="assetId"
+                label="Asset Id:"
+                value={txInput.input.assetId as string}
+                valueOnChange={(value: string) => {
+                  txInputOnChange(
+                    {
+                      ...txInput.input,
+                      assetId: value,
+                    },
+                    txInput.index,
+                    txInput.isCurrentInputIndex,
+                  );
+                }}
+                placeholder="32-bytes"
+              />
+              <div className="tx-input-error-line">{isValidAssetId}</div>
+            </div>
+          )}
+
+          {txInput.input.confidental && (
+            <div>
+              <TransactionCustomInput
+                name="assetCommitment"
+                label={'Asset Commitment:'}
+                value={txInput.input.assetCommitment as string}
+                valueOnChange={(value: string) => {
+                  txInputOnChange({ ...txInput.input, assetCommitment: value }, txInput.index, txInput.isCurrentInputIndex);
+                }}
+              />
+
+              <TransactionCustomInput
+                name="valueCommitment"
+                label={'Value Commitment:'}
+                value={txInput.input.valueCommitment as string}
+                valueOnChange={(value: string) => {
+                  txInputOnChange({ ...txInput.input, valueCommitment: value }, txInput.index, txInput.isCurrentInputIndex);
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
