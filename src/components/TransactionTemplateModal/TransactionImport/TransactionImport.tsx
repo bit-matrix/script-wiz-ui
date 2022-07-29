@@ -74,10 +74,10 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
             vout: transactionDataInputs[i].vout.toString(),
             sequence: transactionDataInputsSequenceHexLE,
             previousTxId: transactionDataInputs[i].txid,
-            scriptPubKey: transactionDataInputs[i].prevout?.scriptpubkey,
-            amount: transactionDataInputs[i].prevout?.value !== undefined ? transactionDataInputs[i].prevout?.value : '',
-            assetId: transactionDataInputs[i].prevout?.asset ? transactionDataInputs[i].prevout?.asset : '',
-            confidental: transactionDataInputs[i].prevout?.assetcommitment ? true : false,
+            scriptPubKey: transactionDataInputs[i].prevout.scriptpubkey,
+            amount: transactionDataInputs[i].prevout.value !== undefined ? transactionDataInputs[i].prevout?.value : '',
+            assetId: transactionDataInputs[i].prevout.asset ? transactionDataInputs[i].prevout?.asset : '',
+            confidental: transactionDataInputs[i].prevout.assetcommitment ? true : false,
           };
 
           newTxInputs.push(txInput);
