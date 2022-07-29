@@ -85,10 +85,6 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
 
   const txInputsOnChange = (input: TxInputLiquid, index: number, isCurrentInputIndex: boolean) => {
     const newTxInputs = [...txInputs];
-    console.log('newTxInputs', newTxInputs);
-
-    const relatedInputIndex = txInputs.findIndex((input, i) => i === index);
-    console.log('relatedInputIndex', relatedInputIndex);
 
     const newInput = {
       previousTxId: input.previousTxId,
@@ -100,11 +96,9 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
       confidental: input.confidental,
     };
 
-    newTxInputs[relatedInputIndex] = newInput;
-    console.log('newInputs2', newTxInputs);
+    newTxInputs[index] = newInput;
 
     setTxInputs(newTxInputs);
-    console.log('txInputs', txInputs);
 
     if (isCurrentInputIndex) {
       setCurrentInputIndex(index);
