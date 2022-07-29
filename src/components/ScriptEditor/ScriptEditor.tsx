@@ -17,7 +17,7 @@ import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
 import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
 import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
 import { convertEditorLines, LOCAL_STORAGE_KEY, LOCAL_STORAGE_OLD_KEY } from '../../helper';
-import TransactionTemplateModal from '../TransactionTemplateModalV2/TransactionTemplateModal';
+import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
 import './ScriptEditor.scss';
 
 type Props = {
