@@ -292,8 +292,6 @@ export const SignatureTools = () => {
                 value={verifySignature}
                 onChange={(value: string) => setVerifySignature(value.replace(/\s/g, ''))}
               />
-
-              {verifyErrorMessage ? <div className="signature-tools-error-message error-div">{verifyErrorMessage}</div> : null}
             </div>
             <div className="signature-tools-result-item">
               <h6 className="signature-tools-tab-header">Message (Hex)</h6>
@@ -303,8 +301,6 @@ export const SignatureTools = () => {
                 value={verifyMessage}
                 onChange={(value: string) => setVerifyMessage(value.replace(/\s/g, ''))}
               />
-
-              {verifyErrorMessage ? <div className="signature-tools-error-message error-div">{verifyErrorMessage}</div> : null}
             </div>
             <div className="signature-tools-result-item">
               <h6 className="signature-tools-tab-header">Public Key (Hex)</h6>
@@ -314,8 +310,6 @@ export const SignatureTools = () => {
                 value={verifyPublicKey}
                 onChange={(value: string) => setVerifyPublicKey(value.replace(/\s/g, ''))}
               />
-
-              {verifyErrorMessage ? <div className="signature-tools-error-message error-div">{verifyErrorMessage}</div> : null}
             </div>
             <div className="signature-tools-message-verify">
               <Button
@@ -327,7 +321,10 @@ export const SignatureTools = () => {
               >
                 Verify Message
               </Button>
-              <Input value={verifyResultNumber} disabled />
+              <div>
+                <Input value={verifyResultNumber} disabled />
+                {verifyErrorMessage ? <div className="signature-tools-error-message error-div">{verifyErrorMessage}</div> : null}
+              </div>
             </div>
           </div>
         </div>
