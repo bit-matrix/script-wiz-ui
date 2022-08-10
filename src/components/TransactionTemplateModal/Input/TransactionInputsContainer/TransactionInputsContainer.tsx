@@ -52,7 +52,8 @@ const TransactionInputsContainer: FC<Props> = ({
       <div className="tx-inputs-container-main">
         <div className="tx-inputs-container">
           {txInputs.map((input: TxInputLiquid, index: number) => {
-            const txInput = { input, index, checked: currentInputIndex === index };
+            const txInput = { input, index, isCurrentInputIndex: currentInputIndex === index };
+
             return (
               <div className="tx-inputs-container-box" key={index}>
                 <div className="tx-inputs-header">
@@ -63,7 +64,7 @@ const TransactionInputsContainer: FC<Props> = ({
                       txInputOnChange(txInput.input, txInput.index, checked);
                     }}
                     value={txInput.index}
-                    checked={txInput.checked}
+                    checked={txInput.isCurrentInputIndex}
                   >
                     Current Input Index
                   </Radio>
@@ -88,7 +89,7 @@ const TransactionInputsContainer: FC<Props> = ({
                   blockHeight={blockHeight}
                   blockTimestamp={blockTimestamp}
                   txInputOnChange={txInputOnChange}
-                  txInput={{ input: txInput.input, index: txInput.index, isCurrentInputIndex: txInput.checked }}
+                  txInput={txInput}
                   vm={vm}
                 />
               </div>
