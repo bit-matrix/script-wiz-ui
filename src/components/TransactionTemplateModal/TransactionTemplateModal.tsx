@@ -226,7 +226,6 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
               blockTimestamp={blockTimestamp}
               txInputOnChange={txInputsOnChange}
               txInputsValue={txInputs}
-              currentInputIndexOnChange={(value) => setCurrentInputIndex(value)}
               currentInputIndexValue={currentInputIndex}
               vm={scriptWiz.vm}
             />

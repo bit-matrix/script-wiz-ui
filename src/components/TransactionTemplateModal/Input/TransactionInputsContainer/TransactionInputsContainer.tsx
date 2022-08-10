@@ -13,7 +13,6 @@ type Props = {
   blockTimestamp: string;
   txInputOnChange: (input: TxInputLiquid, index: number, checked: boolean) => void;
   txInputsValue: TxInputLiquid[];
-  currentInputIndexOnChange: (value: number) => void;
   currentInputIndexValue: number;
   vm: VM;
 };
@@ -37,7 +36,6 @@ const TransactionInputsContainer: FC<Props> = ({
   blockTimestamp,
   txInputOnChange,
   txInputsValue,
-  currentInputIndexOnChange,
   currentInputIndexValue,
   vm,
 }) => {
@@ -63,7 +61,6 @@ const TransactionInputsContainer: FC<Props> = ({
                   <Radio
                     onChange={(value: any, checked: boolean) => {
                       txInputOnChange(txInput.input, txInput.index, checked);
-                      currentInputIndexOnChange(value);
                     }}
                     value={txInput.index}
                     checked={txInput.checked}
@@ -104,6 +101,8 @@ const TransactionInputsContainer: FC<Props> = ({
         onClick={() => {
           const newTxInput = txInputInitial;
           const newTxInputs = [...txInputs];
+          console.log(newTxInputs);
+
           newTxInputs.push(newTxInput);
           setTxInputs(newTxInputs);
         }}
