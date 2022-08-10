@@ -54,6 +54,8 @@ export const SignatureTools = () => {
         setDerEncodedSignature(signResult.derEncodedSign);
       } catch (err) {
         setSignErrorMessage(err as string);
+        setSignSignature(undefined);
+        setDerEncodedSignature(undefined);
       }
     } else {
       try {
@@ -63,6 +65,7 @@ export const SignatureTools = () => {
         // setDerEncodedSignature(signResult.derEncodedSign);
       } catch (err) {
         setSignErrorMessage(err as string);
+        setSignSignature(undefined);
       }
     }
   };
