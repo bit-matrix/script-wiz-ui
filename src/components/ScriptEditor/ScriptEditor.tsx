@@ -240,6 +240,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     (inputText: string, isWitnessElement: boolean = true) => {
       // Look for $label assignments, keep them for later processing and strip them from the line string.
       const labelMatches = inputText.match(/\$\w+$/);
+
       if (labelMatches) {
         inputText = inputText.replace(/\s*\$\w+$/, '');
       }

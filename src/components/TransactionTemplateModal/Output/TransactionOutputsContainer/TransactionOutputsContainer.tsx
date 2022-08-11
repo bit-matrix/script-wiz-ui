@@ -9,6 +9,7 @@ import './TransactionOutputsContainer.scss';
 type Props = {
   txOutputOnChange: (value: TxOutputLiquid, index: number) => void;
   txOutputsValue: TxOutputLiquid[];
+  newTxOutputsOnChange: (value: TxOutputLiquid[]) => void;
   vm: VM;
 };
 
@@ -21,7 +22,7 @@ const txOutputInitial = {
   confidental: false,
 };
 
-const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsValue, vm }) => {
+const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsValue, newTxOutputsOnChange, vm }) => {
   const [txOutputs, setTxOutputs] = useState<TxOutputLiquid[]>([txOutputInitial]);
 
   useEffect(() => {
@@ -64,8 +65,11 @@ const TransactionOutputsContainer: FC<Props> = ({ txOutputOnChange, txOutputsVal
         onClick={() => {
           const newTxOutput = txOutputInitial;
           const newTxOutputs = [...txOutputs];
+
           newTxOutputs.push(newTxOutput);
           setTxOutputs(newTxOutputs);
+
+          newTxOutputsOnChange(newTxOutputs);
         }}
       >
         + Add New Output

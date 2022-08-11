@@ -14,6 +14,7 @@ type Props = {
   txInputOnChange: (input: TxInputLiquid, index: number, checked: boolean) => void;
   txInputsValue: TxInputLiquid[];
   currentInputIndexValue: number;
+  newTxInputsOnChange: (value: TxInputLiquid[]) => void;
   vm: VM;
 };
 
@@ -37,6 +38,7 @@ const TransactionInputsContainer: FC<Props> = ({
   txInputOnChange,
   txInputsValue,
   currentInputIndexValue,
+  newTxInputsOnChange,
   vm,
 }) => {
   const [txInputs, setTxInputs] = useState<TxInputLiquid[]>([txInputInitial]);
@@ -102,10 +104,11 @@ const TransactionInputsContainer: FC<Props> = ({
         onClick={() => {
           const newTxInput = txInputInitial;
           const newTxInputs = [...txInputs];
-          console.log(newTxInputs);
 
           newTxInputs.push(newTxInput);
           setTxInputs(newTxInputs);
+
+          newTxInputsOnChange(newTxInputs);
         }}
       >
         + Add New Input

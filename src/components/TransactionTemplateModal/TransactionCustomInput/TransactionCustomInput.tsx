@@ -82,7 +82,6 @@ const TransactionCustomInput: React.FC<Props> = ({ name, label, value, valueOnCh
           if (name === 'sequence') {
             const bytes4Values = inputConverter(customValue.value, VALUE_TYPES.BE, '4-bytes');
             setCustomValue({ typeValue: VALUE_TYPES.LE, value: bytes4Values.le });
-            console.log(customValue);
           }
         }
 
