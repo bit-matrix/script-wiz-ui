@@ -48,8 +48,8 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput, vm }) => {
       <TransactionCustomInput
         name="scriptPubKey"
         label="ScriptPubKey:"
-        value={txOutput.output.scriptPubKey}
-        valueOnChange={(value: string) => {
+        inputValue={txOutput.output.scriptPubKey}
+        inputValueOnChange={(value: string) => {
           txOutputOnChange({ ...txOutput.output, scriptPubKey: value }, txOutput.index);
         }}
         placeholder="32-bytes"
@@ -59,8 +59,8 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput, vm }) => {
         <TransactionCustomInput
           name="amount"
           label="Amount:"
-          value={txOutput.output.amount}
-          valueOnChange={(value: string) => {
+          inputValue={txOutput.output.amount}
+          inputValueOnChange={(value: string) => {
             txOutputOnChange({ ...txOutput.output, amount: value }, txOutput.index);
           }}
           defaultValueType={VALUE_TYPES.DECIMAL}
@@ -74,8 +74,8 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput, vm }) => {
               <TransactionCustomInput
                 name="assetId"
                 label="Asset Id:"
-                value={txOutput.output.assetId as string}
-                valueOnChange={(value: string) => {
+                inputValue={txOutput.output.assetId as string}
+                inputValueOnChange={(value: string) => {
                   txOutputOnChange({ ...txOutput.output, assetId: value }, txOutput.index);
                 }}
                 placeholder="32-bytes"
@@ -89,8 +89,8 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput, vm }) => {
               <TransactionCustomInput
                 name="assetCommitment"
                 label={'Asset Commitment:'}
-                value={txOutput.output.assetCommitment as string}
-                valueOnChange={(value: string) => {
+                inputValue={txOutput.output.assetCommitment as string}
+                inputValueOnChange={(value: string) => {
                   txOutputOnChange({ ...txOutput.output, assetCommitment: value }, txOutput.index);
                 }}
               />
@@ -98,8 +98,8 @@ const TransactionOutput: FC<Props> = ({ txOutputOnChange, txOutput, vm }) => {
               <TransactionCustomInput
                 name="valueCommitment"
                 label={'Value Commitment:'}
-                value={txOutput.output.valueCommitment as string}
-                valueOnChange={(value: string) => {
+                inputValue={txOutput.output.valueCommitment as string}
+                inputValueOnChange={(value: string) => {
                   txOutputOnChange({ ...txOutput.output, valueCommitment: value }, txOutput.index);
                 }}
               />

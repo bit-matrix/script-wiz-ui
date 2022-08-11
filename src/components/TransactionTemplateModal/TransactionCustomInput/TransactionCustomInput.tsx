@@ -8,8 +8,8 @@ import './TransactionCustomInput.scss';
 type Props = {
   name: string;
   label: string;
-  value: string; // local storage icerisindeki degeri getirmek icin
-  valueOnChange: (value: string) => void; // degeri local storage a kaydetmek lazim
+  inputValue: string;
+  inputValueOnChange: (value: string) => void;
   placeholder?: string;
   defaultValueType?: VALUE_TYPES;
 };
@@ -19,7 +19,7 @@ type InputWithRadio = {
   value: string;
 };
 
-const TransactionCustomInput: React.FC<Props> = ({ name, label, value, valueOnChange, placeholder, defaultValueType }) => {
+const TransactionCustomInput: React.FC<Props> = ({ name, label, inputValue, inputValueOnChange, placeholder, defaultValueType }) => {
   const [typeValue, setTypeValue] = useState<VALUE_TYPES | undefined>(defaultValueType);
   const [customValue, setCustomValue] = useState<InputWithRadio>({ typeValue: defaultValueType as VALUE_TYPES, value: '' }); // valueType degerine gore sonuc degisecek
 
@@ -132,11 +132,11 @@ const TransactionCustomInput: React.FC<Props> = ({ name, label, value, valueOnCh
 
   useEffect(() => {
     if (defaultValueType) {
-      setCustomValue({ value: value, typeValue: typeValue as VALUE_TYPES });
+      setCustomValue({ value: inputValue, typeValue: typeValue as VALUE_TYPES });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultValueType, value]);
+  }, [defaultValueType, inputValue]);
 
   return (
     <div className="tx-custom-input-item">
@@ -156,10 +156,10 @@ const TransactionCustomInput: React.FC<Props> = ({ name, label, value, valueOnCh
         )}
       </div>
       <Input
-        value={defaultValueType ? customValue.value : value}
+        value={defaultValueType ? customValue.value : inputValue}
         placeholder={placeholderOnChange()}
         onChange={(value: string) => {
-          valueOnChange(value);
+          inputValueOnChange(value);
         }}
       />
     </div>

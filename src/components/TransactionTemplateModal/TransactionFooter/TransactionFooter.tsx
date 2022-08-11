@@ -63,8 +63,8 @@ const TransactionFooter: FC<Props> = ({
         <TransactionCustomInput
           name="version"
           label="Tx Version:"
-          value={version}
-          valueOnChange={(value) => {
+          inputValue={version}
+          inputValueOnChange={(value) => {
             setVersion(value);
             versionOnChange(value);
           }}
@@ -76,8 +76,8 @@ const TransactionFooter: FC<Props> = ({
         <TransactionCustomInput
           name="timelock"
           label="Tx Timelock:"
-          value={timelock}
-          valueOnChange={(value) => {
+          inputValue={timelock}
+          inputValueOnChange={(value) => {
             setTimelock(value);
             timelockOnChange(value);
           }}
@@ -89,8 +89,8 @@ const TransactionFooter: FC<Props> = ({
         <TransactionCustomInput
           name="blockHeight"
           label="Block Height:"
-          value={blockHeight as string}
-          valueOnChange={(value) => {
+          inputValue={blockHeight as string}
+          inputValueOnChange={(value) => {
             setBlockHeight(value);
             blockHeightOnChange(value);
           }}
@@ -101,8 +101,8 @@ const TransactionFooter: FC<Props> = ({
         <TransactionCustomInput
           name="blockTimestamp"
           label="Block Timestamp:"
-          value={blockTimestamp as string}
-          valueOnChange={(value) => {
+          inputValue={blockTimestamp as string}
+          inputValueOnChange={(value) => {
             setBlockTimestamp(value);
             blockTimestampOnChange(value);
           }}

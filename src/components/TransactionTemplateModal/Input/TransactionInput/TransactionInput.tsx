@@ -104,8 +104,8 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
         <TransactionCustomInput
           name="previousTxId"
           label="Previous Tx Id:"
-          value={txInput.input.previousTxId}
-          valueOnChange={(value: string) => {
+          inputValue={txInput.input.previousTxId}
+          inputValueOnChange={(value: string) => {
             txInputOnChange(
               {
                 ...txInput.input,
@@ -123,8 +123,8 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
       <TransactionCustomInput
         name="vout"
         label="Vout:"
-        value={txInput.input.vout}
-        valueOnChange={(value: string) => {
+        inputValue={txInput.input.vout}
+        inputValueOnChange={(value: string) => {
           txInputOnChange(
             {
               ...txInput.input,
@@ -140,8 +140,8 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
         <TransactionCustomInput
           name="sequence"
           label="Sequence:"
-          value={txInput.input.sequence}
-          valueOnChange={(value) => {
+          inputValue={txInput.input.sequence}
+          inputValueOnChange={(value) => {
             txInputOnChange(
               {
                 ...txInput.input,
@@ -159,8 +159,8 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
       <TransactionCustomInput
         name="scriptPubKey"
         label="ScriptPubKey:"
-        value={txInput.input.scriptPubKey}
-        valueOnChange={(value: string) => {
+        inputValue={txInput.input.scriptPubKey}
+        inputValueOnChange={(value: string) => {
           txInputOnChange(
             {
               ...txInput.input,
@@ -176,8 +176,8 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
         <TransactionCustomInput
           name="amount"
           label="Amount:"
-          value={txInput.input.amount}
-          valueOnChange={(value: string) => {
+          inputValue={txInput.input.amount}
+          inputValueOnChange={(value: string) => {
             txInputOnChange(
               {
                 ...txInput.input,
@@ -198,8 +198,8 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
               <TransactionCustomInput
                 name="assetId"
                 label="Asset Id:"
-                value={txInput.input.assetId as string}
-                valueOnChange={(value: string) => {
+                inputValue={txInput.input.assetId as string}
+                inputValueOnChange={(value: string) => {
                   txInputOnChange(
                     {
                       ...txInput.input,
@@ -220,8 +220,8 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
               <TransactionCustomInput
                 name="assetCommitment"
                 label={'Asset Commitment:'}
-                value={txInput.input.assetCommitment as string}
-                valueOnChange={(value: string) => {
+                inputValue={txInput.input.assetCommitment as string}
+                inputValueOnChange={(value: string) => {
                   txInputOnChange({ ...txInput.input, assetCommitment: value }, txInput.index, txInput.isCurrentInputIndex);
                 }}
               />
@@ -229,8 +229,8 @@ const TransactionInput: FC<Props> = ({ lastBlock, version, blockHeight, blockTim
               <TransactionCustomInput
                 name="valueCommitment"
                 label={'Value Commitment:'}
-                value={txInput.input.valueCommitment as string}
-                valueOnChange={(value: string) => {
+                inputValue={txInput.input.valueCommitment as string}
+                inputValueOnChange={(value: string) => {
                   txInputOnChange({ ...txInput.input, valueCommitment: value }, txInput.index, txInput.isCurrentInputIndex);
                 }}
               />
