@@ -13,8 +13,8 @@ import './TransactionTemplateModal.scss';
 import TransactionFooter from './TransactionFooter/TransactionFooter';
 
 type Props = {
-  showModal: boolean; //modal acma icin
-  showModalCallback: (show: boolean) => void; // modal kapatma icin
+  showModal: boolean; //for opening modal
+  showModalCallback: (show: boolean) => void; // for closing modal
   scriptWiz: ScriptWiz;
 };
 
@@ -198,7 +198,7 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
       <div className="tx-header-for-close">
         <Modal.Header>
           <TransactionImport
-            txData={(value) => {
+            txDataOnChange={(value) => {
               setTxInputs(value.inputs as TxInputLiquid[]);
               setTxOutputs(value.outputs as TxInputLiquid[]);
               setTimelock(value.timelock);
@@ -207,7 +207,7 @@ const TransactionTemplateModal: FC<Props> = ({ showModal, showModalCallback, scr
               setBlockTimestamp(value.blockTimestamp);
             }}
             scriptWiz={scriptWiz}
-            networkCallback={(value) => setNetwork(value)}
+            networkOnChange={(value) => setNetwork(value)}
           />
 
           <div className="tx-template-header">

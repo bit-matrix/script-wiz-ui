@@ -10,9 +10,9 @@ import { NETWORKS } from '../../../utils/enum/NETWORKS';
 import './TransactionImport.scss';
 
 type Props = {
-  txData: (value: TxData) => void;
   scriptWiz: ScriptWiz;
-  networkCallback: (value: NETWORKS) => void;
+  txDataOnChange: (value: TxData) => void;
+  networkOnChange: (value: NETWORKS) => void;
 };
 
 const txInputInitial = {
@@ -36,7 +36,7 @@ const txOutputInitial = {
   confidental: false,
 };
 
-const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback }) => {
+const TransactionImport: React.FC<Props> = ({ scriptWiz, txDataOnChange, networkOnChange }) => {
   const [network, setNetwork] = useState<NETWORKS>(NETWORKS.MAINNET);
   const [transactionId, setTransactionId] = useState<string>('');
 
@@ -98,7 +98,7 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
           }
         }
 
-        txData({
+        txDataOnChange({
           inputs: newTxInputs,
           outputs: newTxOutputs,
           version: transactionDataVersion,
@@ -116,7 +116,7 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
         );
         toaster.push(message);
 
-        txData({
+        txDataOnChange({
           inputs: [txInputInitial],
           outputs: [txOutputInitial],
           version: '',
@@ -138,7 +138,7 @@ const TransactionImport: React.FC<Props> = ({ txData, scriptWiz, networkCallback
             name="radioList"
             value={network}
             onChange={(value: ValueType) => {
-              networkCallback(value as NETWORKS);
+              networkOnChange(value as NETWORKS);
               setNetwork(value as NETWORKS);
             }}
           >
