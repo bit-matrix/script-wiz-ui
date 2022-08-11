@@ -14,7 +14,7 @@ type Props = {
   txInputOnChange: (input: TxInputLiquid, index: number, checked: boolean) => void;
   txInputsValue: TxInputLiquid[];
   currentInputIndexValue: number;
-  newTxInputsOnChange: (value: TxInputLiquid[]) => void;
+  newTxInputsOnChange: (value: TxInputLiquid[]) => void; // when adding new tx input values
   vm: VM;
 };
 

@@ -9,7 +9,7 @@ import './TransactionOutputsContainer.scss';
 type Props = {
   txOutputOnChange: (value: TxOutputLiquid, index: number) => void;
   txOutputsValue: TxOutputLiquid[];
-  newTxOutputsOnChange: (value: TxOutputLiquid[]) => void;
+  newTxOutputsOnChange: (value: TxOutputLiquid[]) => void; // when adding new tx outputs
   vm: VM;
 };
 
