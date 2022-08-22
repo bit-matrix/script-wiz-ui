@@ -6,11 +6,9 @@ import './App.scss';
 
 type Props = {
   extension?: any;
-  ff?: any;
 };
 
-const App: React.FC<Props> = ({ extension, ff }): JSX.Element => {
-  console.log('ff:', ff);
+const App: React.FC<Props> = ({ extension }): JSX.Element => {
   return <AppRouter extension={extension} />;
 };
 
