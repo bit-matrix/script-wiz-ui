@@ -9,9 +9,13 @@ import App from '../src/App.tsx';
 
 import sha256Streaming from '@bitmatrix/sha256streaming';
 
+import sslRedirect from 'heroku-ssl-redirect';
+
 const PORT = process.env.PORT || 8000;
 
 const app = express();
+
+app.use(sslRedirect.default());
 
 app.use('^/$', (req, res, next) => {
   fs.readFile(path.resolve('./build/index.html'), 'utf-8', (err, data) => {
