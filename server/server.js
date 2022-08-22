@@ -11,8 +11,6 @@ import sha256Streaming from '@bitmatrix/sha256streaming';
 
 import sslRedirect from 'heroku-ssl-redirect';
 
-const PORT = process.env.PORT || 8000;
-
 const app = express();
 app.use(sslRedirect());
 
@@ -30,6 +28,6 @@ app.use('^/$', (req, res, next) => {
 
 app.use(express.static(path.resolve(__dirname, '..', 'build')));
 
-app.listen(PORT, () => {
-  console.log(`App launched on ${PORT}`);
+app.listen(process.env.PORT || 8000, function () {
+  console.log('Express server listening on port %d in %s mode', this.address().port, app.settings.env);
 });
