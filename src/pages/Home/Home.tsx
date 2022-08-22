@@ -4,17 +4,23 @@ import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import ScriptNavbar from '../../components/ScriptNavbar/ScriptNavbar';
 import ScriptEditor from '../../components/ScriptEditor/ScriptEditor';
 
-export const Home = () => {
+type Props = {
+  extension?: any;
+};
+
+export const Home: React.FC<Props> = ({ extension }) => {
   const [scriptWiz, setScriptWiz] = useState<ScriptWiz>();
   const [vm, setVm] = useState<VM>({
     network: VM_NETWORK.LIQUID,
     ver: VM_NETWORK_VERSION.SEGWIT,
   });
 
+  console.log('extension', extension);
+
   useEffect(() => {
-    const scriptWizInstance = new ScriptWiz(vm);
+    const scriptWizInstance = new ScriptWiz(vm, extension);
     setScriptWiz(scriptWizInstance);
-  }, [vm, vm.network, vm.ver]);
+  }, [extension, vm, vm.network, vm.ver]);
 
   if (scriptWiz !== undefined) {
     return (

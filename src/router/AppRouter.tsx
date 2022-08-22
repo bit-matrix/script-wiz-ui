@@ -8,11 +8,17 @@ import { TapLeafCalculator } from '../pages/TapleafCalculator/TapLeafCalculator'
 import { MastTool } from '../pages/MastTool/MastTool';
 import { Sha256Midstate } from '../pages/Sha256d/Sha256Midstate';
 
-export const AppRouter = (): JSX.Element => {
+type Props = {
+  extension?: any;
+};
+
+export const AppRouter: React.FC<Props> = ({ extension }): JSX.Element => {
   return (
     <Router>
       <Switch>
-        <Route exact path={ROUTE_PATH.HOME} component={Home} />
+        <Route exact path={ROUTE_PATH.HOME}>
+          <Home extension={extension} />
+        </Route>
         <Route exact path={ROUTE_PATH.HELPER} component={Helper} />
         <Route exact path={ROUTE_PATH.SIGNATURE_TOOLS} component={SignatureTools} />
         <Route exact path={ROUTE_PATH.TAPLEAF_CALCULATOR} component={TapLeafCalculator} />

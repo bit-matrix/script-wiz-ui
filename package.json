@@ -7,8 +7,9 @@
     "@babel/preset-react": "^7.7.0",
     "@babel/preset-typescript": "^7.18.6",
     "@babel/register": "^7.7.0",
+    "@bitmatrix/sha256streaming": "^1.0.36",
     "@monaco-editor/react": "^4.4.1",
-    "@script-wiz/lib": "0.1.83",
+    "@script-wiz/lib": "^0.1.94",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -30,7 +31,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node server/index.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
