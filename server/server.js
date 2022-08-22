@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import App from '../src/App.tsx';
 
 const express = require('express');
@@ -19,7 +20,12 @@ app.use('^/$', (req, res, next) => {
     }
 
     return res.send(
-      data.replace('<div id="root"></div>', `<div id="root">${ReactDOMServer.renderToString(<App extension={sha256Streaming} />)}</div>`),
+      data.replace(
+        '<div id="root"></div>',
+        `<script>window.extension=${sha256Streaming}</script><div id="root">${ReactDOMServer.renderToString(
+          <App extension={sha256Streaming} />,
+        )}</div>`,
+      ),
     );
   });
 });

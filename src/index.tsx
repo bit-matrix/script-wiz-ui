@@ -5,10 +5,18 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { CustomProvider } from 'rsuite';
 
+declare global {
+  interface Window {
+    extension: any;
+  }
+}
+
+const props = window.extension;
+
 ReactDOM.hydrate(
   <React.StrictMode>
     <CustomProvider theme="dark">
-      <App />
+      <App extension={props} />
     </CustomProvider>
   </React.StrictMode>,
   document.getElementById('root'),
