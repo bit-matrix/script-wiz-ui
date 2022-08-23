@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
-const sha256Streaming = require('@bitmatrix/sha256streaming');
+const Sha256Streaming = require('@bitmatrix/sha256streaming');
 
 // import sslRedirect from 'heroku-ssl-redirect';
 
@@ -22,8 +22,8 @@ app.use('^/$', (req, res, next) => {
     return res.send(
       data.replace(
         '<div id="root"></div>',
-        `<script>window.extension=${sha256Streaming}</script><div id="root">${ReactDOMServer.renderToString(
-          <App extension={sha256Streaming} />,
+        `<script>window.extension=${Sha256Streaming}</script><div id="root">${ReactDOMServer.renderToString(
+          <App extension={Sha256Streaming} />,
         )}</div>`,
       ),
     );
