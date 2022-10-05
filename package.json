@@ -9,7 +9,7 @@
     "@babel/register": "^7.7.0",
     "@bitmatrix/sha256streaming": "^1.0.36",
     "@monaco-editor/react": "^4.4.1",
-    "@script-wiz/lib": "^0.1.94",
+    "@script-wiz/lib": "^0.1.96",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
