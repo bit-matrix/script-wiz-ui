@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { Button, Input, InputGroup, Tooltip, Whisper } from 'rsuite';
 import { taproot } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
-
-import CopyIcon from '../../components/Svg/Icons/Copy';
+import { CopyIcon } from '../../components/Svg/Icons/Copy';
 
 export const TapLeafCalculator = () => {
   const [scriptByteCode, setScriptByteCode] = useState<string>('');

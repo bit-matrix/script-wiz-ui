@@ -7,17 +7,20 @@ import { SignatureTools } from '../pages/SignatureTools/SignatureTools';
 import { TapLeafCalculator } from '../pages/TapleafCalculator/TapLeafCalculator';
 import { MastTool } from '../pages/MastTool/MastTool';
 import { Sha256Midstate } from '../pages/Sha256d/Sha256Midstate';
+import { ScriptWiz, VM } from '@script-wiz/lib';
 
 type Props = {
-  extension?: any;
+  vm: VM;
+  scriptWiz?: ScriptWiz;
+  setVm: (vm: VM) => void;
 };
 
-export const AppRouter: React.FC<Props> = ({ extension }): JSX.Element => {
+export const AppRouter: React.FC<Props> = ({ scriptWiz, vm, setVm }): JSX.Element => {
   return (
     <Router>
       <Switch>
         <Route exact path={ROUTE_PATH.HOME}>
-          <Home extension={extension} />
+          <Home scriptWiz={scriptWiz} vm={vm} setVm={setVm} />
         </Route>
         <Route exact path={ROUTE_PATH.HELPER} component={Helper} />
         <Route exact path={ROUTE_PATH.SIGNATURE_TOOLS} component={SignatureTools} />

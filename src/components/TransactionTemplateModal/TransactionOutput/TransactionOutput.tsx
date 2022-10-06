@@ -3,9 +3,9 @@ import { TxOutput } from '@script-wiz/lib-core';
 import { Input } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
-import CloseIcon from '../../Svg/Icons/Close';
+import { CloseIcon } from '../../Svg/Icons/Close';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
-import './TransactionOutput.scss';
+import './TransactionOutputstyle.scss';
 
 type Props = {
   txOutput: { output: TxOutput; index: number };
@@ -14,7 +14,7 @@ type Props = {
   removeOutput: (index: number) => void;
 };
 
-const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput }) => {
+export const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, removeOutput }) => {
   // const isValidAmount =
   //   (txOutput.output.amount.length !== 16 && txOutput.output.amount.length !== 0) || !validHex(txOutput.output.amount)
   //     ? TX_TEMPLATE_ERROR_MESSAGE.AMOUNT_ERROR
@@ -68,5 +68,3 @@ const TransactionOutput: React.FC<Props> = ({ txOutput, vm, txOutputOnChange, re
     </div>
   );
 };
-
-export default TransactionOutput;

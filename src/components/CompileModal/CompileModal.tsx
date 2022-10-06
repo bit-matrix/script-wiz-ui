@@ -4,13 +4,13 @@ import { address, taproot, TAPROOT_VERSION } from '@script-wiz/lib-core';
 import { Button, Form, Input, InputGroup, Modal, Radio, RadioGroup, Tooltip, Whisper } from 'rsuite';
 import WizData from '@script-wiz/wiz-data';
 import { ValueType } from 'rsuite/esm/Radio';
-import CopyIcon from '../Svg/Icons/Copy';
-import './CompileModal.scss';
+import { CopyIcon } from '../Svg/Icons/Copy';
+import './CompileModalstyle.scss';
 import { Address } from '@script-wiz/lib-core/taproot/model';
 
 type Props = {
   scriptWiz: ScriptWiz;
-  compileModalData: { show: boolean; data?: string, artifact?: Record<string, any> };
+  compileModalData: { show: boolean; data?: string; artifact?: Record<string, any> };
   showCompileModal: (show: boolean) => void;
 };
 
@@ -30,7 +30,7 @@ type TaprootState = {
   address: Address;
 };
 
-const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompileModal }) => {
+export const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompileModal }) => {
   const [keyPath, setKeyPath] = useState<KeyPath>(KeyPath.UNKNOWN);
   const [tapleafVersion, setTapleafVersion] = useState<TapleafVersion>(TapleafVersion.DEFAULT);
   const [pubKeyInput, setPubKeyInput] = useState<string>('');
@@ -261,5 +261,3 @@ const CompileModal: React.FC<Props> = ({ scriptWiz, compileModalData, showCompil
     </Modal>
   );
 };
-
-export default CompileModal;

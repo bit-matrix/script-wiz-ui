@@ -5,10 +5,10 @@ import { crypto } from '@script-wiz/lib-core';
 import { CONVERT_TYPE } from '../../utils/enum/CONVERT_TYPE';
 import { HELPER_ERROR_MESSAGE } from '../../utils/enum/HELPER_ERROR_MESSAGE';
 import { convertBase64, reverseHex, validBin, validBytes, validHex, validNumber } from '../../utils/helper';
-import CopyIcon from '../../components/Svg/Icons/Copy';
-import CloseIcon from '../../components/Svg/Icons/Close';
+import { CopyIcon } from '../../components/Svg/Icons/Copy';
+import { CloseIcon } from '../../components/Svg/Icons/Close';
 import { ValueType } from 'rsuite/esm/Checkbox';
-import './Helper.scss';
+import './Helperstyle.scss';
 
 type Result = {
   hexResult: string;

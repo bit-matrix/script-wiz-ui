@@ -6,7 +6,7 @@ type Props = {
   display: string;
 };
 
-const CustomWhisper: React.FC<Props> = ({ tooltip, display }) => {
+export const CustomWhisper: React.FC<Props> = ({ tooltip, display }) => {
   return (
     <div className="tooltip">
       <div className={`editor-output-text ${getOutputValueType(display)} `}>{display}</div>
@@ -14,5 +14,3 @@ const CustomWhisper: React.FC<Props> = ({ tooltip, display }) => {
     </div>
   );
 };
-
-export default CustomWhisper;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Tooltip, Whisper } from 'rsuite';
-import DownloadIcon from '../../Svg/Icons/Download';
-import SaveIcon from '../../Svg/Icons/Save';
-import TrashIcon from '../../Svg/Icons/Trash';
-import TerminalIcon from '../../Svg/Icons/Terminal';
-import './ScriptEditorHeader.scss';
+import { DownloadIcon } from '../../Svg/Icons/Download';
+import { SaveIcon } from '../../Svg/Icons/Save';
+import { TrashIcon } from '../../Svg/Icons/Trash';
+import { TerminalIcon } from '../../Svg/Icons/Terminal';
+import './ScriptEditorHeaderstyle.scss';
 
 type Props = {
   saveButtonVisibility: boolean;
@@ -15,7 +15,7 @@ type Props = {
   clearEditorClick: () => void;
 };
 
-const ScriptEditorHeader: React.FC<Props> = ({
+export const ScriptEditorHeader: React.FC<Props> = ({
   saveButtonVisibility,
   clearButtonVisibility,
   compileButtonClick,
@@ -60,5 +60,3 @@ const ScriptEditorHeader: React.FC<Props> = ({
     </div>
   );
 };
-
-export default ScriptEditorHeader;

@@ -2,15 +2,15 @@ import React, { useEffect, useState, useCallback, ReactElement } from 'react';
 import { TxData, TxInput, TxOutput } from '@script-wiz/lib-core';
 import { Button, Divider, Input, InputGroup, Message, Modal, Radio, RadioGroup, toaster } from 'rsuite';
 import { ValueType } from 'rsuite/esm/Radio';
-import TransactionInput from './TransactionInput/TransactionInput';
-import TransactionOutput from './TransactionOutput/TransactionOutput';
+import { TransactionInput } from './TransactionInput/TransactionInput';
+import { TransactionOutput } from './TransactionOutput/TransactionOutput';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
 import { ScriptWiz, VM, VM_NETWORK } from '@script-wiz/lib';
 import { upsertVM } from '../../helper';
 import axios from 'axios';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
-import CloseIcon from '../Svg/Icons/Close';
-import './TransactionTemplateModal.scss';
+import { CloseIcon } from '../Svg/Icons/Close';
+import './TransactionTemplateModalstyle.scss';
 
 type Props = {
   showModal: boolean;
@@ -47,7 +47,7 @@ enum Networks {
 
 let message: ReactElement;
 
-const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
+export const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showModalCallBack }) => {
   const [txInputs, setTxInputs] = useState<TxInput[]>([txInputInitial]);
   const [txOutputs, setTxOutputs] = useState<TxOutput[]>([txOutputInitial]);
   const [version, setVersion] = useState<string>('');
@@ -419,5 +419,3 @@ const TransactionTemplateModal: React.FC<Props> = ({ showModal, scriptWiz, showM
     </Modal>
   );
 };
-
-export default TransactionTemplateModal;

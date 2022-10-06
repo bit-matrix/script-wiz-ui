@@ -6,23 +6,23 @@ import logo from '../../images/transparent_white.png';
 import { SponsorModal } from './SponsorModal/SponsorModal';
 import { VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import { ROUTE_PATH } from '../../router/ROUTE_PATH';
-import GithubIcon from '../Svg/Icons/Github';
-import TwitterIcon from '../Svg/Icons/Twitter';
-import MediumIcon from '../Svg/Icons/Medium';
-import TelegramIcon from '../Svg/Icons/Telegram';
-import HeartIcon from '../Svg/Icons/Heart';
-import NpmIcon from '../Svg/Icons/Npm';
-import ToolsIcon from '../Svg/Icons/Tools';
-import MagicIcon from '../Svg/Icons/Magic';
-import './ScriptNavbar.scss';
-import LeafIcon from '../Svg/Icons/Leaf';
+import { GithubIcon } from '../Svg/Icons/Github';
+import { TwitterIcon } from '../Svg/Icons/Twitter';
+import { MediumIcon } from '../Svg/Icons/Medium';
+import { TelegramIcon } from '../Svg/Icons/Telegram';
+import { HeartIcon } from '../Svg/Icons/Heart';
+import { NpmIcon } from '../Svg/Icons/Npm';
+import { ToolsIcon } from '../Svg/Icons/Tools';
+import { MagicIcon } from '../Svg/Icons/Magic';
+import './ScriptNavbarstyle.scss';
+import { LeafIcon } from '../Svg/Icons/Leaf';
 
 type Props = {
   vm: VM;
   onSelectVm: (selectedVm: VM) => void;
 };
 
-const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
+export const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
   const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
 
   const title = useMemo(() => {
@@ -141,5 +141,3 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
     </div>
   );
 };
-
-export default ScriptNavbar;

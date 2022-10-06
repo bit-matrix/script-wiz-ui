@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Input, InputGroup, Tooltip, Whisper } from 'rsuite';
-import CopyIcon from '../../components/Svg/Icons/Copy';
+import { CopyIcon } from '../../components/Svg/Icons/Copy';
 import { sha256d } from '@script-wiz/lib-core';
 
 export const Sha256Midstate = () => {

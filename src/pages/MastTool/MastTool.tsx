@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { taproot, TAPROOT_VERSION } from '@script-wiz/lib-core';
 import { Button, Col, Form, Grid, Input, InputGroup, RadioGroup, Row, Tooltip, Whisper, Modal } from 'rsuite';
-import Radio, { ValueType } from 'rsuite/esm/Radio/Radio';
+
 import WizData from '@script-wiz/wiz-data';
 import { validHex } from '../../utils/helper';
-import './MastTool.scss';
+import './MastToolstyle.scss';
 import { Taproot } from '@script-wiz/lib-core/taproot/model';
-import CopyIcon from '../../components/Svg/Icons/Copy';
+import { CopyIcon } from '../../components/Svg/Icons/Copy';
 
 export const MastTool: React.FC = () => {
   const [version, setVersion] = useState<TAPROOT_VERSION>(TAPROOT_VERSION.BITCOIN);
@@ -43,7 +43,7 @@ export const MastTool: React.FC = () => {
   return (
     <div className="signature-tools-page-main ">
       <div className="signature-tools-page-tabs">
-        <RadioGroup
+        {/* <RadioGroup
           name="radioList"
           inline
           appearance="picker"
@@ -55,7 +55,7 @@ export const MastTool: React.FC = () => {
         >
           <Radio value={TAPROOT_VERSION.BITCOIN}>Bitcoin</Radio>
           <Radio value={TAPROOT_VERSION.LIQUID}>Elements</Radio>
-        </RadioGroup>
+        </RadioGroup> */}
       </div>
 
       <div className="signature-tools-result-item">

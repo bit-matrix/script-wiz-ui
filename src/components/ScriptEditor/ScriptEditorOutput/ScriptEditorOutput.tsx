@@ -1,14 +1,14 @@
 import React, { useCallback } from 'react';
 import WizData from '@script-wiz/wiz-data';
-import BanIcon from '../../Svg/Icons/Ban';
-import './ScriptEditorOutput.scss';
+import { BanIcon } from '../../Svg/Icons/Ban';
+import './ScriptEditorOutputstyle.scss';
 
 type Props = {
   lineStackDataListArray: Array<Array<WizData>>;
   errorMessage?: string;
 };
 
-const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage }) => {
+export const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMessage }) => {
   const getOutputValueType = (value: string): string => {
     if (value.startsWith('0x')) {
       return 'hex';
@@ -73,5 +73,3 @@ const ScriptEditorOutput: React.FC<Props> = ({ lineStackDataListArray, errorMess
     </div>
   );
 };
-
-export default ScriptEditorOutput;

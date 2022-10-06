@@ -4,9 +4,9 @@ import { Button, Checkbox, Divider, Input, InputGroup, Radio, RadioGroup, Toolti
 import { crypto } from '@script-wiz/lib-core';
 import WizData from '@script-wiz/wiz-data';
 import { validHex } from '../../utils/helper';
-import CopyIcon from '../../components/Svg/Icons/Copy';
+import { CopyIcon } from '../../components/Svg/Icons/Copy';
 import { ValueType } from 'rsuite/esm/Radio';
-import './SignatureTools.scss';
+import './SignatureToolsstyle.scss';
 
 export const SignatureTools = () => {
   const [privateKey, setPrivateKey] = useState<WizData>();

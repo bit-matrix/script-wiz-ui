@@ -4,12 +4,12 @@ import * as languageOptions from '../../../options/editorOptions/languageOptions
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import themeOptions from '../../../options/editorOptions/themeOptions';
 import Editor, { useMonaco } from '@monaco-editor/react';
-import editorOptions from '../../../options/editorOptions/editorOptions';
+import { editorOptions } from '../../../options/editorOptions/editorOptions';
 import { scriptWizEditor } from '../../../options/editorOptions/utils/constant';
 import { convertEditorLines } from '../../../helper';
 import { ScriptWiz } from '@script-wiz/lib';
 import { Opcode } from '@script-wiz/lib/opcodes/model/Opcode';
-import './ScriptEditorInput.scss';
+import './ScriptEditorInputstyle.scss';
 
 type Props = {
   scriptWiz: ScriptWiz;
@@ -21,7 +21,7 @@ type Props = {
   scroolTopCallback: (value: number) => void;
 };
 
-const ScriptEditorInput: React.FC<Props> = ({
+export const ScriptEditorInput: React.FC<Props> = ({
   scriptWiz,
   initialEditorValue,
   onChangeScriptEditorInput,
@@ -127,5 +127,3 @@ const ScriptEditorInput: React.FC<Props> = ({
 
   return null;
 };
-
-export default ScriptEditorInput;

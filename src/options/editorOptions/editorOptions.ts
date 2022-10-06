@@ -1,6 +1,6 @@
 import * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-const editorOptions: Monaco.editor.IEditorConstructionOptions = {
+export const editorOptions: Monaco.editor.IEditorConstructionOptions = {
   cursorBlinking: 'smooth',
   dragAndDrop: true,
   fontSize: 14,
@@ -18,5 +18,3 @@ const editorOptions: Monaco.editor.IEditorConstructionOptions = {
     vertical: 'hidden',
   },
 };
-
-export default editorOptions;

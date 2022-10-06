@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ScriptEditorInput from './ScriptEditorInput/ScriptEditorInput';
-import ScriptEditorOutput from './ScriptEditorOutput/ScriptEditorOutput';
-import ScriptEditorHeader from './ScriptEditorHeader/ScriptEditorHeader';
+import { ScriptEditorInput } from './ScriptEditorInput/ScriptEditorInput';
+import { ScriptEditorOutput } from './ScriptEditorOutput/ScriptEditorOutput';
+import { ScriptEditorHeader } from './ScriptEditorHeader/ScriptEditorHeader';
 import { convertEditorLines, LOCAL_STORAGE_KEY, LOCAL_STORAGE_OLD_KEY } from '../../helper';
 import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import WizData from '@script-wiz/wiz-data';
@@ -13,12 +13,12 @@ import {
   initialLiquidTaprootEditorValue,
   initialLiquidTaprootEditorValue2,
 } from './ScriptEditorInput/initialEditorValue';
-import CompileModal from '../CompileModal/CompileModal';
-import TransactionTemplateModal from '../TransactionTemplateModal/TransactionTemplateModal';
-import CustomWhisper from './CustomWhisper';
+import { CompileModal } from '../CompileModal/CompileModal';
+import { TransactionTemplateModal } from '../TransactionTemplateModal/TransactionTemplateModal';
+import { CustomWhisper } from './CustomWhisper';
 import { Mosaic } from 'react-mosaic-component';
 import { useLocalStorageData } from '../../hooks/useLocalStorage';
-import './ScriptEditor.scss';
+import './ScriptEditorstyle.scss';
 
 type Props = {
   scriptWiz: ScriptWiz;
@@ -29,7 +29,7 @@ const initialLastStackDataList: Array<WizData> = [];
 
 type EditorLocalStorage = { editorLines1: string | undefined; editorLines2: string | undefined; vm: VM };
 
-const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
+export const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   const [witnessScriptErrorMessage, setWitnessScriptErrorMessage] = useState<string | undefined>();
   const [stackElementsErrorMessage, setStackElementsErrorMessage] = useState<string | undefined>();
   const [witnessScriptLineStackListArray, setWitnessScriptLineStackListArray] = useState<Array<Array<WizData>>>(initialLineStackDataListArray);
@@ -690,5 +690,3 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     </>
   );
 };
-
-export default ScriptEditor;

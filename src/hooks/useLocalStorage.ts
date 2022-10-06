@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export const useLocalStorageData = <T>(k: string) => {
-  const value = localStorage.getItem(k);
+  const value = typeof window !== 'undefined' ? localStorage.getItem(k) : null;
   const object = value !== null ? JSON.parse(value) : undefined;
   const [data, setData] = useState<T | undefined>(object);
 

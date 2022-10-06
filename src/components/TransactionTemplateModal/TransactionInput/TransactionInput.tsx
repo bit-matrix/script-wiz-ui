@@ -3,10 +3,10 @@ import { TxInput } from '@script-wiz/lib-core';
 import { Input, Radio } from 'rsuite';
 import { TX_TEMPLATE_ERROR_MESSAGE } from '../../../utils/enum/TX_TEMPLATE_ERROR_MESSAGE';
 import { validHex } from '../../../utils/helper';
-import CloseIcon from '../../Svg/Icons/Close';
+import { CloseIcon } from '../../Svg/Icons/Close';
 import { VM, VM_NETWORK } from '@script-wiz/lib';
 import WizData, { hexLE } from '@script-wiz/wiz-data';
-import './TransactionInput.scss';
+import './TransactionInputstyle.scss';
 
 type Props = {
   vm: VM;
@@ -17,7 +17,7 @@ type Props = {
   lastBlock?: any;
 };
 
-const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput, version, lastBlock }) => {
+export const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, removeInput, version, lastBlock }) => {
   const isValidPreviousTxId =
     (txInput.input.previousTxId.length !== 64 && txInput.input.previousTxId.length !== 0) || !validHex(txInput.input.previousTxId)
       ? TX_TEMPLATE_ERROR_MESSAGE.PREVIOUS_TX_ID_ERROR
@@ -238,5 +238,3 @@ const TransactionInput: React.FC<Props> = ({ txInput, vm, txInputOnChange, remov
     </div>
   );
 };
-
-export default TransactionInput;

@@ -2,14 +2,17 @@
 import React from 'react';
 import { AppRouter } from './router/AppRouter';
 import 'react-mosaic-component/react-mosaic-component.css';
-import './App.scss';
+import './Appstyle.scss';
+import { ScriptWiz, VM } from '@script-wiz/lib';
 
 type Props = {
-  extension?: any;
+  vm: VM;
+  scriptWiz?: ScriptWiz;
+  setVm: (vm: VM) => void;
 };
 
-const App: React.FC<Props> = ({ extension }): JSX.Element => {
-  return <AppRouter extension={extension} />;
+const App: React.FC<Props> = ({ vm, scriptWiz, setVm }): JSX.Element => {
+  return <AppRouter scriptWiz={scriptWiz} vm={vm} setVm={setVm} />;
 };
 
 export default App;

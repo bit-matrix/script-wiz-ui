@@ -1,8 +1,8 @@
 import React from 'react';
 import { SvgType } from './SvgType';
-import './Svg.scss';
+import './Svgstyle.scss';
 
-const Svg: React.FC<SvgType> = ({
+export const Svg: React.FC<SvgType> = ({
   path,
   fill,
   bgColor,
@@ -28,5 +28,3 @@ const Svg: React.FC<SvgType> = ({
     </svg>
   );
 };
-
-export default Svg;
