@@ -6,6 +6,12 @@ import reportWebVitals from './reportWebVitals';
 //import "rsuite/dist/styles/rsuite-dark.css";
 import { CustomProvider } from 'rsuite';
 
+declare global {
+  interface Window {
+    secret: any;
+  }
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <CustomProvider theme="dark">
