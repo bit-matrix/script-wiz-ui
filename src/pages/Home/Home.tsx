@@ -12,7 +12,16 @@ export const Home = () => {
   });
 
   useEffect(() => {
-    const scriptWizInstance = new ScriptWiz(vm);
+    const extension = {
+      sha256Initialize: window.secret.sha256initialize,
+      sha256Finalize: window.secret.sha256finalize,
+      sha256Update: window.secret.sha256update,
+      deterministicrandom: window.secret.deterministicrandom,
+    };
+
+    console.log(extension);
+
+    const scriptWizInstance = new ScriptWiz(vm, extension);
     setScriptWiz(scriptWizInstance);
   }, [vm, vm.network, vm.ver]);
 
