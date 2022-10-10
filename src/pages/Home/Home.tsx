@@ -19,8 +19,6 @@ export const Home = () => {
       deterministicrandom: window.secret.deterministicrandom,
     };
 
-    console.log(extension);
-
     const scriptWizInstance = new ScriptWiz(vm, extension);
     setScriptWiz(scriptWizInstance);
   }, [vm, vm.network, vm.ver]);
