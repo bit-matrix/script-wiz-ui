@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Input, InputGroup, Modal, Nav, Tooltip, Whisper } from 'rsuite';
 import CopyIcon from '../../Svg/Icons/Copy';
-import btcQr from './qrImages/btc.png';
-import liquidQr from './qrImages/liquid.png';
 import './SponsorModal.scss';
 
 interface SponsorModalProps {
@@ -25,13 +23,10 @@ export const SponsorModal: React.FC<SponsorModalProps> = ({ show, close }) => {
   return (
     <Modal size="sm" open={show} backdrop={false} onClose={close}>
       <Nav activeKey={activeSponsorType} appearance="subtle" onSelect={(sponsorType) => setActiveSponsorType(sponsorType)}>
-        <Nav.Item eventKey="btc">BTC (Bech32)</Nav.Item>
+        <Nav.Item eventKey="btc">BTC</Nav.Item>
         <Nav.Item eventKey="lbtc">L-BTC</Nav.Item>
       </Nav>
       <Modal.Body>
-        <div className="sponsor-modal-body">
-          {activeSponsorType === 'btc' ? <img src={btcQr} alt="btcqr" /> : <img src={liquidQr} alt="lbtcqr" />}
-        </div>
         <div>
           <InputGroup>
             <Input
@@ -40,8 +35,8 @@ export const SponsorModal: React.FC<SponsorModalProps> = ({ show, close }) => {
               onChange={() => {}}
               value={`${
                 activeSponsorType === 'btc'
-                  ? 'bc1qvhdd984jla9dkr5nad2f6a2wlwt9htucmy3yj3scgmkjymn7usmsjygcta'
-                  : 'VJL9AAstGGHSyF83M6ineuZj3TjQDtykb6zJ5dzxa8fJPUhwEGatuAPjKcBjKKcNeYzicxQ6GostkFoo'
+                  ? 'bc1qxs7cmf53kqmey0xzt308l0mq2hm35utu45qcjy'
+                  : 'lq1qqdz4844m679zvpvvnulu6q4zm9nqr4ws2gr7u46xncva5ma3p7yphytwtuc64rtuefs2s45f45nfv9xwk6kgwhrkkauz7xsy2'
               }`}
             />
             <Whisper placement="top" trigger="click" speaker={<Tooltip>Text has been copied to clipboard!</Tooltip>}>
