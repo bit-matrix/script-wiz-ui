@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
+import { compileData, ScriptWiz, VM, VM_NETWORK, VM_NETWORK_VERSION } from '@script-wiz/lib';
 import WizData from '@script-wiz/wiz-data';
 import { Mosaic } from 'react-mosaic-component';
 import {
@@ -237,7 +237,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
   };
 
   const parseInput = useCallback(
-    (inputText: string, isWitnessElement: boolean = true) => {
+    (inputText: string, scriptCompile: string, isWitnessElement: boolean = true) => {
       // Look for $label assignments, keep them for later processing and strip them from the line string.
       const labelMatches = inputText.match(/\$\w+$/);
 
@@ -288,6 +288,51 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     [scriptWiz],
   );
 
+  const compileAll = useCallback(
+    (inputText: string) => {
+      // Look for $label assignments, keep them for later processing and strip them from the line string.
+      const labelMatches = inputText.match(/\$\w+$/);
+      if (labelMatches) {
+        inputText = inputText.replace(/\s*\$\w+$/, '');
+      }
+
+      if (inputText.startsWith('<') && inputText.endsWith('>')) {
+        const inputTextValue = inputText.substring(1, inputText.length - 1);
+
+        if (inputTextValue.startsWith('0x')) {
+          return compileData(inputTextValue.substring(2));
+        } else if (
+          (inputTextValue.startsWith('"') && inputTextValue.endsWith('"')) ||
+          (inputTextValue.startsWith("'") && inputTextValue.endsWith("'"))
+        ) {
+          const inputTextValueString = inputTextValue.substring(1, inputTextValue.length - 1);
+          const data = WizData.fromText(inputTextValueString);
+
+          return compileData(data.hex);
+        } else if (!isNaN(Number(inputTextValue))) {
+          const data = WizData.fromNumber(Number(inputTextValue));
+
+          return compileData(data.hex);
+        } else if (inputTextValue.startsWith('OP_')) {
+          const data = scriptWiz.opCodes.wordHex(inputTextValue);
+          return data.substring(2);
+        } else {
+          console.error('UI: Invalid input value!!!');
+        }
+      } else if (inputText.startsWith('OP_')) {
+        const data = scriptWiz.opCodes.wordHex(inputText);
+
+        return data.substring(2);
+      } else {
+        console.error('UI: Invalid input value!!!');
+      }
+
+      return '';
+    },
+
+    [scriptWiz],
+  );
+
   const stackElementsOnChange = (lines: string[]) => {
     setStackElementsErrorMessage(undefined);
 
@@ -317,16 +362,29 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
     const firstEditorLineCount = witnessScriptLines?.length || 0;
 
     if (addedLines) {
+      let scriptCompileResult = '';
+
+      for (let z = 0; z < addedLines.length; z++) {
+        const line = addedLines[z];
+
+        if (z > firstEditorLineCount - 1) {
+          let data = '';
+          data = compileAll(line);
+
+          scriptCompileResult += data;
+        }
+      }
+
       for (let i = 0; i < addedLines.length; i++) {
         const line = addedLines[i];
         let firstIndex = 0;
 
         if (line !== '') {
           if (i < firstEditorLineCount) {
-            parseInput(line, false);
+            parseInput(line, scriptCompileResult, false);
             firstIndex = i;
           } else {
-            parseInput(line);
+            parseInput(line, scriptCompileResult);
           }
 
           const scriptWizErrorMessage = scriptWiz.stackDataList.errorMessage;
@@ -356,7 +414,7 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
     setWitnessScriptLineStackListArray(newLineStackDataListArray.slice(firstEditorLineCount, newLineStackDataListArray.length));
     setStackElementsLineStackListArray(newLineStackDataListArray.slice(0, firstEditorLineCount));
-  }, [witnessScriptLines, stackElementsLines, parseInput, scriptWiz, scriptWiz.stackDataList.txData]);
+  }, [witnessScriptLines, stackElementsLines, parseInput, scriptWiz, scriptWiz.stackDataList.txData, compileAll]);
 
   const compileScripts = () => {
     try {
