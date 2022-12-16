@@ -368,9 +368,12 @@ const ScriptEditor: React.FC<Props> = ({ scriptWiz }) => {
 
         if (z > firstEditorLineCount - 1) {
           let data = '';
-          data = compileAll(line);
-
-          scriptCompileResult += data;
+          try {
+            data = compileAll(line);
+            scriptCompileResult += data;
+          } catch {
+            // @todo add extra control
+          }
         }
       }
 
