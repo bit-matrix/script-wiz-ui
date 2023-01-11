@@ -7,6 +7,7 @@ import { SignatureTools } from '../pages/SignatureTools/SignatureTools';
 import { TapLeafCalculator } from '../pages/TapleafCalculator/TapLeafCalculator';
 import { MastTool } from '../pages/MastTool/MastTool';
 import { Sha256Midstate } from '../pages/Sha256d/Sha256Midstate';
+import { EcCalculator } from '../pages/EcCalculator/EcCalculator';
 
 export const AppRouter = (): JSX.Element => {
   return (
@@ -18,6 +19,7 @@ export const AppRouter = (): JSX.Element => {
         <Route exact path={ROUTE_PATH.TAPLEAF_CALCULATOR} component={TapLeafCalculator} />
         <Route exact path={ROUTE_PATH.MAST_TOOL} component={MastTool} />
         <Route exact path={ROUTE_PATH.SHA256D} component={Sha256Midstate} />
+        <Route exact path={ROUTE_PATH.EC_CALCULATOR} component={EcCalculator} />
       </Switch>
     </Router>
   );
