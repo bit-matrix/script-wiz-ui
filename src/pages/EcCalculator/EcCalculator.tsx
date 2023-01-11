@@ -31,19 +31,23 @@ export const EcCalculator = () => {
   };
 
   const fromX = () => {
-    const key = Buffer.from(x, 'hex');
+    try {
+      const key = Buffer.from(x, 'hex');
 
-    const pub = bcrypto.secp256k1.publicKeyCreate(key);
+      const pub = bcrypto.secp256k1.publicKeyCreate(key);
 
-    const isOdd = pub[0] === 3 ? true : false;
+      const isOdd = pub[0] === 3 ? true : false;
 
-    const p = Point.fromHex(x);
+      const p = Point.fromHex(x);
 
-    setY({ isOdd, y: p.y.toString(16) });
+      setY({ isOdd, y: p.y.toString(16) });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <div className="signature-tools-page-main">
+    <div className="signature-tools-page-main" style={{ overflowX: 'hidden' }}>
       <div className="signature-tools-result-item">
         <h6 className="signature-tools-tab-header">(Point 1)</h6>
         <Input
