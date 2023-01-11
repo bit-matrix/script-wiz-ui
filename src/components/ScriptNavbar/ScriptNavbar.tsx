@@ -16,7 +16,7 @@ import ToolsIcon from '../Svg/Icons/Tools';
 import MagicIcon from '../Svg/Icons/Magic';
 import './ScriptNavbar.scss';
 import LeafIcon from '../Svg/Icons/Leaf';
-import GraphIcon from '../Svg/Icons/Graph';
+import WavePointIcon from '@rsuite/icons/WavePoint';
 
 type Props = {
   vm: VM;
@@ -69,7 +69,7 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
       <div className="script-editor-header-right-section">
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Ec Calculator</Tooltip>}>
           <div onClick={() => window.open(ROUTE_PATH.EC_CALCULATOR, '_blank')} className="route-button">
-            <ToolsIcon width="1rem" height="1rem" />
+            <WavePointIcon width="1rem" height="1rem" />
           </div>
         </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Mast Tool</Tooltip>}>
