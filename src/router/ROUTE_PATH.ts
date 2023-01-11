@@ -5,4 +5,5 @@ export enum ROUTE_PATH {
   TAPLEAF_CALCULATOR = '/tapleafcalculator',
   MAST_TOOL = '/masthelper',
   SHA256D = '/sha256d',
+  EC_CALCULATOR = '/ecCalculator',
 }
