@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Input, InputGroup, Tooltip, Whisper, Nav, RadioGroup, Radio } from 'rsuite';
+import { Button, Input, InputGroup, Tooltip, Whisper, RadioGroup, Radio } from 'rsuite';
 import CopyIcon from '../../components/Svg/Icons/Copy';
 import { Point } from '@noble/secp256k1';
 import bcrypto from 'bcrypto';
