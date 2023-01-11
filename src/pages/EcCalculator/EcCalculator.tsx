@@ -130,7 +130,7 @@ export const EcCalculator = () => {
           </div>
           <div className="signature-tools-result-item">
             <Button className="signature-tools-button" appearance="primary" size="md" onClick={pointMultiplation}>
-              X Mul
+              Multiply Points
             </Button>
           </div>
         </>
@@ -166,7 +166,7 @@ export const EcCalculator = () => {
           </div>
           <div className="signature-tools-result-item">
             <Button className="signature-tools-button" appearance="primary" size="md" onClick={pointAdd}>
-              + Add
+              Addition Points
             </Button>
           </div>
         </>
