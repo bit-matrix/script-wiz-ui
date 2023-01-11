@@ -17,6 +17,7 @@ import MagicIcon from '../Svg/Icons/Magic';
 import './ScriptNavbar.scss';
 import LeafIcon from '../Svg/Icons/Leaf';
 import WavePointIcon from '@rsuite/icons/WavePoint';
+import NumbersIcon from '@rsuite/icons/Numbers';
 
 type Props = {
   vm: VM;
@@ -67,6 +68,11 @@ const ScriptNavbar: React.FC<Props> = ({ vm, onSelectVm }) => {
         </a>
       </div>
       <div className="script-editor-header-right-section">
+        <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>256 Bit Calculator</Tooltip>}>
+          <div onClick={() => window.open(ROUTE_PATH.CALCULATOR, '_blank')} className="route-button">
+            <NumbersIcon width="1rem" height="1rem" />
+          </div>
+        </Whisper>
         <Whisper placement="bottom" trigger="hover" speaker={<Tooltip>Ec Calculator</Tooltip>}>
           <div onClick={() => window.open(ROUTE_PATH.EC_CALCULATOR, '_blank')} className="route-button">
             <WavePointIcon width="1rem" height="1rem" />
