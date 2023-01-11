@@ -14,7 +14,7 @@ export const EcCalculator = () => {
   const [mulResult, setMulResult] = useState({ x: '', y: '' });
   const [addResult, setAddResult] = useState({ x: '', y: '' });
   const [x, setX] = useState('');
-  const [y, setY] = useState<{ isOdd: boolean; y: string }>();
+  const [y, setY] = useState<{ isOdd: boolean; y: string; y2: string }>();
 
   const pointMultiplation = () => {
     try {
@@ -37,12 +37,8 @@ export const EcCalculator = () => {
   const fromX = () => {
     try {
       const p = Point.fromHex(x);
-      console.log(p.y.toString(16));
-      console.log(p.negate().y.toString(16));
 
-      const pub = bcrypto.secp256k1.publicKeyExport(Buffer.from(x, 'hex'));
-      console.log(pub.y.toString('hex'));
-      setY({ isOdd: true, y: '00' });
+      setY({ isOdd: true, y: p.y.toString(16), y2: p.negate().y.toString(16) });
     } catch (error) {
       console.log(error);
     }
@@ -196,7 +192,7 @@ export const EcCalculator = () => {
             </Button>
           </div>
           <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Y Axis</h6>
+            <h6 className="signature-tools-tab-header">Y Axis Positive</h6>
             <div>
               <InputGroup className="signature-tools-compile-modal-input-group">
                 <Input value={y?.y} disabled />
@@ -206,7 +202,21 @@ export const EcCalculator = () => {
                   </InputGroup.Button>
                 </Whisper>
               </InputGroup>
-              <span>X axis is {y?.isOdd ? 'odd' : 'even'}</span>
+              {/* <span>X axis is {y?.isOdd ? 'odd' : 'even'}</span> */}
+            </div>
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Y Axis Negative</h6>
+            <div>
+              <InputGroup className="signature-tools-compile-modal-input-group">
+                <Input value={y?.y2} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(y?.y2 || '')}>
+                    <CopyIcon width="1rem" height="1rem" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
+              {/* <span>X axis is {y?.isOdd ? 'odd' : 'even'}</span> */}
             </div>
           </div>
         </>
