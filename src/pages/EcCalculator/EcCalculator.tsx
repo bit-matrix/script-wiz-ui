@@ -64,12 +64,12 @@ export const EcCalculator = () => {
       {tab !== 2 && (
         <>
           <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Point 1</h6>
+            <h6 className="signature-tools-tab-header">Point</h6>
             <div className="flex-div">
               <Input
                 className="signature-tools-main-input"
                 type="text"
-                placeholder="Point 1 Value (hex)"
+                placeholder="Point Value (hex)"
                 value={point1}
                 style={{ width: '90%' }}
                 onChange={(value: string) => setPoint1(value.replace(/\s/g, ''))}
@@ -88,11 +88,11 @@ export const EcCalculator = () => {
             </div>
           </div>
           <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Point 2</h6>
+            <h6 className="signature-tools-tab-header">Scalar</h6>
             <Input
               className="signature-tools-main-input"
               type="text"
-              placeholder="Point 2 Value (hex)"
+              placeholder="Scalar Value (hex)"
               value={point2}
               onChange={(value: string) => setPoint2(value.replace(/\s/g, ''))}
             />
