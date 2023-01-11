@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Input, InputGroup, Tooltip, Whisper, RadioGroup, Radio } from 'rsuite';
+import { Button, Input, InputGroup, Tooltip, Whisper, RadioGroup, Radio, Checkbox } from 'rsuite';
 import CopyIcon from '../../components/Svg/Icons/Copy';
 import { Point } from '@noble/secp256k1';
 import bcrypto from 'bcrypto';
 import { ValueType } from 'rsuite/esm/Radio';
+
+const g = '79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798';
 
 export const EcCalculator = () => {
   const [tab, setTab] = useState(0);
@@ -58,7 +60,7 @@ export const EcCalculator = () => {
             setTab(Number(value));
           }}
         >
-          <Radio value={0}>POINT MULTIPILATION</Radio>
+          <Radio value={0}>POINT MULTIPLATION</Radio>
           <Radio value={1}>POINT ADDITION</Radio>
           <Radio value={2}>Y FROM X</Radio>
         </RadioGroup>
@@ -67,13 +69,27 @@ export const EcCalculator = () => {
         <>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">Point 1</h6>
-            <Input
-              className="signature-tools-main-input"
-              type="text"
-              placeholder="Point 1 Value (hex)"
-              value={point1}
-              onChange={(value: string) => setPoint1(value.replace(/\s/g, ''))}
-            />
+            <div className="flex-div">
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                placeholder="Point 1 Value (hex)"
+                value={point1}
+                style={{ width: '90%' }}
+                onChange={(value: string) => setPoint1(value.replace(/\s/g, ''))}
+              />
+              <Checkbox
+                className="signature-tools-import-checkbox"
+                style={{ width: '10%' }}
+                onChange={(value, checked) => {
+                  if (checked) {
+                    setPoint1(g);
+                  }
+                }}
+              >
+                Fill G
+              </Checkbox>
+            </div>
           </div>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">Point 2</h6>
