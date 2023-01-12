@@ -4,6 +4,9 @@ import CopyIcon from '../../components/Svg/Icons/Copy';
 import { Point } from '@noble/secp256k1';
 import { ValueType } from 'rsuite/esm/Radio';
 import BN from 'bn.js';
+import { validHex } from '../../utils/helper';
+import WizData from '@script-wiz/wiz-data';
+import { taproot } from '@script-wiz/lib-core';
 
 const ORDNUNG = new BN('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 'hex');
 const g = '79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798';
@@ -16,6 +19,9 @@ export const EcCalculator = () => {
   const [addResult, setAddResult] = useState({ x: '', y: '' });
   const [x, setX] = useState('');
   const [y, setY] = useState<{ isOdd: boolean; y: string; y2: string }>();
+  const [innerKey, setInnerKey] = useState<string>('');
+  const [tapTweak, setTapTweak] = useState<string>('');
+  const [tweakAddResult, setTweakAddResult] = useState<string>('');
 
   const pointMultiplation = () => {
     try {
@@ -68,7 +74,18 @@ export const EcCalculator = () => {
 
     const p = Point.fromHex(xAxisHex);
 
-    setMulResult({ x: xAxisHex, y: p.y.toString(16) });
+    setAddResult({ x: xAxisHex, y: p.y.toString(16) });
+  };
+
+  const checkInnerKeyValid = () => {
+    return validHex(innerKey) && innerKey.length === 64;
+  };
+
+  const tweakAddCalc = () => {
+    const innerKeyData = WizData.fromHex(innerKey);
+    const tapTweakData = WizData.fromHex(tapTweak);
+    const res = taproot.tweakAdd(innerKeyData, tapTweakData);
+    setTweakAddResult(res.hex);
   };
 
   return (
@@ -88,9 +105,10 @@ export const EcCalculator = () => {
           <Radio value={2}>SCALAR MULTIPLICATION</Radio>
           <Radio value={3}>SCALAR ADDITION</Radio>
           <Radio value={4}>Y FROM X</Radio>
+          <Radio value={5}>TWEAK ADD</Radio>
         </RadioGroup>
       </div>
-      {tab !== 4 && (
+      {tab < 4 && (
         <>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">{tab < 2 ? 'Point' : 'Scalar'}</h6>
@@ -270,6 +288,52 @@ export const EcCalculator = () => {
                 </Whisper>
               </InputGroup>
               {/* <span>X axis is {y?.isOdd ? 'odd' : 'even'}</span> */}
+            </div>
+          </div>
+        </>
+      )}
+
+      {tab === 5 && (
+        <>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Inner Key (Hex)</h6>
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder="32-byte inner key"
+              value={innerKey}
+              onChange={(value: string) => setInnerKey(value.replace(/\s/g, ''))}
+            />
+            <div className="helper-tab-info">
+              {!checkInnerKeyValid() && innerKey !== '' ? <div className="helper-error-message">Invalid Inner Key</div> : null}
+            </div>
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">TapTweak (Hex)</h6>
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder="32-byte tap tweak"
+              value={tapTweak}
+              onChange={(value: string) => setTapTweak(value.replace(/\s/g, ''))}
+            />
+          </div>
+          <div className="signature-tools-result-item">
+            <Button className="signature-tools-button" appearance="primary" size="md" onClick={tweakAddCalc}>
+              Tweak Add
+            </Button>
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Tweak Add Result</h6>
+            <div>
+              <InputGroup className="signature-tools-compile-modal-input-group">
+                <Input value={tweakAddResult} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakAddResult)}>
+                    <CopyIcon width="1rem" height="1rem" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
             </div>
           </div>
         </>
