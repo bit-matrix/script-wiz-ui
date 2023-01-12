@@ -124,8 +124,11 @@ export const BitCalculator = () => {
 
   return (
     <div className="signature-tools-page-main" style={{ overflow: 'hidden' }}>
+      <h3 className="signature-tools-tab-header" style={{ textAlign: 'center' }}>
+        Big Number Calculator{' '}
+      </h3>
       <div className="signature-tools-result-item">
-        <h6 className="signature-tools-tab-header">Point 2</h6>
+        <h6 className="signature-tools-tab-header">Number or Hex</h6>
         <Input
           className="signature-tools-main-input"
           type="text"
@@ -133,6 +136,7 @@ export const BitCalculator = () => {
           value={newState}
           onChange={(value: string) => setNewState(value.replace(/\s/g, ''))}
         />
+        <span>Hex values must start with "0x" prefix</span>
       </div>
       <div className="signature-tools-result-item">
         <div className="flex-div"></div>
