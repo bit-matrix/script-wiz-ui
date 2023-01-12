@@ -59,9 +59,7 @@ export const EcCalculator = () => {
     const xAxis = a.mul(b.mod(ORDNUNG)).mod(ORDNUNG);
     const xAxisHex = xAxis.toString('hex');
 
-    const p = Point.fromHex(xAxisHex);
-
-    setMulResult({ x: xAxisHex, y: p.y.toString(16) });
+    setMulResult({ x: xAxisHex, y: '' });
   };
 
   //ref -> https://github.com/MrMaxweII/Secp256k1-Calculator/blob/c9374a8dab79a0b609c235b9c6e8c3ba290e410a/Calculator.java#L90
@@ -72,9 +70,7 @@ export const EcCalculator = () => {
     const xAxis = a.add(ORDNUNG.add(b)).mod(ORDNUNG);
     const xAxisHex = xAxis.toString('hex');
 
-    const p = Point.fromHex(xAxisHex);
-
-    setAddResult({ x: xAxisHex, y: p.y.toString(16) });
+    setAddResult({ x: xAxisHex, y: '' });
   };
 
   const checkInnerKeyValid = () => {
@@ -164,19 +160,22 @@ export const EcCalculator = () => {
               </InputGroup>
             </div>
           </div>
-          <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Multiplation Result Y</h6>
-            <div>
-              <InputGroup className="signature-tools-compile-modal-input-group">
-                <Input value={mulResult.y} disabled />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(mulResult.y)}>
-                    <CopyIcon width="1rem" height="1rem" />
-                  </InputGroup.Button>
-                </Whisper>
-              </InputGroup>
+          {tab === 0 && (
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Multiplation Result Y</h6>
+              <div>
+                <InputGroup className="signature-tools-compile-modal-input-group">
+                  <Input value={mulResult.y} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(mulResult.y)}>
+                      <CopyIcon width="1rem" height="1rem" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="signature-tools-result-item">
             <Button
               className="signature-tools-button"
@@ -211,19 +210,22 @@ export const EcCalculator = () => {
               </InputGroup>
             </div>
           </div>
-          <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Addition Result Y</h6>
-            <div>
-              <InputGroup className="signature-tools-compile-modal-input-group">
-                <Input value={addResult.y} disabled />
-                <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
-                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(addResult.y)}>
-                    <CopyIcon width="1rem" height="1rem" />
-                  </InputGroup.Button>
-                </Whisper>
-              </InputGroup>
+          {tab === 1 && (
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Addition Result Y</h6>
+              <div>
+                <InputGroup className="signature-tools-compile-modal-input-group">
+                  <Input value={addResult.y} disabled />
+                  <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
+                    <InputGroup.Button onClick={() => navigator.clipboard.writeText(addResult.y)}>
+                      <CopyIcon width="1rem" height="1rem" />
+                    </InputGroup.Button>
+                  </Whisper>
+                </InputGroup>
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="signature-tools-result-item">
             <Button
               className="signature-tools-button"

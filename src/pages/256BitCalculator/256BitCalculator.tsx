@@ -4,20 +4,46 @@ import { Button, Input } from 'rsuite';
 
 export const BitCalculator = () => {
   const [oldState, setOldState] = useState<BN>();
-  const [newState, setNewState] = useState<number | string>('');
+  const [newState, setNewState] = useState<string>('');
 
   const add = () => {
     if (oldState) {
-      const bn2 = new BN(newState);
+      console.log('1');
+      if (newState.startsWith('0x')) {
+        console.log('3');
+        const input = new BN(newState, 'hex');
 
-      const calculation = oldState.add(bn2);
-
-      setOldState(calculation);
-      console.log(calculation.toString());
+        const calculation = oldState.add(input);
+        setOldState(calculation);
+      } else {
+        console.log('4');
+        const input = new BN(Number(newState));
+        const calculation = oldState.add(input);
+        setOldState(calculation);
+      }
     } else {
-      console.log(new BN(newState));
-      setOldState(new BN(newState));
+      console.log('2');
+
+      if (newState.startsWith('0x')) {
+        console.log('5');
+        setOldState(new BN(newState, 'hex'));
+      } else {
+        console.log('6');
+        setOldState(new BN(Number(newState)));
+      }
     }
+
+    // if (oldState) {
+    //   const bn2 = new BN(newState);
+
+    //   const calculation = oldState.add(bn2);
+
+    //   setOldState(calculation);
+    //   console.log(calculation.toString());
+    // } else {
+    //   console.log(new BN(newState));
+    //   setOldState(new BN(newState));
+    // }
 
     setNewState('');
   };
@@ -94,6 +120,10 @@ export const BitCalculator = () => {
           <Button className="signature-tools-button mr-5" appearance="primary" size="md" onClick={() => {}}>
             %
           </Button>
+        </div>
+        <div className="signature-tools-result-item">
+          <span>{oldState?.toString('hex')}</span> <br />
+          <span>{oldState?.toString()}</span>
         </div>
       </div>
     </div>
