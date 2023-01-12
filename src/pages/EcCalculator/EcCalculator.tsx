@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Input, InputGroup, Tooltip, Whisper, RadioGroup, Radio, Checkbox } from 'rsuite';
 import CopyIcon from '../../components/Svg/Icons/Copy';
-import { Point } from '@noble/secp256k1';
-import bcrypto from 'bcrypto';
+import { Point, utils } from '@noble/secp256k1';
 import { ValueType } from 'rsuite/esm/Radio';
+import BN from 'bn.js';
 
 const g = '79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798';
 
@@ -44,6 +44,35 @@ export const EcCalculator = () => {
     }
   };
 
+  // const mert = () => {
+  //   const normal = utils._normalizePrivateKey;
+
+  //   const point = Point.fromHex('d0864c071c0c3f1101dcd0f34ce20d2364f1db7e70f884077530780fb9e251af');
+  //   const t = normal('877DF449BBD5DC304081FC653D3727EA7EFA1F89ACC5E19DA95FF9859FFA46F6');
+
+  //   const Q = Point.BASE.multiplyAndAddUnsafe(point, t, BigInt(1));
+
+  //   // console.log(Q?.y.toString(16));
+  //   // console.log(Q?.x.toString(16));
+  //   // const p = Point.fromHex(Q.x.toString(16));
+
+  //   // console.log({ y: p.y.toString(16), y2: p.negate().y.toString(16) });
+  // };
+
+  //ref -> https://github.com/MrMaxweII/Secp256k1-Calculator/blob/c9374a8dab79a0b609c235b9c6e8c3ba290e410a/Calculator.java#L96
+  const scalarMul = () => {
+    const a = new BN(point1, 'hex');
+    const b = new BN(point2, 'hex');
+    const ORDNUNG = new BN('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 'hex');
+
+    const xAxis = a.mul(b.mod(ORDNUNG)).mod(ORDNUNG);
+    const xAxisHex = xAxis.toString('hex');
+
+    const p = Point.fromHex(xAxisHex);
+
+    setMulResult({ x: xAxisHex, y: p.y.toString(16) });
+  };
+
   return (
     <div className="signature-tools-page-main" style={{ overflow: 'hidden' }}>
       <div className="signature-tools-page-tabs">
@@ -56,35 +85,38 @@ export const EcCalculator = () => {
             setTab(Number(value));
           }}
         >
-          <Radio value={0}>POINT MULTIPLATION</Radio>
+          <Radio value={0}>POINT MULTIPLICATION</Radio>
           <Radio value={1}>POINT ADDITION</Radio>
-          <Radio value={2}>Y FROM X</Radio>
+          <Radio value={2}>SCALAR MULTIPLICATION</Radio>
+          <Radio value={3}>Y FROM X</Radio>
         </RadioGroup>
       </div>
-      {tab !== 2 && (
+      {tab !== 3 && (
         <>
           <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Point</h6>
+            <h6 className="signature-tools-tab-header">{tab !== 2 ? 'Point' : 'Scalar'}</h6>
             <div className="flex-div">
               <Input
                 className="signature-tools-main-input"
                 type="text"
-                placeholder="Point Value (hex)"
+                placeholder={tab !== 2 ? 'Point Value (hex)' : 'Scalar Value (hex)'}
                 value={point1}
-                style={{ width: '90%' }}
+                style={{ width: tab !== 2 ? '90%' : '100%' }}
                 onChange={(value: string) => setPoint1(value.replace(/\s/g, ''))}
               />
-              <Checkbox
-                className="signature-tools-import-checkbox"
-                style={{ width: '10%' }}
-                onChange={(value, checked) => {
-                  if (checked) {
-                    setPoint1(g);
-                  }
-                }}
-              >
-                Fill G
-              </Checkbox>
+              {tab !== 2 && (
+                <Checkbox
+                  className="signature-tools-import-checkbox"
+                  style={{ width: '10%' }}
+                  onChange={(value, checked) => {
+                    if (checked) {
+                      setPoint1(g);
+                    }
+                  }}
+                >
+                  Fill G
+                </Checkbox>
+              )}
             </div>
           </div>
           <div className="signature-tools-result-item">
@@ -100,7 +132,7 @@ export const EcCalculator = () => {
         </>
       )}
 
-      {tab === 0 && (
+      {(tab === 0 || tab === 2) && (
         <>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">Multiplation Result X</h6>
@@ -129,7 +161,18 @@ export const EcCalculator = () => {
             </div>
           </div>
           <div className="signature-tools-result-item">
-            <Button className="signature-tools-button" appearance="primary" size="md" onClick={pointMultiplation}>
+            <Button
+              className="signature-tools-button"
+              appearance="primary"
+              size="md"
+              onClick={() => {
+                if (tab === 0) {
+                  pointMultiplation();
+                } else if (tab === 2) {
+                  scalarMul();
+                }
+              }}
+            >
               Multiply Points
             </Button>
           </div>
@@ -172,7 +215,7 @@ export const EcCalculator = () => {
         </>
       )}
 
-      {tab === 2 && (
+      {tab === 3 && (
         <>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">X Axis Value</h6>
