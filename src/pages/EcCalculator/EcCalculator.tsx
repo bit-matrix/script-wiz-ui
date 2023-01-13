@@ -345,7 +345,7 @@ export const EcCalculator = () => {
                 }
               }}
             >
-              Addition Points
+              {tab === 1 ? 'Add two points' : 'Addition Points'}
             </Button>
           </div>
         </>
