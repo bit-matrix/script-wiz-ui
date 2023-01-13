@@ -7,7 +7,7 @@ import BN from 'bn.js';
 import { validHex } from '../../utils/helper';
 import WizData from '@script-wiz/wiz-data';
 import { taproot } from '@script-wiz/lib-core';
-import { add, neg, pow, SEVEN, sqrt, THREE } from './helper';
+import { add, addition, neg, pow, SEVEN, sqrt, THREE } from './helper';
 import bigInt from 'big-integer';
 
 const ORDNUNG = new BN('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 'hex');
@@ -38,8 +38,16 @@ export const EcCalculator = () => {
 
   const pointAdd = () => {
     try {
-      const data = Point.fromHex(point1).add(Point.fromHex(point2));
-      setAddResult({ x: data.x.toString(16), y: data.y.toString(16) });
+      //  const data = Point.fromHex(point1).add(Point.fromHex(point2));
+      const p1 = yfromX(point1);
+      const p2 = yfromX(point2);
+      const a = bigInt(point1, 16);
+      const a1 = bigInt(p1.axisOne, 16);
+      const b = bigInt(point2, 16);
+      const b1 = bigInt(p2.axisOne, 16);
+      const xaxis = addition([a, a1], [b, b1])[0].toString(16);
+
+      setAddResult({ x: xaxis, y: yfromX(xaxis).axisOne });
     } catch (error) {
       console.log(error);
     }
@@ -109,7 +117,6 @@ export const EcCalculator = () => {
     const inputHex = bigInt(input, 16);
     const res = sqrt(add(pow(inputHex, THREE), SEVEN));
     const res2 = neg(sqrt(add(pow(inputHex, THREE), SEVEN)));
-
     return { isOdd: res.isOdd(), axisOne: res.toString(16), axisTwo: res2.toString(16) };
   };
 
