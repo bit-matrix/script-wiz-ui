@@ -17,7 +17,7 @@ export const EcCalculator = () => {
   const [tab, setTab] = useState(0);
   const [point1, setPoint1] = useState('');
   const [point2, setPoint2] = useState('');
-  const [mulResult, setMulResult] = useState({ x: '', y: '' });
+  const [mulResult, setMulResult] = useState({ x: '', y: '', isOdd: false });
   const [addResult, setAddResult] = useState({ x: '', y: '' });
   const [x, setX] = useState('');
   const [y, setY] = useState<{ y: string; y2: string }>();
@@ -28,10 +28,10 @@ export const EcCalculator = () => {
   const pointMultiplation = () => {
     try {
       const data = Point.fromHex(point1).multiply(BigInt('0x' + point2));
-
+      const yAxis = bigInt(data.y.toString(16), 16);
       // const yAxis = yfromX(data.x.toString(16));
 
-      setMulResult({ x: data.x.toString(16), y: data.y.toString(16) });
+      setMulResult({ x: data.x.toString(16), y: yAxis.toString(16), isOdd: yAxis.isOdd() });
     } catch (error) {
       console.log(error);
     }
@@ -72,7 +72,7 @@ export const EcCalculator = () => {
     const xAxis = a.mul(b.mod(ORDNUNG)).mod(ORDNUNG);
     const xAxisHex = xAxis.toString('hex');
 
-    setMulResult({ x: xAxisHex, y: '' });
+    setMulResult({ x: xAxisHex, y: '', isOdd: false });
   };
 
   //ref -> https://github.com/MrMaxweII/Secp256k1-Calculator/blob/c9374a8dab79a0b609c235b9c6e8c3ba290e410a/Calculator.java#L90
@@ -188,7 +188,7 @@ export const EcCalculator = () => {
           </div>
           {tab === 0 && (
             <div className="signature-tools-result-item">
-              <h6 className="signature-tools-tab-header">Multiplation Result Y (Even/Odd)</h6>
+              <h6 className="signature-tools-tab-header">Multiplation Result Y</h6>
               <div>
                 <InputGroup className="signature-tools-compile-modal-input-group">
                   <Input value={mulResult.y} disabled />
@@ -198,6 +198,7 @@ export const EcCalculator = () => {
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
+                <span>Y axis is {mulResult.isOdd ? 'ODD' : 'EVEN'}</span>
               </div>
             </div>
           )}
