@@ -20,7 +20,7 @@ export const EcCalculator = () => {
   const [mulResult, setMulResult] = useState({ x: '', y: '' });
   const [addResult, setAddResult] = useState({ x: '', y: '' });
   const [x, setX] = useState('');
-  const [y, setY] = useState<{ y: string; y2: string }>();
+  const [y, setY] = useState<{ isOdd: boolean; y: string; y2: string }>();
   const [innerKey, setInnerKey] = useState<string>('');
   const [tapTweak, setTapTweak] = useState<string>('');
   const [tweakAddResult, setTweakAddResult] = useState<string>('');
@@ -28,10 +28,9 @@ export const EcCalculator = () => {
   const pointMultiplation = () => {
     try {
       const data = Point.fromHex(point1).multiply(BigInt('0x' + point2));
+      const yAxis = yfromX(data.x.toString(16));
 
-      // const yAxis = yfromX(data.x.toString(16));
-
-      setMulResult({ x: data.x.toString(16), y: data.y.toString(16) });
+      setMulResult({ x: data.x.toString(16), y: yAxis.axisOne });
     } catch (error) {
       console.log(error);
     }
@@ -58,7 +57,9 @@ export const EcCalculator = () => {
     try {
       const yAxis = yfromX(x);
 
-      setY({ y: yAxis.axisOne, y2: yAxis.axisTwo });
+      console.log(yAxis);
+
+      setY({ isOdd: yAxis.isOdd, y: yAxis.axisOne, y2: yAxis.axisTwo });
     } catch (error) {
       console.log(error);
     }
@@ -102,12 +103,7 @@ export const EcCalculator = () => {
     const inputHex = bigInt(input, 16);
     const res = sqrt(add(pow(inputHex, THREE), SEVEN));
     const res2 = neg(sqrt(add(pow(inputHex, THREE), SEVEN)));
-
-    if (res.isEven()) {
-      return { axisOne: res.toString(16), axisTwo: res2.toString(16) };
-    } else {
-      return { axisOne: res2.toString(16), axisTwo: res.toString(16) };
-    }
+    return { isOdd: res.isOdd(), axisOne: res.toString(16), axisTwo: res2.toString(16) };
   };
 
   return (
