@@ -11,7 +11,7 @@ import { add, addition, neg, pow, SEVEN, sqrt, THREE } from './helper';
 import bigInt from 'big-integer';
 
 const ORDNUNG = new BN('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 'hex');
-const g = '79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798';
+const g = '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798';
 
 export const EcCalculator = () => {
   const [tab, setTab] = useState(0);
@@ -174,7 +174,7 @@ export const EcCalculator = () => {
       {(tab === 0 || tab === 2) && (
         <>
           <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Multiplation Result X</h6>
+            <h6 className="signature-tools-tab-header">Multiplation Result X </h6>
             <div>
               <InputGroup className="signature-tools-compile-modal-input-group">
                 <Input value={mulResult.x} disabled />
@@ -188,7 +188,7 @@ export const EcCalculator = () => {
           </div>
           {tab === 0 && (
             <div className="signature-tools-result-item">
-              <h6 className="signature-tools-tab-header">Multiplation Result Y</h6>
+              <h6 className="signature-tools-tab-header">Multiplation Result Y (Even/Odd)</h6>
               <div>
                 <InputGroup className="signature-tools-compile-modal-input-group">
                   <Input value={mulResult.y} disabled />
