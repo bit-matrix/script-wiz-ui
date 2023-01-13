@@ -1,0 +1,110 @@
+import BN from 'bn.js';
+
+export const p = new BN('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F', 16);
+
+export const ZERO = new BN(0);
+const ONE = new BN(1);
+const TWO = new BN(2);
+export const THREE = new BN(3);
+const FOUR = new BN(4);
+export const SEVEN = new BN(7);
+
+export const add = (a: BN, b: BN) => {
+  return a.add(b).mod(p);
+};
+
+export const neg = (a: BN) => {
+  return p.sub(a);
+};
+
+export const sub = (a: BN, b: BN) => {
+  return add(a, neg(b));
+};
+
+export const mul = (a: BN, b: BN) => {
+  return a.mul(b).mod(p);
+};
+
+export const inv = (a: BN) => {
+  return a.invm(p);
+};
+
+export const div = (a: BN, b: BN) => {
+  return mul(a, inv(b));
+};
+
+export const abs = (a: BN) => {
+  if (a.cmp(p.sub(ONE).div(TWO)) === 1) return neg(a);
+  return a;
+};
+
+export const pow = (x: BN, n: BN) => {
+  return x.pow(n).mod(p);
+};
+
+export const sqrt = (num: BN): BN => {
+  if (num.lt(new BN(0))) {
+    throw new Error('Sqrt only works on non-negtiave inputs');
+  }
+  if (num.lt(new BN(2))) {
+    return num;
+  }
+
+  const smallCand = sqrt(num.shrn(2)).shln(1);
+  const largeCand = smallCand.add(new BN(1));
+
+  if (largeCand.mul(largeCand).gt(num)) {
+    return smallCand;
+  } else {
+    return largeCand;
+  }
+};
+
+// export const sqrt = (n: BN) => {
+//   let s = ZERO;
+//   let q = p.sub(ONE);
+//   while (q.and(ONE).eq(ZERO)) {
+//     q = q.div(TWO);
+//     s = s.add(ONE);
+//   }
+
+//   // if (s.eq(ONE)) {
+//   //   console.log('1');
+//   //   let r = pow(n, p.add(ONE).div(FOUR));
+//   //   if (r.mul(r).mod(p).eq(n)) return abs(r);
+//   //   {
+//   //     console.log('\nFehler!  sqrt(' + n + ') existiert nicht! (Math_Modulo.sqrt) \n');
+//   //     return ZERO;
+//   //   }
+//   // }
+
+//   console.log('2');
+
+//   // Find the first quadratic non-residue z by brute-force search
+//   let z = ZERO;
+//   while (pow((z = z.add(ONE)), p.sub(ONE).div(TWO)).eq(p.sub(ONE)) == false);
+//   let c = pow(z, q);
+//   let r = pow(n, q.add(ONE).div(TWO));
+//   let t = pow(n, q);
+//   let m = s;
+//   while (t.eq(ONE) == false) {
+//     let tt = t;
+//     let i = ZERO;
+//     while (tt.eq(ONE) == false) {
+//       tt = tt.mul(tt).mod(p);
+//       i = i.add(ONE);
+//       if (i.eq(m)) {
+//         if (n.eq(ZERO) == false) console.log('\nFehler!  sqrt(' + n + ') existiert nicht! (Math_Modulo.sqrt) \n');
+//         return ZERO;
+//       }
+//     }
+//     let b = pow(c, pow(TWO, m.sub(i).sub(ONE)));
+//     let b2 = b.mul(b).mod(p);
+//     r = r.mul(b).mod(p);
+//     t = t.mul(b2).mod(p);
+//     c = b2;
+//     m = i;
+//   }
+//   if (r.mul(r).mod(p).eq(n)) return abs(r);
+//   return ZERO;
+// };
