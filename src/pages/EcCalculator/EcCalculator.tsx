@@ -55,25 +55,11 @@ export const EcCalculator = () => {
 
   const fromX = () => {
     try {
-      const p = Point.fromHex(x);
-      const trueYAxis = yfromX(x);
+      const yAxis = yfromX(x);
 
-      console.log(trueYAxis);
+      console.log(yAxis);
 
-      let firstYaxis = '';
-      let secondYaxis = '';
-
-      if (trueYAxis.isOdd) {
-        console.log('1');
-        firstYaxis = p.negate().y.toString(16);
-        secondYaxis = p.y.toString(16);
-      } else {
-        console.log('2');
-        firstYaxis = p.y.toString(16);
-        secondYaxis = p.negate().y.toString(16);
-      }
-
-      setY({ isOdd: trueYAxis.isOdd, y: firstYaxis, y2: secondYaxis });
+      setY({ isOdd: yAxis.isOdd, y: yAxis.axisOne, y2: yAxis.axisTwo });
     } catch (error) {
       console.log(error);
     }
@@ -301,7 +287,7 @@ export const EcCalculator = () => {
             </Button>
           </div>
           <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Y Axis Positive</h6>
+            <h6 className="signature-tools-tab-header">Even Y Axis</h6>
             <div>
               <InputGroup className="signature-tools-compile-modal-input-group">
                 <Input value={y?.y} disabled />
@@ -315,7 +301,7 @@ export const EcCalculator = () => {
             </div>
           </div>
           <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">Y Axis Negative</h6>
+            <h6 className="signature-tools-tab-header">Odd Y Axis</h6>
             <div>
               <InputGroup className="signature-tools-compile-modal-input-group">
                 <Input value={y?.y2} disabled />
@@ -325,7 +311,7 @@ export const EcCalculator = () => {
                   </InputGroup.Button>
                 </Whisper>
               </InputGroup>
-              <span>X axis is {y?.isOdd ? 'ODD' : 'EVEN'}</span>
+              {/* <span>X axis is {y?.isOdd ? 'ODD' : 'EVEN'}</span> */}
             </div>
           </div>
         </>
