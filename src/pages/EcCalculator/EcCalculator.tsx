@@ -7,6 +7,8 @@ import BN from 'bn.js';
 import { validHex } from '../../utils/helper';
 import WizData from '@script-wiz/wiz-data';
 import { taproot } from '@script-wiz/lib-core';
+import { add, neg, pow, SEVEN, sqrt, THREE } from './helper';
+import bigInt from 'big-integer';
 
 const ORDNUNG = new BN('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 'hex');
 const g = '79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798';
@@ -26,7 +28,9 @@ export const EcCalculator = () => {
   const pointMultiplation = () => {
     try {
       const data = Point.fromHex(point1).multiply(BigInt('0x' + point2));
-      setMulResult({ x: data.x.toString(16), y: data.y.toString(16) });
+      const yAxis = yfromX(data.x.toString(16));
+
+      setMulResult({ x: data.x.toString(16), y: yAxis.axisOne });
     } catch (error) {
       console.log(error);
     }
@@ -44,8 +48,24 @@ export const EcCalculator = () => {
   const fromX = () => {
     try {
       const p = Point.fromHex(x);
+      const trueYAxis = yfromX(x);
 
-      setY({ isOdd: true, y: p.y.toString(16), y2: p.negate().y.toString(16) });
+      console.log(trueYAxis);
+
+      let firstYaxis = '';
+      let secondYaxis = '';
+
+      if (trueYAxis.isOdd) {
+        console.log('1');
+        firstYaxis = p.negate().y.toString(16);
+        secondYaxis = p.y.toString(16);
+      } else {
+        console.log('2');
+        firstYaxis = p.y.toString(16);
+        secondYaxis = p.negate().y.toString(16);
+      }
+
+      setY({ isOdd: trueYAxis.isOdd, y: firstYaxis, y2: secondYaxis });
     } catch (error) {
       console.log(error);
     }
@@ -82,6 +102,15 @@ export const EcCalculator = () => {
     const tapTweakData = WizData.fromHex(tapTweak);
     const res = taproot.tweakAdd(innerKeyData, tapTweakData);
     setTweakAddResult(res.hex);
+  };
+
+  // ref -> https://github.com/MrMaxweII/Secp256k1-Calculator/blob/master/Secp256k1.java
+  const yfromX = (input: string) => {
+    const inputHex = bigInt(input, 16);
+    const res = sqrt(add(pow(inputHex, THREE), SEVEN));
+    const res2 = neg(sqrt(add(pow(inputHex, THREE), SEVEN)));
+
+    return { isOdd: res.isOdd(), axisOne: res.toString(16), axisTwo: res2.toString(16) };
   };
 
   return (
