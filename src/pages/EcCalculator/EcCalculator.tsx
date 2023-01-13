@@ -198,7 +198,7 @@ export const EcCalculator = () => {
                     </InputGroup.Button>
                   </Whisper>
                 </InputGroup>
-                <span>Y axis is {mulResult.isOdd ? 'ODD' : 'EVEN'}</span>
+                {mulResult.y && <span>Y axis is {mulResult.isOdd ? 'ODD' : 'EVEN'}</span>}
               </div>
             </div>
           )}
