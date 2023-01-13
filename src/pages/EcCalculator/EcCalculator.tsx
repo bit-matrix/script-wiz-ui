@@ -16,9 +16,11 @@ const g = '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798';
 export const EcCalculator = () => {
   const [tab, setTab] = useState(0);
   const [point1, setPoint1] = useState('');
+  const [point1y, setPoint1y] = useState('');
   const [point2, setPoint2] = useState('');
+  const [point2y, setPoint2y] = useState('');
   const [mulResult, setMulResult] = useState({ x: '', y: '', isOdd: false });
-  const [addResult, setAddResult] = useState({ x: '', y: '' });
+  const [addResult, setAddResult] = useState({ x: '', y: '', isOdd: false });
   const [x, setX] = useState('');
   const [y, setY] = useState<{ y: string; y2: string }>();
   const [innerKey, setInnerKey] = useState<string>('');
@@ -40,15 +42,15 @@ export const EcCalculator = () => {
   const pointAdd = () => {
     try {
       //  const data = Point.fromHex(point1).add(Point.fromHex(point2));
-      const p1 = yfromX(point1);
-      const p2 = yfromX(point2);
+      // const p1 = yfromX(point1);
+      // const p2 = yfromX(point2);
       const a = bigInt(point1, 16);
-      const a1 = bigInt(p1.axisOne, 16);
+      const a1 = bigInt(point1y, 16);
       const b = bigInt(point2, 16);
-      const b1 = bigInt(p2.axisOne, 16);
-      const xaxis = addition([a, a1], [b, b1])[0].toString(16);
+      const b1 = bigInt(point2y, 16);
+      const xaxis = addition([a, a1], [b, b1]);
 
-      setAddResult({ x: xaxis, y: yfromX(xaxis).axisOne });
+      setAddResult({ x: xaxis[0].toString(16), y: xaxis[1].toString(16), isOdd: xaxis[0].isOdd() });
     } catch (error) {
       console.log(error);
     }
@@ -83,7 +85,7 @@ export const EcCalculator = () => {
     const xAxis = a.add(ORDNUNG.add(b)).mod(ORDNUNG);
     const xAxisHex = xAxis.toString('hex');
 
-    setAddResult({ x: xAxisHex, y: '' });
+    setAddResult({ x: xAxisHex, y: '', isOdd: false });
   };
 
   const checkInnerKeyValid = () => {
@@ -104,9 +106,9 @@ export const EcCalculator = () => {
     const res2 = neg(sqrt(add(pow(inputHex, THREE), SEVEN)));
 
     if (res.isEven()) {
-      return { axisOne: res.toString(16), axisTwo: res2.toString(16) };
+      return { axisOne: res.toString(16), axisTwo: res2.toString(16), y: res.toString(16) };
     } else {
-      return { axisOne: res2.toString(16), axisTwo: res.toString(16) };
+      return { axisOne: res2.toString(16), axisTwo: res.toString(16), y: res2.toString(16) };
     }
   };
 
@@ -130,7 +132,7 @@ export const EcCalculator = () => {
           <Radio value={5}>TWEAK ADD</Radio>
         </RadioGroup>
       </div>
-      {tab < 4 && (
+      {tab < 4 && tab !== 1 && (
         <>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">{tab < 2 ? 'Point' : 'Scalar'}</h6>
@@ -166,6 +168,82 @@ export const EcCalculator = () => {
               placeholder="Scalar Value (hex)"
               value={point2}
               onChange={(value: string) => setPoint2(value.replace(/\s/g, ''))}
+            />
+          </div>
+        </>
+      )}
+
+      {tab === 1 && (
+        <>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Point 1 X</h6>
+            <div className="flex-div">
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                placeholder={'Point 1 X Value (hex)'}
+                value={point1}
+                style={{ width: '90%' }}
+                onChange={(value: string) => setPoint1(value.replace(/\s/g, ''))}
+              />
+
+              <Checkbox
+                className="signature-tools-import-checkbox"
+                style={{ width: '10%' }}
+                onChange={(value, checked) => {
+                  if (checked) {
+                    setPoint1(g);
+                  }
+                }}
+              >
+                Fill G
+              </Checkbox>
+            </div>
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Point 1 Y</h6>
+
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder={'Point 1 Y Value (hex)'}
+              value={point1y}
+              style={{ width: '90%' }}
+              onChange={(value: string) => setPoint1y(value.replace(/\s/g, ''))}
+            />
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Point 2 X</h6>
+            <div className="flex-div">
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                placeholder={'Point 2 X Value (hex)'}
+                value={point2}
+                onChange={(value: string) => setPoint2(value.replace(/\s/g, ''))}
+              />
+
+              <Checkbox
+                className="signature-tools-import-checkbox"
+                style={{ width: '10%' }}
+                onChange={(value, checked) => {
+                  if (checked) {
+                    setPoint1(g);
+                  }
+                }}
+              >
+                Fill G
+              </Checkbox>
+            </div>
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Point 2 Y</h6>
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder={'Point 2 Y Value (hex)'}
+              value={point2y}
+              onChange={(value: string) => setPoint2y(value.replace(/\s/g, ''))}
             />
           </div>
         </>
@@ -250,6 +328,7 @@ export const EcCalculator = () => {
                   </Whisper>
                 </InputGroup>
               </div>
+              {addResult.y && <span style={{ marginTop: '0.4rem' }}>Y axis is {addResult.isOdd ? 'ODD' : 'EVEN'}</span>}
             </div>
           )}
 
