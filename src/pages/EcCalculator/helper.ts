@@ -3,6 +3,7 @@
 import bigInt from 'big-integer';
 
 export const p = bigInt('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F', 16);
+export const ModuloHalb = bigInt('7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFE17', 16);
 
 export const ZERO = bigInt(0);
 const ONE = bigInt(1);
@@ -54,15 +55,11 @@ export const sqrt = (n: bigInt.BigInteger) => {
   if (s.equals(ONE)) {
     let r = pow(n, p.add(ONE).divide(FOUR));
     if (r.multiply(r).mod(p).equals(n)) return abs(r);
-    {
-      console.log('\nFehler!  sqrt(' + n + ') existiert nicht! (Math_Modulo.sqrt) \n');
-      return ZERO;
-    }
   }
 
   // Find the first quadratic non-residue z by brute-force search
   let z = ZERO;
-  while (pow((z = z.add(ONE)), p.subtract(ONE).divide(TWO)).equals(p.subtract(ONE)) == false);
+  while (pow((z = z.add(ONE)), p.subtract(ONE).divide(TWO)).equals(p.subtract(ONE)) === false);
   let c = pow(z, q);
   let r = pow(n, q.add(ONE).divide(TWO));
   let t = pow(n, q);
@@ -74,7 +71,7 @@ export const sqrt = (n: bigInt.BigInteger) => {
       tt = tt.multiply(tt).mod(p);
       i = i.add(ONE);
       if (i.equals(m)) {
-        if (n.equals(ZERO) === false) console.log('\nFehler!  sqrt(' + n + ') existiert nicht! (Math_Modulo.sqrt) \n');
+        if (n.equals(ZERO) === false) console.log('Error');
         return ZERO;
       }
     }
@@ -87,4 +84,30 @@ export const sqrt = (n: bigInt.BigInteger) => {
   }
   if (r.multiply(r).mod(p).equals(n)) return abs(r);
   return ZERO;
+};
+
+export const multiply_2 = (P: bigInt.BigInteger[]) => {
+  let erg = [];
+  let m = div(mul(THREE, pow(P[0], TWO)), mul(TWO, sqrt(add(pow(P[0], THREE), SEVEN))));
+  if (P[1].compareTo(ModuloHalb) === 1) m = neg(m);
+  let n = sub(P[1], mul(m, P[0]));
+  erg[0] = sub(pow(m, TWO), mul(TWO, P[0]));
+  erg[1] = neg(add(mul(m, erg[0]), n));
+  return erg;
+};
+
+export const addition = (po1: bigInt.BigInteger[], po2: bigInt.BigInteger[]) => {
+  let nullVektor = [];
+  nullVektor[0] = bigInt('0', 16);
+  nullVektor[1] = bigInt('0', 16);
+  if (po1[0].equals(ZERO) && po1[1].equals(ZERO)) return po2;
+  if (po2[0].equals(ZERO) && po2[1].equals(ZERO)) return po1;
+  if (po2[1].equals(po1[1])) return multiply_2(po1);
+  else if (po2[0].equals(po1[0])) return nullVektor;
+  let erg = [];
+  let m = div(sub(po2[1], po1[1]), sub(po2[0], po1[0]));
+  let n = sub(po1[1], mul(m, po1[0]));
+  erg[0] = sub(sub(mul(m, m), po1[0]), po2[0]);
+  erg[1] = neg(add(mul(m, erg[0]), n));
+  return erg;
 };
