@@ -15,6 +15,8 @@ const g = '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798';
 
 export const EcCalculator = () => {
   const [tab, setTab] = useState(0);
+  const [inp, setInp] = useState('');
+  const [inpResult, setInpResult] = useState<bigInt.BigInteger>();
   const [point1, setPoint1] = useState('');
   const [point1y, setPoint1y] = useState('');
   const [point2, setPoint2] = useState('');
@@ -112,6 +114,10 @@ export const EcCalculator = () => {
     }
   };
 
+  const negate = () => {
+    setInpResult(neg(bigInt(inp, 16)));
+  };
+
   return (
     <div className="signature-tools-page-main" style={{ overflow: 'hidden' }}>
       <div className="signature-tools-page-tabs">
@@ -130,6 +136,7 @@ export const EcCalculator = () => {
           <Radio value={3}>SCALAR ADDITION</Radio>
           <Radio value={4}>Y FROM X</Radio>
           <Radio value={5}>TWEAK ADD</Radio>
+          <Radio value={6}>FIELD MINUS</Radio>
         </RadioGroup>
       </div>
       {tab < 4 && tab !== 1 && (
@@ -345,7 +352,7 @@ export const EcCalculator = () => {
                 }
               }}
             >
-              Addition Points
+              {tab === 1 ? 'Add two points' : 'Addition Points'}
             </Button>
           </div>
         </>
@@ -438,6 +445,38 @@ export const EcCalculator = () => {
                 <Input value={tweakAddResult} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(tweakAddResult)}>
+                    <CopyIcon width="1rem" height="1rem" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
+            </div>
+          </div>
+        </>
+      )}
+      {tab === 6 && (
+        <>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Input (Hex)</h6>
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder="Input (hex)"
+              value={inp}
+              onChange={(value: string) => setInp(value.replace(/\s/g, ''))}
+            />
+          </div>
+          <div className="signature-tools-result-item">
+            <Button className="signature-tools-button" appearance="primary" size="md" onClick={negate}>
+              Field minus
+            </Button>
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Negate Result</h6>
+            <div>
+              <InputGroup className="signature-tools-compile-modal-input-group">
+                <Input value={inpResult?.toString(16)} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(inpResult?.toString(16) || '')}>
                     <CopyIcon width="1rem" height="1rem" />
                   </InputGroup.Button>
                 </Whisper>
