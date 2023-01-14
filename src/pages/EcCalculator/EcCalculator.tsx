@@ -12,6 +12,7 @@ import bigInt from 'big-integer';
 
 const ORDNUNG = new BN('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 'hex');
 const g = '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798';
+const gy = '483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8';
 
 export const EcCalculator = () => {
   const [tab, setTab] = useState(0);
@@ -52,7 +53,7 @@ export const EcCalculator = () => {
       const b1 = bigInt(point2y, 16);
       const xaxis = addition([a, a1], [b, b1]);
 
-      setAddResult({ x: xaxis[0].toString(16), y: xaxis[1].toString(16), isOdd: xaxis[0].isOdd() });
+      setAddResult({ x: xaxis[0].toString(16), y: xaxis[1].toString(16), isOdd: xaxis[1].isOdd() });
     } catch (error) {
       console.log(error);
     }
@@ -200,6 +201,7 @@ export const EcCalculator = () => {
                 onChange={(value, checked) => {
                   if (checked) {
                     setPoint1(g);
+                    setPoint1y(gy);
                   }
                 }}
               >
@@ -235,7 +237,8 @@ export const EcCalculator = () => {
                 style={{ width: '10%' }}
                 onChange={(value, checked) => {
                   if (checked) {
-                    setPoint1(g);
+                    setPoint2(g);
+                    setPoint2y(gy);
                   }
                 }}
               >
