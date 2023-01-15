@@ -593,6 +593,16 @@ export const EcCalculator = () => {
             />
           </div>
           <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Tag </h6>
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder="Tag"
+              value={tag}
+              onChange={(value: string) => setTag(value.replace(/\s/g, ''))}
+            />
+          </div>
+          <div className="signature-tools-result-item">
             <Button className="signature-tools-button" appearance="primary" size="md" onClick={tagHashCalc}>
               Calculate Tag Hash
             </Button>
