@@ -4,6 +4,7 @@ import bigInt from 'big-integer';
 
 export const p = bigInt('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F', 16);
 export const ModuloHalb = bigInt('7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFE17', 16);
+const ORDNUNG = bigInt('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 16);
 
 export const ZERO = bigInt(0);
 const ONE = bigInt(1);
@@ -110,4 +111,8 @@ export const addition = (po1: bigInt.BigInteger[], po2: bigInt.BigInteger[]) => 
   erg[0] = sub(sub(mul(m, m), po1[0]), po2[0]);
   erg[1] = neg(add(mul(m, erg[0]), n));
   return erg;
+};
+
+export const negOrder = (a: bigInt.BigInteger) => {
+  return ORDNUNG.subtract(a);
 };
