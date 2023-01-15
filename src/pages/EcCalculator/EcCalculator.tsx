@@ -33,10 +33,12 @@ export const EcCalculator = () => {
   const [tweakAddResult, setTweakAddResult] = useState<string>('');
   const [tagInput, setTagInput] = useState<string>('');
   const [tagResult, setTagResult] = useState<string>('');
+  const [ecinpY, setecinpY] = useState<string>('');
+  const [tag, setTag] = useState<string>('BIP0340/challenge');
 
   const pointMultiplation = () => {
     try {
-      const data = Point.fromHex(point1).multiply(BigInt('0x' + point2));
+      const data = new Point(BigInt('0x' + point1), BigInt('0x' + ecinpY)).multiply(BigInt('0x' + point2));
       const yAxis = bigInt(data.y.toString(16), 16);
       // const yAxis = yfromX(data.x.toString(16));
 
@@ -67,7 +69,7 @@ export const EcCalculator = () => {
     try {
       const yAxis = yfromX(x);
 
-      setY({ y: yAxis.axisOne, y2: yAxis.axisTwo });
+      setY({ y: yAxis.even, y2: yAxis.odd });
     } catch (error) {
       console.log(error);
     }
@@ -113,9 +115,9 @@ export const EcCalculator = () => {
     const res2 = neg(sqrt(add(pow(inputHex, THREE), SEVEN)));
 
     if (res.isEven()) {
-      return { axisOne: res.toString(16), axisTwo: res2.toString(16), y: res.toString(16) };
+      return { even: res.toString(16), odd: res2.toString(16), y: res.toString(16) };
     } else {
-      return { axisOne: res2.toString(16), axisTwo: res.toString(16), y: res2.toString(16) };
+      return { even: res2.toString(16), odd: res.toString(16), y: res2.toString(16) };
     }
   };
 
@@ -128,8 +130,6 @@ export const EcCalculator = () => {
   };
 
   const tagHashCalc = () => {
-    const tag = 'BIP0340/challenge';
-
     const tagHash = taproot.tagHash(tag, WizData.fromHex(tagInput));
     setTagResult(tagHash);
   };
@@ -160,12 +160,12 @@ export const EcCalculator = () => {
       {tab < 4 && tab !== 1 && (
         <>
           <div className="signature-tools-result-item">
-            <h6 className="signature-tools-tab-header">{tab < 2 ? 'Point' : 'Scalar'}</h6>
+            <h6 className="signature-tools-tab-header">{tab < 2 ? 'Point X' : 'Scalar'}</h6>
             <div className="flex-div">
               <Input
                 className="signature-tools-main-input"
                 type="text"
-                placeholder={tab < 2 ? 'Point Value (hex)' : 'Scalar Value (hex)'}
+                placeholder={tab < 2 ? 'Point X Value (hex)' : 'Scalar Value (hex)'}
                 value={point1}
                 style={{ width: tab < 2 ? '90%' : '100%' }}
                 onChange={(value: string) => setPoint1(value.replace(/\s/g, ''))}
@@ -177,6 +177,8 @@ export const EcCalculator = () => {
                   onChange={(value, checked) => {
                     if (checked) {
                       setPoint1(g);
+                      setPoint1y(gy);
+                      setecinpY(gy);
                     }
                   }}
                 >
@@ -185,6 +187,46 @@ export const EcCalculator = () => {
               )}
             </div>
           </div>
+
+          {tab === 0 && (
+            <div className="signature-tools-result-item">
+              <h6 className="signature-tools-tab-header">Point Y</h6>
+              <div className="flex-div">
+                <Input
+                  className="signature-tools-main-input"
+                  type="text"
+                  placeholder="Point Y Value (hex)"
+                  value={ecinpY}
+                  style={{ width: '75%' }}
+                  onChange={(value: string) => setecinpY(value.replace(/\s/g, ''))}
+                />
+                <div className="flex-div" style={{ width: '25%' }}>
+                  <Button
+                    className="signature-tools-button mr"
+                    appearance="primary"
+                    size="sm"
+                    onClick={() => {
+                      const data = yfromX(point1);
+                      setecinpY(data.odd);
+                    }}
+                  >
+                    Odd Y
+                  </Button>
+                  <Button
+                    className="signature-tools-button"
+                    appearance="primary"
+                    size="sm"
+                    onClick={() => {
+                      const data = yfromX(point1);
+                      setecinpY(data.even);
+                    }}
+                  >
+                    Even Y
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">Scalar</h6>
             <Input
@@ -234,7 +276,6 @@ export const EcCalculator = () => {
               type="text"
               placeholder={'Point 1 Y Value (hex)'}
               value={point1y}
-              style={{ width: '90%' }}
               onChange={(value: string) => setPoint1y(value.replace(/\s/g, ''))}
             />
           </div>
@@ -549,6 +590,16 @@ export const EcCalculator = () => {
               placeholder="Input (hex)"
               value={tagInput}
               onChange={(value: string) => setTagInput(value.replace(/\s/g, ''))}
+            />
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Tag </h6>
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder="Tag"
+              value={tag}
+              onChange={(value: string) => setTag(value.replace(/\s/g, ''))}
             />
           </div>
           <div className="signature-tools-result-item">
