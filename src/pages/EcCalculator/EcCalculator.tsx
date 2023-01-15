@@ -17,7 +17,9 @@ const gy = '483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8';
 export const EcCalculator = () => {
   const [tab, setTab] = useState(0);
   const [inp, setInp] = useState('');
+  const [inpOrder, setInpOrder] = useState('');
   const [inpResult, setInpResult] = useState<bigInt.BigInteger>();
+  const [inpOrderResult, setInpOrderResult] = useState<bigInt.BigInteger>();
   const [point1, setPoint1] = useState('');
   const [point1y, setPoint1y] = useState('');
   const [point2, setPoint2] = useState('');
@@ -29,6 +31,8 @@ export const EcCalculator = () => {
   const [innerKey, setInnerKey] = useState<string>('');
   const [tapTweak, setTapTweak] = useState<string>('');
   const [tweakAddResult, setTweakAddResult] = useState<string>('');
+  const [tagInput, setTagInput] = useState<string>('');
+  const [tagResult, setTagResult] = useState<string>('');
 
   const pointMultiplation = () => {
     try {
@@ -119,6 +123,17 @@ export const EcCalculator = () => {
     setInpResult(neg(bigInt(inp, 16)));
   };
 
+  const negateOrder = () => {
+    setInpOrderResult(neg(bigInt(inpOrder, 16)));
+  };
+
+  const tagHashCalc = () => {
+    const tag = 'BIP0340/challenge';
+
+    const tagHash = taproot.tagHash(tag, WizData.fromHex(tagInput));
+    setTagResult(tagHash);
+  };
+
   return (
     <div className="signature-tools-page-main" style={{ overflow: 'hidden' }}>
       <div className="signature-tools-page-tabs">
@@ -138,6 +153,8 @@ export const EcCalculator = () => {
           <Radio value={4}>Y FROM X</Radio>
           <Radio value={5}>TWEAK ADD</Radio>
           <Radio value={6}>FIELD MINUS</Radio>
+          <Radio value={7}>ORDER MINUS</Radio>
+          <Radio value={8}>TAG HASH</Radio>
         </RadioGroup>
       </div>
       {tab < 4 && tab !== 1 && (
@@ -480,6 +497,72 @@ export const EcCalculator = () => {
                 <Input value={inpResult?.toString(16)} disabled />
                 <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
                   <InputGroup.Button onClick={() => navigator.clipboard.writeText(inpResult?.toString(16) || '')}>
+                    <CopyIcon width="1rem" height="1rem" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
+            </div>
+          </div>
+        </>
+      )}
+
+      {tab === 7 && (
+        <>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Input (Hex)</h6>
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder="Input (hex)"
+              value={inpOrder}
+              onChange={(value: string) => setInpOrder(value.replace(/\s/g, ''))}
+            />
+          </div>
+          <div className="signature-tools-result-item">
+            <Button className="signature-tools-button" appearance="primary" size="md" onClick={negateOrder}>
+              Field minus
+            </Button>
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Negate Result</h6>
+            <div>
+              <InputGroup className="signature-tools-compile-modal-input-group">
+                <Input value={inpOrderResult?.toString(16)} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(inpOrderResult?.toString(16) || '')}>
+                    <CopyIcon width="1rem" height="1rem" />
+                  </InputGroup.Button>
+                </Whisper>
+              </InputGroup>
+            </div>
+          </div>
+        </>
+      )}
+
+      {tab === 8 && (
+        <>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Input (Hex)</h6>
+            <Input
+              className="signature-tools-main-input"
+              type="text"
+              placeholder="Input (hex)"
+              value={tagInput}
+              onChange={(value: string) => setTagInput(value.replace(/\s/g, ''))}
+            />
+          </div>
+          <div className="signature-tools-result-item">
+            <Button className="signature-tools-button" appearance="primary" size="md" onClick={tagHashCalc}>
+              Calculate Tag Hash
+            </Button>
+          </div>
+          <div className="signature-tools-result-item">
+            <h6 className="signature-tools-tab-header">Tag Hash Result</h6>
+            <div>
+              <InputGroup className="signature-tools-compile-modal-input-group">
+                <Input value={tagResult} disabled />
+                <Whisper placement="top" trigger="click" speaker={<Tooltip>Result has been copied to clipboard!</Tooltip>}>
+                  <InputGroup.Button onClick={() => navigator.clipboard.writeText(tagResult)}>
                     <CopyIcon width="1rem" height="1rem" />
                   </InputGroup.Button>
                 </Whisper>
