@@ -198,6 +198,7 @@ export const EcCalculator = () => {
                   placeholder="Point Y Value (hex)"
                   value={ecinpY}
                   style={{ width: '75%' }}
+                  disabled
                   onChange={(value: string) => setecinpY(value.replace(/\s/g, ''))}
                 />
                 <div className="flex-div" style={{ width: '25%' }}>
@@ -270,14 +271,41 @@ export const EcCalculator = () => {
           </div>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">Point 1 Y</h6>
-
-            <Input
-              className="signature-tools-main-input"
-              type="text"
-              placeholder={'Point 1 Y Value (hex)'}
-              value={point1y}
-              onChange={(value: string) => setPoint1y(value.replace(/\s/g, ''))}
-            />
+            <div className="flex-div">
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                placeholder={'Point 1 Y Value (hex)'}
+                value={point1y}
+                style={{ width: '75%' }}
+                disabled
+                onChange={(value: string) => setPoint1y(value.replace(/\s/g, ''))}
+              />
+              <div className="flex-div" style={{ width: '25%' }}>
+                <Button
+                  className="signature-tools-button mr"
+                  appearance="primary"
+                  size="sm"
+                  onClick={() => {
+                    const data = yfromX(point1);
+                    setPoint1y(data.odd);
+                  }}
+                >
+                  Odd Y
+                </Button>
+                <Button
+                  className="signature-tools-button"
+                  appearance="primary"
+                  size="sm"
+                  onClick={() => {
+                    const data = yfromX(point1);
+                    setPoint1y(data.even);
+                  }}
+                >
+                  Even Y
+                </Button>
+              </div>
+            </div>
           </div>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">Point 2 X</h6>
@@ -306,13 +334,41 @@ export const EcCalculator = () => {
           </div>
           <div className="signature-tools-result-item">
             <h6 className="signature-tools-tab-header">Point 2 Y</h6>
-            <Input
-              className="signature-tools-main-input"
-              type="text"
-              placeholder={'Point 2 Y Value (hex)'}
-              value={point2y}
-              onChange={(value: string) => setPoint2y(value.replace(/\s/g, ''))}
-            />
+            <div className="flex-div">
+              <Input
+                className="signature-tools-main-input"
+                type="text"
+                placeholder={'Point 2 Y Value (hex)'}
+                value={point2y}
+                style={{ width: '75%' }}
+                disabled
+                onChange={(value: string) => setPoint2y(value.replace(/\s/g, ''))}
+              />
+              <div className="flex-div" style={{ width: '25%' }}>
+                <Button
+                  className="signature-tools-button mr"
+                  appearance="primary"
+                  size="sm"
+                  onClick={() => {
+                    const data = yfromX(point2);
+                    setPoint2y(data.odd);
+                  }}
+                >
+                  Odd Y
+                </Button>
+                <Button
+                  className="signature-tools-button"
+                  appearance="primary"
+                  size="sm"
+                  onClick={() => {
+                    const data = yfromX(point1);
+                    setPoint2y(data.even);
+                  }}
+                >
+                  Even Y
+                </Button>
+              </div>
+            </div>
           </div>
         </>
       )}
