@@ -361,7 +361,7 @@ export const EcCalculator = () => {
                   appearance="primary"
                   size="sm"
                   onClick={() => {
-                    const data = yfromX(point1);
+                    const data = yfromX(point2);
                     setPoint2y(data.even);
                   }}
                 >
