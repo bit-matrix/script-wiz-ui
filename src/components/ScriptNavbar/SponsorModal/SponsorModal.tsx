@@ -14,8 +14,8 @@ export const SponsorModal: React.FC<SponsorModalProps> = ({ show, close }) => {
   const copyToClipboard = () => {
     const btcAddress =
       activeSponsorType === 'btc'
-        ? 'bc1qvhdd984jla9dkr5nad2f6a2wlwt9htucmy3yj3scgmkjymn7usmsjygcta'
-        : 'VJL9AAstGGHSyF83M6ineuZj3TjQDtykb6zJ5dzxa8fJPUhwEGatuAPjKcBjKKcNeYzicxQ6GostkFoo';
+        ? 'bc1qxs7cmf53kqmey0xzt308l0mq2hm35utu45qcjy'
+        : 'lq1qqdz4844m679zvpvvnulu6q4zm9nqr4ws2gr7u46xncva5ma3p7yphytwtuc64rtuefs2s45f45nfv9xwk6kgwhrkkauz7xsy2';
 
     navigator.clipboard.writeText(btcAddress);
   };
