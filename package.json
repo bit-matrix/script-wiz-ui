@@ -3,6 +3,10 @@
   "version": "0.1.18",
   "private": false,
   "type": "module",
+  "engines" : { 
+    "npm" : ">=9.8.0",
+    "node" : ">=20"
+  },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
     "@noble/secp256k1": "^2.0.0",
