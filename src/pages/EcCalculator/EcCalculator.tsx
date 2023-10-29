@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, InputGroup, Tooltip, Whisper, RadioGroup, Radio, Checkbox } from 'rsuite';
 import CopyIcon from '../../components/Svg/Icons/Copy';
-import { Point } from '@noble/secp256k1';
+import { ProjectivePoint } from '@noble/secp256k1';
 import { ValueType } from 'rsuite/esm/Radio';
 import BN from 'bn.js';
 import { validHex } from '../../utils/helper';
@@ -38,9 +38,9 @@ export const EcCalculator = () => {
 
   const pointMultiplation = () => {
     try {
-      const data = new Point(BigInt('0x' + point1), BigInt('0x' + ecinpY)).multiply(BigInt('0x' + point2));
-      const yAxis = bigInt(data.y.toString(16), 16);
-      // const yAxis = yfromX(data.x.toString(16));
+      const data = new ProjectivePoint(BigInt(point1), BigInt(ecinpY), BigInt(1)).multiply(BigInt(point2));
+      const affinePoint = data.toAffine(); // This is a hypothetical method.
+      const yAxis = bigInt(affinePoint.y.toString(16), 16);
 
       setMulResult({ x: data.x.toString(16), y: yAxis.toString(16), isOdd: yAxis.isOdd() });
     } catch (error) {
